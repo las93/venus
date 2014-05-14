@@ -1,0 +1,4 @@
+[14-May-2014 12:04:14 Europe/Paris] E:\venus\private\core\Router.php> (l.278) preg_match(): Compilation failed: nothing to repeat at offset 1
+[14-May-2014 12:09:33 Europe/Paris] E:\venus\private\src\Demo\common\Controller.php> (l.46) Undefined variable: sControllerName
+[14-May-2014 12:09:42 Europe/Paris] E:\venus\private\src\Demo\common\Controller.php> (l.48) Undefined variable: sControllerName
+[14-May-2014 12:09:53 Europe/Paris] E:\venus\private\core\Router.php> (l.391) Object of class Venus\src\Demo\Controller\Home could not be converted to string

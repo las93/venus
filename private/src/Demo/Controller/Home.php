@@ -1,39 +1,41 @@
 <?php
 
 /**
- * Controller Manager
+ * Controller to test
  *
- * @category  	src\Demo
- * @package   	src\Demo\common
+ * @category  	src
+ * @package   	src\Demo\Controller
  * @author    	Judicaël Paquet <paquet.judicael@iscreenway.com>
  * @copyright 	Copyright (c) 2013-2014 iScreenway FR/VN Inc. (http://www.iscreenway.com)
- * @license   	http://www.iscreenway.com/framework/licence.php Tout droit rÃ©servÃ© Ã  http://www.iscreenway.com
+ * @license   	http://www.iscreenway.com/framework/licence.php Tout droit réservé à http://www.iscreenway.com
  * @version   	Release: 1.0.0
  * @filesource	http://www.iscreenway.com/framework/download.php
  * @link      	http://www.iscreenway.com
  * @since     	1.0
  */
 
-namespace Venus\src\Demo\common;
+namespace Venus\src\Demo\Controller;
 
-use \Venus\core\Controller as CoreController;
-use \Venus\core\UrlManager as UrlManager;
+use \Venus\src\Demo\common\Controller as Controller;
+use \Venus\lib\Session as Session;
+use \Venus\src\Demo\Model\user as modelUser;
+use \Venus\src\Demo\Entity\user as entityUser;
 
 /**
- * Controller Manager
+ * Controller to test
  *
- * @category  	src\Demo
- * @package   	src\Demo\common
+ * @category  	src
+ * @package   	src\Demo\Controller
  * @author    	Judicaël Paquet <paquet.judicael@iscreenway.com>
  * @copyright 	Copyright (c) 2013-2014 iScreenway FR/VN Inc. (http://www.iscreenway.com)
- * @license   	http://www.iscreenway.com/framework/licence.php Tout droit rÃ©servÃ© Ã  http://www.iscreenway.com
+ * @license   	http://www.iscreenway.com/framework/licence.php Tout droit réservé à http://www.iscreenway.com
  * @version   	Release: 1.0.0
  * @filesource	http://www.iscreenway.com/framework/download.php
  * @link      	http://www.iscreenway.com
  * @since     	1.0
  */
 
-abstract class Controller extends CoreController {
+class Home extends Controller {
 
 	/**
 	 * Constructor
@@ -45,5 +47,18 @@ abstract class Controller extends CoreController {
 	public function __construct() {
 
 		parent::__construct();
+	}
+
+	/**
+	 * the main page
+	 *
+	 * @access public
+	 * @return void
+	 */
+
+	public function show() {
+
+		echo "Hello World";
+
 	}
 }
