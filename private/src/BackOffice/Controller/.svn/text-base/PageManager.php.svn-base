@@ -1,0 +1,68 @@
+<?php
+
+/**
+ * Page Manager Controller
+ *
+ * @category    src
+ * @package     src\BackOffice\Controller
+ * @author      vietphan
+ * @copyright   Copyright (c) 2013-2014 iScreenway FR/VN Inc. (http://www.iscreenway.com)
+ * @license     http://www.iscreenway.com/framework/licence.php Tout droit réservé à http://www.iscreenway.com
+ * @version     Release: 1.0.0
+ * @filesource  http://www.iscreenway.com/framework/download.php
+ * @link        http://www.iscreenway.com
+ * @since       1.0
+ */
+
+namespace src\BackOffice\Controller;
+
+use \core\Controller as Controller;
+use \src\BackOffice\Model\page as PageModel;
+use \lib\Entity;
+
+/**
+ * Controller to test
+ *
+ * @category    src
+ * @package     src\BackOffice\Controller
+ * @author      vietphan
+ * @copyright   Copyright (c) 2013-2014 iScreenway FR/VN Inc. (http://www.iscreenway.com)
+ * @license     http://www.iscreenway.com/framework/licence.php Tout droit réservé à http://www.iscreenway.com
+ * @version     Release: 1.0.0
+ * @filesource  http://www.iscreenway.com/framework/download.php
+ * @link        http://www.iscreenway.com
+ * @since       1.0
+ */
+
+class PageManager extends Controller {
+
+    /**
+     * Constructor
+     *
+     * @access public
+     * @return object
+     */
+
+    public function __construct() {
+    	
+        $this->pageModel = function() { return new PageModel; };
+        
+        parent::__construct();
+    }
+
+    /**
+     * create or update page
+     *
+     * @access public
+     * @return void
+     */
+    
+    public function createOrUpdate() {
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $params = json_decode($_POST['page'], true);
+            echo json_encode(Entity::getAllEntity($this->pageModel->createOrUpdate($params, true)));
+            //header('Location: http://'.$_SERVER['HTTP_HOST'].$sUrlMenuManager);
+        }
+    }
+}

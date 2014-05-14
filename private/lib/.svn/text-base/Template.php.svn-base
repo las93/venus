@@ -1,0 +1,215 @@
+<?php
+
+/**
+ * Manage Template
+ *
+ * @category  	lib
+ * @author    	Judicaël Paquet <paquet.judicael@iscreenway.com>
+ * @copyright 	Copyright (c) 2013-2014 iScreenway FR/VN Inc. (http://www.iscreenway.com)
+ * @license   	http://www.iscreenway.com/framework/licence.php Tout droit réservé à http://www.iscreenway.com
+ * @version   	Release: 1.0.0
+ * @filesource	http://www.iscreenway.com/framework/download.php
+ * @link      	http://www.iscreenway.com
+ * @since     	1.0
+ */
+
+namespace lib;
+
+/**
+ * This class manage the Template
+ *
+ * @category  	lib
+ * @author    	Judicaël Paquet <paquet.judicael@iscreenway.com>
+ * @copyright 	Copyright (c) 2013-2014 iScreenway FR/VN Inc. (http://www.iscreenway.com)
+ * @license   	http://www.iscreenway.com/framework/licence.php Tout droit réservé à http://www.iscreenway.com
+ * @version   	Release: 1.0.0
+ * @filesource	http://www.iscreenway.com/framework/download.php
+ * @link      	http://www.iscreenway.com
+ * @since     	1.0
+ */
+
+class Template {
+
+	/**
+	 * Array of var to assign at the template
+	 *
+	 * @access private
+	 * @var    array
+	 */
+
+	private $_aVar = array();
+
+	/**
+	 * Template name
+	 *
+	 * @access private
+	 * @var    string
+	 */
+
+	private $_sTemplateName = '';
+
+	/**
+	 * constructor of class
+	 *
+	 * @access public
+	 * @param  string $sName name of the template
+	 * @return bool
+	 */
+
+	public function __construct($sName = null) {
+
+		if ($sName !== null) { $this->_sTemplateName = $sName; }
+	}
+
+	/**
+	 * assign a variable for the template
+	 *
+	 * @access public
+	 * @param  string $sName name of the variable
+	 * @param  mixed $mValue value of the variable
+	 * @return \lib\Template
+	 */
+
+	public function assign($sName, $mValue) {
+
+		$this->_aVar[$sName] = $mValue;
+		return $this;
+	}
+
+	/**
+	 * show the template
+	 *
+	 * @access public
+	 * @param  string $sName name of the template
+	 * @return bool
+	 */
+
+	public function display($sName = null) {
+
+		$sTemplate = $this->fetch($sName = null);
+		echo $sTemplate;
+	}
+
+	/**
+	 * fetch the template
+	 *
+	 * @access public
+	 * @param  string $sName name of the template
+	 * @return string
+	 */
+
+	public function fetch($sName = null) {
+
+		if ($sName !== null) { $this->_sTemplateName = $sName; }
+
+		$sTemplate = file_get_contents(str_replace('lib', '', __DIR__).$this->_sTemplateName);
+
+		ob_start();
+		$this->_transform($sTemplate, $this->_sTemplateName, true);
+		return ob_get_clean();
+	}
+
+	/**
+	 * assign a variable for the template
+	 *
+	 * @access private
+	 * @param  string $sContent content
+	 * @param  string $sTemplateName tempalte name
+	 * @param  boolean $bFirst if you call this for the first time
+	 * @return bool
+	 */
+
+	private function _transform($sContent, $sTemplateName, $bFirst = false) {
+
+		if (!isset($_SERVER['PHP_AUTH_USER'])) { $_SERVER['PHP_AUTH_USER'] = ''; }
+		if (!isset($_SESSION)) { $_SESSION = array(); }
+
+		$aProtectedVar = $this->_aVar;
+		$aProtectedVar['app']['security'] = array();
+		$aProtectedVar['app']['user'] = array('username' => $_SERVER['PHP_AUTH_USER']);
+		$aProtectedVar['app']['request'] = $_POST;
+		$aProtectedVar['app']['session'] = $_SESSION;
+		$aProtectedVar['app']['environment'] = $_SERVER;
+		$aProtectedVar['app']['debug'] = array();
+
+		$sTmpDirectory = str_replace('private'.DIRECTORY_SEPARATOR.'lib', 'data'.DIRECTORY_SEPARATOR.'cache', __DIR__).DIRECTORY_SEPARATOR;
+		// if (DIRECTORY_SEPARATOR != '/') { $sBeforeCharacter = '\\\\'; }
+		// else { $sBeforeCharacter = ''; }
+		$sTmpDirectory = str_replace('\\', '\\\\\\', $sTmpDirectory);
+
+		$sContent = preg_replace('|\{\*|', '<?php /*', $sContent);
+		$sContent = preg_replace('|\*\}|', '*/ ?>', $sContent);
+
+		/** @todo I must test that */
+
+		if (preg_match('|\{include \$([a-zA-Z_]+)([a-zA-Z0-9_\->\[\]"\'\(\)]*)\}|', $sContent, $aMatch)) {
+
+			$sContent = preg_replace('|\{include \$([a-zA-Z_]+)([a-zA-Z0-9_\->\[\]"\'\(\)]*)\}|e', '$sTempToCall = $aProtectedVar[\'$1\']$2; echo "{include \$'.'$1'.'$2}";', $sContent);
+			$sContent = preg_replace('|\{include \$([a-zA-Z_]+)([a-zA-Z0-9_\->\[\]"\'\(\)]*)\}|', '<?php include "'.$sTmpDirectory.'".md5($aProtectedVar[\'$1\']$2).".cac.php"; ?>', $sContent);
+			$this->_transform(file_get_contents(str_replace('lib', '', __DIR__).$sTempToCall, $sTempToCall));
+		}
+
+		if (preg_match('|\{include model\}|', $sContent)) {
+
+			$sContent = preg_replace('|\{include model\}|', '<?php include "'.$sTmpDirectory.'".md5($aProtectedVar[\'model\']).".cac.php"; ?>', $sContent);
+			$this->_transform(file_get_contents(str_replace('lib', '', __DIR__).$aProtectedVar['model']), $aProtectedVar['model']);
+		}
+
+		/** @todo I must test that */
+		$sContent = preg_replace('|\{include [\'"]([^\'"]+)[\'"]\}|', '<?php include "'.$sTmpDirectory.'"."$1"; ?>', $sContent);
+		$sContent = preg_replace('|\{include \$([a-zA-Z_]+)([a-zA-Z0-9_\->\[\]"\'\(\)]*) assign \$([a-zA-Z_]+)([a-zA-Z0-9_\->\[\]"\'\(\)]*)\}|', '<?php $aProtectedVar[\'$3\']$4 = file_get_contents("'.$sTmpDirectory.'".$aProtectedVar[\'$1\']$2); ?>', $sContent);
+		$sContent = preg_replace('|\{include [\'"]([^\'"]+)[\'"] assign \$([a-zA-Z_]+)([a-zA-Z0-9_\->\[\]"\'\(\)]*)\}|', '<?php $aProtectedVar[\'$2\']$3 = file_get_contents("'.$sTmpDirectory.'"."$1"); ?>', $sContent);
+
+		$sContent = preg_replace('|\{url [\'"]([^\'"]+)[\'"] *\}|', '<?php $oUrlManager = new \core\UrlManager; echo $oUrlManager->getUrl(\'$1\', array()); ?>', $sContent);
+		$sContent = preg_replace('|\{url [\'"]([^\'"]+)[\'"] \$([a-zA-Z_]+)([a-zA-Z0-9_\->\[\]"\'\(\)]*)\}|', '<?php $oUrlManager = new \core\UrlManager; echo $oUrlManager->getUrl(\'$1\', $aProtectedVar[\'$2\']$3); ?>', $sContent);
+		$sContent = preg_replace('|\{dump \$([a-zA-Z_]+)([a-zA-Z0-9_\->\[\]"\'\(\)]*)\}|', '<?php var_dump($aProtectedVar[\'$1\']$2); ?>', $sContent);
+
+		$sContent = preg_replace('|\{foreach \$([a-zA-Z_]+)([a-zA-Z0-9_\->\[\]"\'\(\)]*) as \$([a-zA-Z_]+)([a-zA-Z0-9_\->\[\]"\'\(\)]*)\}|', '<?php foreach($aProtectedVar[\'$1\']$2 as $aProtectedVar[\'$3\']$4) { ?>', $sContent);
+		$sContent = preg_replace('|\{/foreach\}|', '<?php } ?>', $sContent);
+
+		$sContent = preg_replace('|\{\$([a-zA-Z_]+)([a-zA-Z0-9_\->\[\]"\'\(\)]*) assign \$([a-zA-Z_]+)([a-zA-Z0-9_\->\[\]"\'\(\)]*)\}|', '<?php $aProtectedVar[\'$1\']$2 = $aProtectedVar[\'$3\']$4; ?>', $sContent);
+		$sContent = preg_replace('|\{\$([a-zA-Z_]+)([a-zA-Z0-9_\->\[\]"\'\(\)]*) assign [\'"](.*)[\'"]\}|', '<?php $aProtectedVar[\'$1\']$2 = \'$3\'; ?>', $sContent);
+		$sContent = preg_replace('|\{\$([a-zA-Z_]+)([a-zA-Z0-9_\->\[\]"\'\(\)]*)\}|', '<?php echo $aProtectedVar[\'$1\']$2; ?>', $sContent);
+
+		$sContent = preg_replace('|\{count \$([a-zA-Z_]+)([a-zA-Z0-9_\->\[\]"\'\(\)]*)\}|', '<?php echo count($aProtectedVar[\'$1\']$2); ?>', $sContent);
+		$sContent = preg_replace('|\{count \$([a-zA-Z_]+)([a-zA-Z0-9_\->\[\]"\'\(\)]*) assign \$([a-zA-Z_]+)([a-zA-Z0-9_\->\[\]"\'\(\)]*)\}|', '<?php $aProtectedVar[\'$3\']$4 = count($aProtectedVar[\'$1\']$2); ?>', $sContent);
+
+		$sContent = preg_replace('|\{length \$([a-zA-Z_]+)([a-zA-Z0-9_\->\[\]"\'\(\)]*)\}|', '<?php echo strlen($aProtectedVar[\'$1\']$2); ?>', $sContent);
+		$sContent = preg_replace('|\{length \$([a-zA-Z_]+)([a-zA-Z0-9_\->\[\]"\'\(\)]*) assign \$([a-zA-Z_]+)([a-zA-Z0-9_\->\[\]"\'\(\)]*)\}|', '<?php $aProtectedVar[\'$3\']$4 = strlen($aProtectedVar[\'$1\']$2); ?>', $sContent);
+
+		$sContent = preg_replace('|\{\$([a-zA-Z_]+)([a-zA-Z0-9_\->\[\]"\'\(\)]*) default [\']{0,1}([^\']+)[\']{0,1}\}|', '<?php if ($aProtectedVar[\'$1\']$2) { echo $aProtectedVar[\'$1\']$2; } else { echo $3; } ?>', $sContent);
+		$sContent = preg_replace('|\{date [\']{0,1}([^\']+)[\']{0,1} \$([a-zA-Z_]+)([a-zA-Z0-9_\->\[\]"\'\(\)]*)\}|', '<?php echo date(\'$1\', $aProtectedVar[\'$2\']$3); } ?>', $sContent);
+
+		$sContent = preg_replace('|\{\$([a-zA-Z_]+)([a-zA-Z0-9_\->\[\]"\'\(\)]*) url\}|', '<?php echo urlencode($aProtectedVar[\'$1\']$2); } ?>', $sContent);
+		$sContent = preg_replace('|\{\$([a-zA-Z_]+)([a-zA-Z0-9_\->\[\]"\'\(\)]*) html\}|', '<?php echo htmlentities($aProtectedVar[\'$1\']$2); } ?>', $sContent);
+		$sContent = preg_replace('|\{\$([a-zA-Z_]+)([a-zA-Z0-9_\->\[\]"\'\(\)]*) email\}|', '<?php echo preg_replace(\'/[^a-zA-Z-_.@]+/\', \'\', $aProtectedVar[\'$1\']$2); } ?>', $sContent);
+		$sContent = preg_replace('|\{\$([a-zA-Z_]+)([a-zA-Z0-9_\->\[\]"\'\(\)]*) lower\}|', '<?php echo strtolower($aProtectedVar[\'$1\']$2); } ?>', $sContent);
+		$sContent = preg_replace('|\{\$([a-zA-Z_]+)([a-zA-Z0-9_\->\[\]"\'\(\)]*) nl2br\}|', '<?php echo nl2br($aProtectedVar[\'$1\']$2); } ?>', $sContent);
+		$sContent = preg_replace('|\{\$([a-zA-Z_]+)([a-zA-Z0-9_\->\[\]"\'\(\)]*) upper\}|', '<?php echo strtoupper($aProtectedVar[\'$1\']$2); } ?>', $sContent);
+
+		$sContent = str_replace('{else}', '<?php } else { ?>', $sContent);
+		$sContent = str_replace('{/if}', '<?php } ?>', $sContent);
+		$sContent = preg_replace('|\{if is_granted\(\'([a-zA-Z0-9_]+)\'\) *\}|', '<?php $oSecurity = new \core\Security; if ($oSecurity->getUserRole() == \'$2\') { ?>', $sContent);
+		$sContent = preg_replace('|\{if ([^\}]*)\$([a-zA-Z_]+)([a-zA-Z0-9_\->\[\]"\'\(\)]*)([^\}]*)\}|', '<?php if ($1'.'$aProtectedVar[\'$2\']$3'.'$4) { ?>', $sContent);
+		$sContent = preg_replace('|\{elseif ([^\}]*)\$([a-zA-Z_]+)([a-zA-Z0-9_\->\[\]"\'\(\)]*)([^\}]*)\}|', '<?php } else if ($1'.'$aProtectedVar[\'$2\']$3'.'$4) { ?>', $sContent);
+
+		file_put_contents($sTmpDirectory.$this->_getEncodeTemplateName($sTemplateName).'.cac.php', $sContent);
+
+		if ($bFirst === true) {
+
+			include($sTmpDirectory.$this->_getEncodeTemplateName($sTemplateName).'.cac.php');
+		}
+	}
+
+	/**
+	 * get the encode name od the template
+	 *
+	 * @access private
+	 * @param  string $sName name of the template
+	 * @return string
+	 */
+	private function _getEncodeTemplateName($sName) {
+
+		return md5($sName);
+	}
+}

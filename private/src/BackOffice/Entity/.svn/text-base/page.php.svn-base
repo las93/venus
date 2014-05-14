@@ -1,0 +1,146 @@
+<?php
+
+/**
+ * Entity to page
+ *
+ * @category  	src
+ * @package   	src\BackOffice\Entity
+ * @author    	vietphan
+ * @copyright 	Copyright (c) 2013-2014 iScreenway FR/VN Inc. (http://www.iscreenway.com)
+ * @license   	http://www.iscreenway.com/framework/licence.php Tout droit réservé à http://www.iscreenway.com
+ * @version   	Release: 1.0.0
+ * @filesource	http://www.iscreenway.com/framework/download.php
+ * @link      	http://www.iscreenway.com
+ * @since     	1.0
+ */
+
+namespace src\BackOffice\Entity;
+
+use \core\Entity as Entity;
+
+/**
+ * Entity to page
+ *
+ * @category  	src
+ * @package   	src\BackOffice\Entity
+ * @author    	vietphan
+ * @copyright 	Copyright (c) 2013-2014 iScreenway FR/VN Inc. (http://www.iscreenway.com)
+ * @license   	http://www.iscreenway.com/framework/licence.php Tout droit réservé à http://www.iscreenway.com
+ * @version   	Release: 1.0.0
+ * @filesource	http://www.iscreenway.com/framework/download.php
+ * @link      	http://www.iscreenway.com
+ * @since     	1.0
+ */
+
+class page extends Entity {
+
+	/**
+	 * id
+	 *
+	 * @access private
+	 * @var    int
+	 *
+	 * @primary_key
+	 * @map id
+	 */
+
+	private $id = null;
+
+	/**
+	 * content
+	 *
+	 * @access private
+	 * @var    text
+	 *
+	 */
+
+	private $content = null;
+
+	/**
+	 * menu_id
+	 *
+	 * @access private
+	 * @var    int
+	 *
+	 */
+
+	private $menu_id = null;
+
+	/**
+	 * get id of page
+	 *
+	 * @access public
+	 * @return int
+	 */
+
+	public function get_id() {
+
+		return $this->id;
+	}
+
+	/**
+	 * set id of page
+	 *
+	 * @access public
+	 * @param  int $id id of page
+	 * @return \src\Batch\Entity\page
+	 */
+
+	public function set_id($id) {
+
+		$this->id = $id;
+		return $this;
+	}
+
+	/**
+	 * get content of page
+	 *
+	 * @access public
+	 * @return text
+	 */
+
+	public function get_content() {
+
+		return $this->content;
+	}
+
+	/**
+	 * set content of page
+	 *
+	 * @access public
+	 * @param  text $content content of page
+	 * @return \src\Batch\Entity\page
+	 */
+
+	public function set_content($content) {
+
+		$this->content = $content;
+		return $this;
+	}
+
+	/**
+	 * get menu_id of page
+	 *
+	 * @access public
+	 * @return int
+	 */
+
+	public function get_menu_id() {
+
+		return $this->menu_id;
+	}
+
+	/**
+	 * set menu_id of page
+	 *
+	 * @access public
+	 * @param  int $menu_id menu_id of page
+	 * @return \src\Batch\Entity\page
+	 */
+
+	public function set_menu_id($menu_id) {
+
+		$this->menu_id = $menu_id;
+		return $this;
+	}
+}

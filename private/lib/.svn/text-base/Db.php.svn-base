@@ -1,0 +1,78 @@
+<?php
+
+/**
+ * Db Manager
+ *
+ * @category  	lib
+ * @package   	lib\Db
+ * @author    	Judicaël Paquet <paquet.judicael@iscreenway.com>
+ * @copyright 	Copyright (c) 2013-2014 iScreenway FR/VN Inc. (http://www.iscreenway.com)
+ * @license   	http://www.iscreenway.com/framework/licence.php Tout droit réservé à http://www.iscreenway.com
+ * @version   	Release: 1.0.0
+ * @filesource	http://www.iscreenway.com/framework/download.php
+ * @link      	http://www.iscreenway.com
+ * @since     	1.0
+ */
+
+namespace lib;
+
+use \core\Config as Config;
+use \lib\Db as Db;
+use \lib\Entity as Entity;
+
+/**
+ * Db Manager
+ *
+ * @category  	lib
+ * @package   	lib\Db
+ * @author    	Judicaël Paquet <paquet.judicael@iscreenway.com>
+ * @copyright 	Copyright (c) 2013-2014 iScreenway FR/VN Inc. (http://www.iscreenway.com)
+ * @license   	http://www.iscreenway.com/framework/licence.php Tout droit réservé à http://www.iscreenway.com
+ * @version   	Release: 1.0.0
+ * @filesource	http://www.iscreenway.com/framework/download.php
+ * @link      	http://www.iscreenway.com
+ * @since     	1.0
+ */
+
+class Db {
+
+	/**
+	 * object Db
+	 *
+	 * @access private
+	 * @var    array
+	 */
+
+	private static $_oPdo = null;
+	
+	/**
+	 * get instance of Pdo
+	 *
+	 * @access public
+	 * @param  string sName name of the configuration
+	 * @return void
+	 */
+
+	public static function connect($sName) {
+
+		if (!isset(self::$_oPdo[$sName])) { 
+
+			$oDbConf = Config::get('Db')->configuration;
+
+			if ($oDbConf->{$sName}->type == 'mysql') {
+			
+				self::$_oPdo[$sName] = new \PDO('mysql:host='.$oDbConf->{$sName}->host.';dbname='.$oDbConf->{$sName}->db, $oDbConf->{$sName}->user, $oDbConf->{$sName}->password);
+			}
+			else if ($oDbConf->{$sName}->type == 'mssql') {
+			
+				self::$_oPdo[$sName] = new \PDO('mssql:host='.$oDbConf->{$sName}->host.';dbname='.$oDbConf->{$sName}->db, $oDbConf->{$sName}->user, $oDbConf->{$sName}->password);
+			}
+			else if ($oDbConf->{$sName}->type == 'sqlite') {
+
+				self::$_oPdo[$sName] = new \PDO('sqlite:'.$oDbConf->{$sName}->path);
+			}
+		}
+
+		return self::$_oPdo[$sName];
+	}
+}

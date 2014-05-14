@@ -1,0 +1,89 @@
+<?php
+
+/**
+ * Manage Template
+ *
+ * @category  	lib
+ * @author    	Judicaël Paquet <paquet.judicael@iscreenway.com>
+ * @copyright 	Copyright (c) 2013-2014 iScreenway FR/VN Inc. (http://www.iscreenway.com)
+ * @license   	http://www.iscreenway.com/framework/licence.php Tout droit réservé à http://www.iscreenway.com
+ * @version   	Release: 1.0.0
+ * @filesource	http://www.iscreenway.com/framework/download.php
+ * @link      	http://www.iscreenway.com
+ * @since     	1.0
+ */
+
+namespace Venus\lib\Template\Functions;
+
+/**
+ * This class manage the Template
+ *
+ * @category  	lib
+ * @author    	Judicaël Paquet <paquet.judicael@iscreenway.com>
+ * @copyright 	Copyright (c) 2013-2014 iScreenway FR/VN Inc. (http://www.iscreenway.com)
+ * @license   	http://www.iscreenway.com/framework/licence.php Tout droit réservé à http://www.iscreenway.com
+ * @version   	Release: 1.0.0
+ * @filesource	http://www.iscreenway.com/framework/download.php
+ * @link      	http://www.iscreenway.com
+ * @since     	1.0
+ */
+
+class ToInclude {
+
+	/**
+	 * run before
+	 *
+	 * @access public
+	 * @param  array $aParams parameters
+	 * @return \Venus\lib\Template\ToInclude
+	 */
+
+	public function run($aParams = array()) {
+
+		;
+	}
+
+	/**
+	 * run before
+	 *
+	 * @access public
+	 * @param  array $aParams parameters
+	 * @return \Venus\lib\Template\ToInclude
+	 */
+
+	public function replaceBy($aParams = array()) {
+
+		if (!strstr($aParams['real_name'], '\\') && !strstr($aParams['real_name'], '/')) {
+
+			$aParams['to_include'] = 'src/'.PORTAIL.'/View/'.$aParams['real_name'];
+			$aParams['real_name'] = ''.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.PORTAIL.DIRECTORY_SEPARATOR.'View'.DIRECTORY_SEPARATOR.$aParams['real_name'];
+		}
+
+		$sViewDirectory = str_replace('lib'.DIRECTORY_SEPARATOR.'Template'.DIRECTORY_SEPARATOR.'Functions',
+			'src/'.PORTAIL.'/View/', __DIR__);
+
+		$sCacheDirectory = str_replace('private'.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'Template'.DIRECTORY_SEPARATOR.'Functions',
+						'data/cache/', __DIR__);
+
+		$oMobileDetect = new \Mobile_Detect;
+
+		if ($oMobileDetect->isMobile() && file_exists(str_replace('lib/Template/Functions', '../../..', __DIR__).str_replace('.tpl', 'Mobile.tpl', $aParams['real_name']))) {
+
+			eval('$oTemplate = new \Venus\lib\Template("'.str_replace('.tpl', 'Mobile.tpl', $aParams['real_name']).'"); $oTemplate->fetch(null, false);');
+		}
+		else {
+
+			eval('$oTemplate = new \Venus\lib\Template("'.$aParams['real_name'].'"); $oTemplate->fetch(null, false);');
+		}
+
+		if (strstr($aParams['file'], '$_aProtectedVar[\'model\']')) {
+		//return '<?php include "'.$sCacheDirectory.'".md5('.preg_replace('#^.*?([^/\\\\]+)$#', '$1', $aParams['file']).').".cac.php"; ?'.'>';
+			return '<?php '.$aParams['file'].' = str_replace("\\\\", "/", '.$aParams['file'].'); if (!strstr('.$aParams['file'].', \'/\')) { '.$aParams['file'].' = "src/'.PORTAIL.'/View/".'.$aParams['file'].'; } $oMobileDetect = new \Mobile_Detect; if ($oMobileDetect->isMobile()) { if (file_exists("'.$sCacheDirectory.'".md5('.str_replace('.tpl', 'Mobile.tpl',$aParams['file']).').".cac.php")) { include "'.$sCacheDirectory.'".md5('.str_replace('.tpl', 'Mobile.tpl',$aParams['file']).').".cac.php"; } else { include "'.$sCacheDirectory.'".md5('.$aParams['file'].').".cac.php"; }} else { include "'.$sCacheDirectory.'".md5('.$aParams['file'].').".cac.php"; } ?'.'>';
+		}
+		else {
+
+			return '<?php $oMobileDetect = new \Mobile_Detect; if ($oMobileDetect->isMobile()) { if (file_exists("'.$sCacheDirectory.'".md5("'.str_replace('.tpl', 'Mobile.tpl', $aParams['to_include']).'").".cac.php")) { include "'.$sCacheDirectory.'".md5("'.str_replace('.tpl', 'Mobile.tpl', $aParams['to_include']).'").".cac.php"; } else { include "'.$sCacheDirectory.'".md5("'.$aParams['to_include'].'").".cac.php"; } } else { include "'.$sCacheDirectory.'".md5("'.$aParams['to_include'].'").".cac.php"; } ?'.'>';
+		}
+
+	}
+}

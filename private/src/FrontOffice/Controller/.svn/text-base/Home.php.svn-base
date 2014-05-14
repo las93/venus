@@ -1,0 +1,71 @@
+<?php
+
+/**
+ * Controller to test
+ *
+ * @category  	src
+ * @package   	src\Front\Controller
+ * @author    	Judicaël Paquet <paquet.judicael@iscreenway.com>
+ * @copyright 	Copyright (c) 2013-2014 iScreenway FR/VN Inc. (http://www.iscreenway.com)
+ * @license   	http://www.iscreenway.com/framework/licence.php Tout droit réservé à http://www.iscreenway.com
+ * @version   	Release: 1.0.0
+ * @filesource	http://www.iscreenway.com/framework/download.php
+ * @link      	http://www.iscreenway.com
+ * @since     	1.0
+ */
+
+namespace src\Front\Controller;
+
+use \core\Controller as Controller;
+use \src\Front\Model\news as News;
+
+/**
+ * Controller to test
+ *
+ * @category  	src
+ * @package   	src\Front\Controller
+ * @author    	Judicaël Paquet <paquet.judicael@iscreenway.com>
+ * @copyright 	Copyright (c) 2013-2014 iScreenway FR/VN Inc. (http://www.iscreenway.com)
+ * @license   	http://www.iscreenway.com/framework/licence.php Tout droit réservé à http://www.iscreenway.com
+ * @version   	Release: 1.0.0
+ * @filesource	http://www.iscreenway.com/framework/download.php
+ * @link      	http://www.iscreenway.com
+ * @since     	1.0
+ */
+
+class Home extends Controller {
+
+	/**
+	 * Constructor
+	 *
+	 * @access public
+	 * @return object
+	 */
+
+	public function __construct() {
+
+		$this->modelNews = function() { return new News; };
+		
+		parent::__construct();
+	}
+	
+	/**
+	 * the main page
+	 *
+	 * @access public
+	 * @return void
+	 */
+
+	public function show() {
+
+		$aNews = $this->modelNews->get();
+
+		$oNewsCriteria = new \src\Front\Entity\news;
+		
+		$this->modelNews->update($oNewsCriteria);
+		
+		$this->view
+			 ->assign('news', $aNews)
+			 ->display();	
+	}
+}
