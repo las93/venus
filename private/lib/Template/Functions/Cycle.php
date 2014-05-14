@@ -4,12 +4,12 @@
  * Manage Template
  *
  * @category  	lib
- * @author    	Judicaël Paquet <paquet.judicael@iscreenway.com>
- * @copyright 	Copyright (c) 2013-2014 iScreenway FR/VN Inc. (http://www.iscreenway.com)
- * @license   	http://www.iscreenway.com/framework/licence.php Tout droit réservé à http://www.iscreenway.com
+ * @author    	Judicaël Paquet <judicael.paquet@gmail.com>
+ * @copyright 	Copyright (c) 2013-2014 PAQUET Judicaël FR Inc. (https://github.com/las93)
+ * @license   	https://github.com/las93/venus/blob/master/LICENSE.md Tout droit réservé à PAQUET Judicaël
  * @version   	Release: 1.0.0
- * @filesource	http://www.iscreenway.com/framework/download.php
- * @link      	http://www.iscreenway.com
+ * @filesource	https://github.com/las93/venus
+ * @link      	https://github.com/las93
  * @since     	1.0
  */
 
@@ -19,12 +19,12 @@ namespace Venus\lib\Template\Functions;
  * This class manage the Template
  *
  * @category  	lib
- * @author    	Judicaël Paquet <paquet.judicael@iscreenway.com>
- * @copyright 	Copyright (c) 2013-2014 iScreenway FR/VN Inc. (http://www.iscreenway.com)
- * @license   	http://www.iscreenway.com/framework/licence.php Tout droit réservé à http://www.iscreenway.com
+ * @author    	Judicaël Paquet <judicael.paquet@gmail.com>
+ * @copyright 	Copyright (c) 2013-2014 PAQUET Judicaël FR Inc. (https://github.com/las93)
+ * @license   	https://github.com/las93/venus/blob/master/LICENSE.md Tout droit réservé à PAQUET Judicaël
  * @version   	Release: 1.0.0
- * @filesource	http://www.iscreenway.com/framework/download.php
- * @link      	http://www.iscreenway.com
+ * @filesource	https://github.com/las93/venus
+ * @link      	https://github.com/las93
  * @since     	1.0
  */
 
