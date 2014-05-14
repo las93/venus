@@ -1,1 +1,0 @@
-<a href="{url 'ajouter_ba'}">Ajouter une bande annonce</a>

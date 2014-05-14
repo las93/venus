@@ -1,1 +1,0 @@
-<a href="{url 'ajouter_nationalite'}">Ajouter une nationalité</a>
