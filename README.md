@@ -11,7 +11,7 @@ Nouveau framework PHP basé sur un concept MVC solide et très malléable.
 
 Pour afficher Hello World, voici le Vhost apache Type à mettre en place :
 
-&lt;VirtualHost *:80&gt;
+<VirtualHost *:80>
      ServerName localhost
      DocumentRoot E:/venus/public/Demo/
      <Directory E:/venus/public/Demo/>
