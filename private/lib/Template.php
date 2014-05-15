@@ -878,7 +878,7 @@ class Template {
 	private function _getEncodeTemplateName($sName) {
 
 		$sName = str_replace('\\', '/', $sName);
-		//$sName = str_replace('/src', 'src', $sName);
+		$sName = str_replace('/src', 'src', $sName);
 		return md5($sName);
 	}
 }
