@@ -65,6 +65,7 @@ class ToInclude {
 		$sCacheDirectory = str_replace('private'.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'Template'.DIRECTORY_SEPARATOR.'Functions',
 						'data/cache/', __DIR__);
 
+
 		$oMobileDetect = new \Mobile_Detect;
 
 		if ($oMobileDetect->isMobile() && file_exists(str_replace('lib/Template/Functions', '../../..', __DIR__).str_replace('.tpl', 'Mobile.tpl', $aParams['real_name']))) {
@@ -73,12 +74,13 @@ class ToInclude {
 		}
 		else {
 
-			eval('$oTemplate = new \Venus\lib\Template("'.$aParams['real_name'].'"); $oTemplate->fetch(null, false);');
+			eval('$oTemplate = new \Venus\lib\Template("'.str_replace("\\", "/", $aParams['real_name']).'"); $oTemplate->fetch(null, false);');
+
 		}
 
 		if (strstr($aParams['file'], '$_aProtectedVar[\'model\']')) {
 		//return '<?php include "'.$sCacheDirectory.'".md5('.preg_replace('#^.*?([^/\\\\]+)$#', '$1', $aParams['file']).').".cac.php"; ?'.'>';
-			return '<?php '.$aParams['file'].' = str_replace("\\\\", "/", '.$aParams['file'].'); if (!strstr('.$aParams['file'].', \'/\')) { '.$aParams['file'].' = "src/'.PORTAIL.'/View/".'.$aParams['file'].'; } $oMobileDetect = new \Mobile_Detect; if ($oMobileDetect->isMobile()) { if (file_exists("'.$sCacheDirectory.'".md5('.str_replace('.tpl', 'Mobile.tpl',$aParams['file']).').".cac.php")) { include "'.$sCacheDirectory.'".md5('.str_replace('.tpl', 'Mobile.tpl',$aParams['file']).').".cac.php"; } else { include "'.$sCacheDirectory.'".md5('.$aParams['file'].').".cac.php"; }} else { include "'.$sCacheDirectory.'".md5('.$aParams['file'].').".cac.php"; } ?'.'>';
+			return '<?php '.$aParams['file'].' = str_replace("\\\\", "/", '.$aParams['file'].'); if (!strstr('.$aParams['file'].', \'/\')) { '.$aParams['file'].' = "src/'.PORTAIL.'/View/".'.$aParams['file'].'; } $oMobileDetect = new \Mobile_Detect; if ($oMobileDetect->isMobile()) { if (file_exists(\''.$sCacheDirectory.'\'.md5('.str_replace('.tpl', 'Mobile.tpl',$aParams['file']).').".cac.php")) { include \''.$sCacheDirectory.'\'.md5('.str_replace('.tpl', 'Mobile.tpl',$aParams['file']).').".cac.php"; } else { include \''.$sCacheDirectory.'\'.md5('.$aParams['file'].').".cac.php"; }} else { include \''.$sCacheDirectory.'\'.md5('.$aParams['file'].').".cac.php"; } ?'.'>';
 		}
 		else {
 

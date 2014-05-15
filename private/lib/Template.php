@@ -81,7 +81,7 @@ class Template {
 	 * @var    int
 	 */
 
-	private $_iVersion = 1;
+	private $_iVersion = 2;
 
 	/**
 	 * Left delimiter
@@ -404,6 +404,7 @@ class Template {
 	private function _transform($sContent, $sTemplateName, $bFirst = false, $bDoCompilation = true) {
 
 		if (strstr($sContent, '{* version=2;')) { $this->_iVersion = 2; }
+		if (strstr($sContent, '{* version=1;')) { $this->_iVersion = 1; }
 
 		if ($this->_iVersion === 1) {
 
@@ -445,7 +446,7 @@ class Template {
 				$sContent = preg_replace_callback('|\{include \$([a-zA-Z0-9_]+)([a-zA-Z0-9_\->\[\]"\'\(\)]*)\}|m', array($this, '_includeTransform'), $sContent);
 			}
 
-			if (preg_match('|\{include model\}|', $sContent)) {  
+			if (preg_match('|\{include model\}|', $sContent)) {
 
 					$sContent = preg_replace('|\{include model\}|', '<?php $aProtectedVar[\'model\'] = preg_replace("#^.+[^a-zA-Z0-9_-]([a-zA-Z0-9_-]+\.tpl)$#msi", "\$1", $aProtectedVar[\'model\']); $oMobileDetect = new \Mobile_Detect; if ($oMobileDetect->isMobile() && file_exists("'.$sTmpDirectory.'".md5(str_replace(".tpl", "Mobile.tpl", str_replace("\\\\\\\\", "/", $aProtectedVar[\'model\']))).".cac.php")) { include "'.$sTmpDirectory.'".md5(str_replace(".tpl", "Mobile.tpl", str_replace("\\\\\\\\", "/", $aProtectedVar[\'model\']))).".cac.php"; } else { include "'.$sTmpDirectory.'".md5(str_replace("\\\\\\\\", "/", $aProtectedVar[\'model\'])).".cac.php"; } ?>', $sContent);
 
@@ -460,7 +461,7 @@ class Template {
 						$sModelname = str_replace(array('src/'.PORTAIL.'/View/', 'src\\'.PORTAIL.'\View\\'), array('', ''), $aProtectedVar['model']);
 						$this->_transform(file_get_contents(str_replace('lib', 'src/'.PORTAIL.'/View/', __DIR__).$sModelname), $sModelname);
 					}
-				}  
+				}
 
 			if (preg_match('|\{include [\'"]([^\'"]+)[\'"]\}|', $sContent)) {
 
@@ -877,7 +878,7 @@ class Template {
 	private function _getEncodeTemplateName($sName) {
 
 		$sName = str_replace('\\', '/', $sName);
-		$sName = str_replace('/src', 'src', $sName);
+		//$sName = str_replace('/src', 'src', $sName);
 		return md5($sName);
 	}
 }
