@@ -106,6 +106,10 @@ class Entity extends Controller {
 
 							$sQuery .= '('.$oOneField->value.') ';
 						}
+						else if (in_array($oOneField->type, array('varchar', 'char', 'blob'))) {
+
+							$sQuery .= '('.$oOneField->value.') ';
+						}
 
 						if (isset($oOneField->null) && $oOneField->null === true) { $sQuery .= ' NULL '; }
 						else if (isset($oOneField->null) && $oOneField->null === false) { $sQuery .= ' NOT NULL '; }
@@ -119,7 +123,7 @@ class Entity extends Controller {
 							$sQuery .= ' DEFAULT '.$oOneField->default.' ';
 						}
 
-						if (isset($oOneField->undefined) && $oOneField->unsigned === true) {
+						if (isset($oOneField->unsigned) && $oOneField->unsigned === true) {
 
 							$sQuery .= ' UNSIGNED ';
 						}
