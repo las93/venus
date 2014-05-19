@@ -75,7 +75,7 @@ class Entity extends Controller {
 		if (isset($aOptions['c'])) { $bCreate = $aOptions['c']; }
 		else { $bCreate = false; }
 
-		$oConfiguration = Config::get('Db')->configuration;
+		$oConfiguration = Config::get('Db', $sPortail)->configuration;
 
 		foreach ($oConfiguration as $sConnectionName => $oConnection) {
 
@@ -89,7 +89,7 @@ class Entity extends Controller {
 
 				foreach ($oConnection->tables as $sTableName => $oOneTable) {
 
-					$sQuery = 'CREATE TABLE '.$sTableName.'(';
+					$sQuery = 'CREATE TABLE IF NOT EXISTS '.$sTableName.'(';
 
 					$aIndex = array();
 					$aPrimaryKey = array();
@@ -108,7 +108,7 @@ class Entity extends Controller {
 						}
 						else if (in_array($oOneField->type, array('varchar', 'char', 'blob'))) {
 
-							$sQuery .= '('.$oOneField->value.') ';
+							$sQuery .= '(250) ';
 						}
 
 						if (isset($oOneField->null) && $oOneField->null === true) { $sQuery .= ' NULL '; }
@@ -154,7 +154,7 @@ class Entity extends Controller {
 					$sQuery .= ')';
 
 					$oPdo->query($sQuery);
-					echo $sQuery.' - ';
+					echo $sQuery."\n";
 				}
 			}
 
@@ -449,7 +449,7 @@ class '.$sTableName.' extends Entity {'."\n";
 
 				$sContentFile .= '}';
 
-				file_put_contents(__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'Entity'.DIRECTORY_SEPARATOR.$sTableName.'.php', $sContentFile);
+				file_put_contents(__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.$sPortail.DIRECTORY_SEPARATOR.'Entity'.DIRECTORY_SEPARATOR.$sTableName.'.php', $sContentFile);
 
 				$sContentFile = '<?php
 
@@ -488,7 +488,7 @@ use \Venus\core\Model as Model;
 class '.$sTableName.' extends Model {
 }'."\n";
 
-				file_put_contents(__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'Model'.DIRECTORY_SEPARATOR.$sTableName.'.php', $sContentFile);
+				file_put_contents(__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.$sPortail.DIRECTORY_SEPARATOR.'Model'.DIRECTORY_SEPARATOR.$sTableName.'.php', $sContentFile);
 			}
 		}
 	}
