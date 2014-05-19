@@ -47,15 +47,15 @@ class DateFormat {
 
 	/**
 	 * run before
-	 * replace {$foo |date_format:"%Y/%m/%d" by {date("%Y/%m/%d", $foo)
 	 *
 	 * @access public
-	 * @param  array $aParams parameters
-	 * @return \Venus\lib\Template\Mailto
+	 * @param  string $sContent content to transform
+	 * @param  string $sFormat date format
+	 * @return string
 	 */
 
-	public function replaceBy($sContent, $sFormat) {
+	public function replaceBy($sContent, $sFormat = 'D, d M Y H:i:s') {
 
-		return '{date(\''.$sFormat.'\', '.$sContent.')';
+		return '{date("'.$sFormat.'", '.$sContent.')}';
 	}
 }

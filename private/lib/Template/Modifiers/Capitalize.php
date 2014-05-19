@@ -47,16 +47,15 @@ class Capitalize {
 
 	/**
 	 * run before
-	 * replace {$foo |date_format:"%Y/%m/%d" by {date("%Y/%m/%d", $foo)
-	 *
 	 *
 	 * @access public
-	 * @param  array $aParams parameters
-	 * @return \Venus\lib\Template\Mailto
+	 * @param  string $sContent content to transform
+	 * @param  string $sWithNumber NOT USE NOW (just for compatibilitie with Smarty
+	 * @return string
 	 */
 
-	public function replaceBy($sContent, $sFormat) {
+	public function replaceBy($sContent, $sWithNumber = null) {
 
-		return '{ucwords('.$sContent.')';
+		return '{ucwords('.$sContent.')}';
 	}
 }
