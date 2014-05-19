@@ -423,7 +423,7 @@ class Template {
 		$_aProtectedVar['app']['post'] = $_POST;
 		$_aProtectedVar['app']['cookies'] = $_COOKIE;
 		$_aProtectedVar['app']['env'] = $_ENV;
-		$_aProtectedVar['app']['session'] = $_COOKIE;
+		$_aProtectedVar['app']['session'] = $_SESSION;
 		$_aProtectedVar['app']['request'] = array_merge($_GET, $_POST, $_COOKIE, $_SERVER, $_ENV);
 		$_aProtectedVar['app']['now'] = time();
 		$_aProtectedVar['app']['const'] = get_defined_constants();
@@ -479,7 +479,7 @@ class Template {
 			//				{$foo+1}, {$foo*$bar}, {$app.get.page}, {$app.post.page}, {$app.cookies.page}, , {$app.anv.path},
 			//				{$app.session.page}, {$app.request.page}, {$app.now}, {$app.const.page}, {$smarty.capture}, {$smarty.section},
 			//				{$smarty.template}, {$smarty.current_dir}, {$smarty.version}, {$smarty.template_object}, {$smarty.block.child},
-			//				{$smarty.block.parent}, {$smarty.ldelim}, {$smarty.rdelim}
+			//				{$smarty.block.parent}, {$app.ldelim}, {$app.rdelim}
 			// particulier ;
 			// version 1 forbiden : {$app['security']}, {$app['user']}, {$app['environment']}, {$app['debug']}
 			//*****************************************************************************************************************************
