@@ -50,12 +50,16 @@ class Capitalize {
 	 *
 	 * @access public
 	 * @param  string $sContent content to transform
-	 * @param  string $sWithNumber NOT USE NOW (just for compatibilitie with Smarty
+	 * @param  bool $bWithNumber change the word with digit
+	 * @param  bool $bRestInLowerCase the rest of word in lower case 
 	 * @return string
 	 */
 
-	public function replaceBy($sContent, $sWithNumber = null) {
+	public function replaceBy($sContent, $bWithNumber = false, $bRestInLowerCase = false) {
 
-		return '{ucwords('.$sContent.')}';
+		if ($bRestInLowerCase === true) { sContent = strtolower(sContent); }
+
+		if ($bWithNumber === true) { return '{ucwords('.$sContent.')}'; }
+		else { return '{preg_replace("/([a-zA-Z])([a-zA-Z]+[^0-9])/", "$1$2", '.$sContent.')}'; }
 	}
 }
