@@ -111,6 +111,19 @@ class File {
 	}
 
 	/**
+	 * flush the cache
+	 *
+	 * @access public
+	 * @param  string $sName name of the session
+	 * @return mixed
+	 */
+
+	public function flush() {
+
+		$this->_removeDirectory($this->_sFolder);
+	}
+
+	/**
 	 *
 	 *
 	 * @access public
@@ -126,5 +139,28 @@ class File {
 		}
 
 		return substr(md5($sName), 0, 2).DIRECTORY_SEPARATOR.substr(md5($sName), 2, 2).DIRECTORY_SEPARATOR;
+	}
+
+	/**
+	 * remove a directory recursivly
+	 *
+	 * @access private
+	 * @param  string $sName nom du répertoire
+	 * @return void
+	 */
+
+	private function _removeDirectory($sName) {
+
+		if ($rDirectory = opendir($sName)) {
+
+			while (($sFile = readdir($rDirectory)) !== false) {
+
+				if ($sFile > '0' and filetype($sName.$sFile) == "file") { unlink($sName.$sFile); }
+				elseif ($sFile > '0' and filetype($sName.$sFile) == "dir") { remove_dir($sName.$sFile."\\"); }
+			}
+
+			closedir($rDirectory);
+			rmdir($sName);
+		}
 	}
 }

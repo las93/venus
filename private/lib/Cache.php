@@ -63,6 +63,7 @@ class Cache {
 
 		if ($sCacheName === 'file') { $this->_sTypeOfCache = 'file'; }
 		else if ($sCacheName === 'memcache') { $this->_sTypeOfCache = 'memcache'; }
+		else if ($sCacheName === 'apc') { $this->_sTypeOfCache = 'apc'; }
 	}
 
 	/**
@@ -85,6 +86,10 @@ class Cache {
 
 			return self::_getCacheObject()->set($sName, $mValue, 0, $iTimeout);
 		}
+		else if (self::$_sTypeOfCache === 'apc') {
+
+			return self::_getCacheObject()->set($sName, $mValue, $iTimeout);
+		}
 	}
 
 	/**
@@ -106,6 +111,10 @@ class Cache {
 
 			return self::_getCacheObject()->get($sName);
 		}
+		else if (self::$_sTypeOfCache === 'apc') {
+
+			return self::_getCacheObject()->get($sName);
+		}
 	}
 
 	/**
@@ -119,6 +128,19 @@ class Cache {
 	public static function delete($sName) {
 
 		return self::_getCacheObject()->delete($sName);
+	}
+
+	/**
+	 * flush the cache
+	 *
+	 * @access public
+	 * @param  string $sName name of the session
+	 * @return boolean
+	 */
+
+	public static function flush() {
+
+		return self::_getCacheObject()->flush();
 	}
 
 	/**
