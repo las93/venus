@@ -539,10 +539,17 @@ class Template {
 					preg_match_all('#:([^:]+)#msi', $aOne[3], $aMatchs2, PREG_SET_ORDER);
 					$aParams = [];
 					$aParams[] = $aOne[1];
+					$iIndex = 1;
 
 					foreach ($aMatchs2 as $sOne2) {
 
-						$aParams[] = $sOne2[1];
+						if (!isset($aParams[$iIndex])) { $aParams[$iIndex] = $sOne2[1]; }
+						else { $aParams[$iIndex] .= $sOne2[1]; }
+
+						if (substr($aParams[$iIndex], -1) == "'" && substr($aParams[$iIndex], 0, 1) == "'") { $iIndex++; }
+						else if (substr($aParams[$iIndex], -1) == '"' && substr($aParams[$iIndex], 0, 1) == '"') { $iIndex++; }
+						else if (substr($aParams[$iIndex], 0, 1) != '"' && substr($aParams[$iIndex], 0, 1) != "'") { $iIndex++; }
+						else { $aParams[$iIndex] .= ":"; }
 					}
 
 					$oFunction->run($aParams);
