@@ -555,8 +555,8 @@ class Template {
 			//*****************************************************************************************************************************
 
 			$sContent = preg_replace('|\{(\$[a-z0-9_\[\].\->\(\)\$\+/*\']+)\}|msi', '<?php echo $1; ?>', $sContent);
-			$sContent = preg_replace('|\{([a-z0-9_\(\),.]+\(\$[a-z0-9_\[\].\->\(\)\$\+/*\']+[ a-z0-9_\(\),".]+)\}|msi', '<?php echo $1; ?>', $sContent);
-			$sContent = preg_replace('|\{([a-z0-9_\(\),.]+\([^\)]+\))\}|msi', '<?php echo $1; ?>', $sContent);
+			$sContent = preg_replace('|\{([a-z0-9_\(\),.]+\(\$[a-z0-9_\[\].\->\(\)\$\+/*\'"]+[ a-z0-9_\(\),".]+)\}|msi', '<?php echo $1; ?>', $sContent);
+			$sContent = preg_replace('|\{([a-z0-9_\(\),.]+\([^\}]+\))\}|msi', '<?php echo $1; ?>', $sContent);
 
 			$sContent = preg_replace('|echo echo|', 'echo', $sContent);
 
