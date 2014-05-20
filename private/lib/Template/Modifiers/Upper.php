@@ -3,7 +3,7 @@
 /**
  * Manage Template
  *
- * @category  	lib
+ * @CountCharactersegory  	lib
  * @package		lib\Template
  * @author    	Judicaël Paquet <judicael.paquet@gmail.com>
  * @copyright 	Copyright (c) 2013-2014 PAQUET Judicaël FR Inc. (https://github.com/las93)
@@ -19,7 +19,7 @@ namespace Venus\lib\Template\Modifiers;
 /**
  * This class manage the Template
  *
- * @category  	lib
+ * @CountCharactersegory  	lib
  * @package		lib\Template
  * @author    	Judicaël Paquet <judicael.paquet@gmail.com>
  * @copyright 	Copyright (c) 2013-2014 PAQUET Judicaël FR Inc. (https://github.com/las93)
@@ -30,7 +30,7 @@ namespace Venus\lib\Template\Modifiers;
  * @since     	1.0
  */
 
-class Truncate {
+class Upper {
 
 	/**
 	 * run before
@@ -47,30 +47,14 @@ class Truncate {
 
 	/**
 	 * run before
-	 * replace {$foo |date_format:"%Y/%m/%d" by {date("%Y/%m/%d", $foo)
-	 *
 	 *
 	 * @access public
-	 * @param  string $sContent parameters
-	 * @return \Venus\lib\Template\Mailto
+	 * @param  string $sContent content to transform
+	 * @return string
 	 */
 
-	public function replaceBy($sContent, $iTruncateNumber = 30, $sEtc = '"..."', $bBreakWords = false, $bMiddle = false) {
+	public function replaceBy($sContent) {
 
-		if (isset($sContent[$iTruncateNumber])) {
-
-			$iTruncateNumber -= min($iTruncateNumber, strlen($sEtc));
-
-			if (!$bBreakWords && !$bMiddle) {
-
-				$string = preg_replace('/\s+?(\S+)?$/', '', substr($sContent, 0, $iTruncateNumber + 1));
-			}
-
-			if (!$bMiddle) { return '{echo(substr('.$sContent.', 0, '.$iTruncateNumber.').'.$sEtc.')}'; }
-
-			return '{substr('.$sContent.', 0, '.$iTruncateNumber.' / 2).'.$sEtc.'.substr('.$sContent.', - '.$iTruncateNumber.' / 2)}';
-		}
-
-		return '{'.$sContent.'}';
+		return '{strtoupper('.$sContent.')}';
 	}
 }

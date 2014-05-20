@@ -30,7 +30,7 @@ namespace Venus\lib\Template\Modifiers;
  * @since     	1.0
  */
 
-class Truncate {
+class Unescape {
 
 	/**
 	 * run before
@@ -55,22 +55,18 @@ class Truncate {
 	 * @return \Venus\lib\Template\Mailto
 	 */
 
-	public function replaceBy($sContent, $iTruncateNumber = 30, $sEtc = '"..."', $bBreakWords = false, $bMiddle = false) {
+	public function replaceBy($sContent, $sOptionToUnescape = '"html"', $sEncoding = '"UTF-8"') {
 
-		if (isset($sContent[$iTruncateNumber])) {
+		$sOptionToUnescape = str_replace("'", '"', $sOptionToUnescape);
+		$sEncoding = str_replace("'", '"', $sEncoding);
 
-			$iTruncateNumber -= min($iTruncateNumber, strlen($sEtc));
+		if ($sOptionToUnescape === '"htmlall"') {
 
-			if (!$bBreakWords && !$bMiddle) {
-
-				$string = preg_replace('/\s+?(\S+)?$/', '', substr($sContent, 0, $iTruncateNumber + 1));
-			}
-
-			if (!$bMiddle) { return '{echo(substr('.$sContent.', 0, '.$iTruncateNumber.').'.$sEtc.')}'; }
-
-			return '{substr('.$sContent.', 0, '.$iTruncateNumber.' / 2).'.$sEtc.'.substr('.$sContent.', - '.$iTruncateNumber.' / 2)}';
+			return '{html_entity_decode('.$sContent.', ENT_COMPAT | ENT_HTML401, '.$sEncoding.')}';
 		}
+		else {
 
-		return '{'.$sContent.'}';
+			return '{htmlspecialchars_decode('.$sContent.', ENT_COMPAT | ENT_HTML401)}';
+		}
 	}
 }
