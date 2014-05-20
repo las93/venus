@@ -530,6 +530,8 @@ class Template {
 				$sName = ucfirst($aOne[2]);
 
 				$sName = preg_replace('|_([a-z])|e', 'strtoupper("$1")', $sName);
+				// replace the name of modifier which are a key name of php
+				$sName = str_replace(array('Default'), array('StringDefault'), $sName);
 
 				if (file_exists(__DIR__.DIRECTORY_SEPARATOR.'Template'.DIRECTORY_SEPARATOR.'Modifiers'.DIRECTORY_SEPARATOR.$sName.'.php')) {
 
