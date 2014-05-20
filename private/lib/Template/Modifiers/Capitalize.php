@@ -51,13 +51,13 @@ class Capitalize {
 	 * @access public
 	 * @param  string $sContent content to transform
 	 * @param  bool $bWithNumber change the word with digit
-	 * @param  bool $bRestInLowerCase the rest of word in lower case 
+	 * @param  bool $bRestInLowerCase the rest of word in lower case
 	 * @return string
 	 */
 
 	public function replaceBy($sContent, $bWithNumber = false, $bRestInLowerCase = false) {
 
-		if ($bRestInLowerCase === true) { sContent = strtolower(sContent); }
+		if ($bRestInLowerCase === true) { $sContent = strtolower(sContent); }
 
 		if ($bWithNumber === true) { return '{ucwords('.$sContent.')}'; }
 		else { return '{preg_replace("/([a-zA-Z])([a-zA-Z]+[^0-9])/", "$1$2", '.$sContent.')}'; }
