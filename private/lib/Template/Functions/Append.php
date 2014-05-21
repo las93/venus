@@ -53,7 +53,7 @@ class Append {
 
 	public function replaceBy($aParams = array()) {
 
-		if (isset($aParams['var'])) { $sVar = $aParams['var']; }
+		if (isset($aParams['var'])) { $sVar = '$_aProtectedVar['.$aParams['var'].']'; }
 		else { new Exception('Append: var obligatory');}
 
 		if (isset($aParams['value'])) { $sValue = $aParams['value']; }

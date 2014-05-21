@@ -53,9 +53,14 @@ class Assign {
 
 	public function replaceBy($aParams = array()) {
 
+		if (isset($aParams['var'])) { $sVar = '$_aProtectedVar['.$aParams['var'].']'; }
+		else { new Exception('Assign: var obligatory');}
+
+		if (!isset($aParams['value'])) { new Exception('Assign: value obligatory');}
+
 		if (isset($aParams['var']) && isset($aParams['value'])) {
 
-			return '<?php '.$aParams['var'].' = '.$aParams['value'].'; ?>';
+			return '<?php '.$sVar.' = '.$aParams['value'].'; ?>';
 		}
 	}
 }
