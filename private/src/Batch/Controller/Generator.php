@@ -22,7 +22,6 @@
 namespace Venus\src\Batch\Controller;
 
 use \Venus\core\Config as Config;
-use \Venus\src\Batch\common\Controller as Controller;
 
 /**
  * Batch that generate files and folders
@@ -106,6 +105,13 @@ $oRouter = new \Venus\core\Router();
 $oRouter->run();'."\n";
 
 			file_put_contents($sPublicPath.DIRECTORY_SEPARATOR.$sPortail.DIRECTORY_SEPARATOR.'index.php', $sContentFile);
+
+			$sContentFile = 'RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^.*$ /index.php [NC,L]';
+
+			file_put_contents($sPublicPath.DIRECTORY_SEPARATOR.$sPortail.DIRECTORY_SEPARATOR.'.htaccess', $sContentFile);
 		}
 
 		if (!is_writable($sPrivatePath)) {
