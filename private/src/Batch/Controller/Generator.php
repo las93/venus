@@ -55,7 +55,7 @@ class Generator extends Controller {
 		 * option -p [portail]
 		 */
 
-		if (!isset($aOptions['p'])) { $sPortail = $aOptions['p']; }
+		if (isset($aOptions['p'])) { $sPortail = $aOptions['p']; }
 		else { $sPortail = 'Batch'; }
 
 		if (!preg_match('/^[a-zA-Z0-9]+$/', $sPortail)) {
@@ -122,15 +122,15 @@ $oRouter->run();'."\n";
 			mkdir($sPrivatePath.DIRECTORY_SEPARATOR.$sPortail.DIRECTORY_SEPARATOR.'conf', 0777, true);
 			mkdir($sPrivatePath.DIRECTORY_SEPARATOR.$sPortail.DIRECTORY_SEPARATOR.'common', 0777, true);
 
-			$sContent = file_get_contents('common'.DIRECTORY_SEPARATOR.'Controller.php');
+			$sContent = file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'common'.DIRECTORY_SEPARATOR.'Controller.php');
 			$sContent = str_replace('Batch', $sPortail, $sContent);
 			file_put_contents($sPrivatePath.DIRECTORY_SEPARATOR.$sPortail.DIRECTORY_SEPARATOR.'common'.DIRECTORY_SEPARATOR.'Controller.php', $sContent);
 
-			$sContent = file_get_contents('common'.DIRECTORY_SEPARATOR.'Model.php');
+			$sContent = file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'common'.DIRECTORY_SEPARATOR.'Model.php');
 			$sContent = str_replace('Batch', $sPortail, $sContent);
 			file_put_contents($sPrivatePath.DIRECTORY_SEPARATOR.$sPortail.DIRECTORY_SEPARATOR.'common'.DIRECTORY_SEPARATOR.'Model.php', $sContent);
 
-			$sContent = file_get_contents('common'.DIRECTORY_SEPARATOR.'Entity.php');
+			$sContent = file_get_contents(__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'common'.DIRECTORY_SEPARATOR.'Entity.php');
 			$sContent = str_replace('Batch', $sPortail, $sContent);
 			file_put_contents($sPrivatePath.DIRECTORY_SEPARATOR.$sPortail.DIRECTORY_SEPARATOR.'common'.DIRECTORY_SEPARATOR.'Entity.php', $sContent);
 		}
