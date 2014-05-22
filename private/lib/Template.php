@@ -658,7 +658,7 @@ class Template {
 				}
 				else {
 
-					$sModelname = str_replace(array('src/'.PORTAIL.'/View/', 'src\\'.PORTAIL.'\View\\'), array('', ''), $_aProtectedVar['model']);
+					$sModelname = str_replace(array('src/'.PORTAIL.'/View/', 'src\\'.PORTAIL.'\View\\', '\\'), array('', '', ''), $_aProtectedVar['model']);
 					$this->_transform(file_get_contents(str_replace('lib', 'src/'.PORTAIL.'/View/', __DIR__).$sModelname), $sModelname);
 				}
 			}
@@ -687,10 +687,10 @@ class Template {
 				$sContent = preg_replace('|(<<<EOF(?:(?<!EOF;).)+?)#DOLLAR#(.+?EOF;)|msi', '$1'.'\\\$'.'$2', $sContent);
 			}
 
-			$sContent .= '<?php /* '.print_r(str_replace('\\\\\\', '/', $sTmpDirectory).$this->_getEncodeTemplateName($sTemplateName).'.cac.php', true).' */ ?>';
-			$sContent .= '<?php /* '.print_r(file_exists(str_replace('\\\\\\', '/', $sTmpDirectory).$this->_getEncodeTemplateName($sTemplateName).'.cac.php'), true).' */ ?>';
-			$sContent .= '<?php /* '.print_r(file_put_contents(str_replace('\\\\\\', '/', $sTmpDirectory).$this->_getEncodeTemplateName($sTemplateName).'.cac.php', $sContent), true).' */ ?>';
-			$sContent .= '<?php /* '.str_replace('\\\\\\', '/', $sTmpDirectory).' = '.$sTemplateName.' = '.md5($sTemplateName).' */ ?>';
+			$sContent .= "\n".'<?php /* '.print_r(str_replace('\\\\\\', '/', $sTmpDirectory).$this->_getEncodeTemplateName($sTemplateName).'.cac.php', true).' */ ?>';
+			$sContent .= "\n".'<?php /* template : '.$sTemplateName.' */ ?>';
+			$sContent .= "\n".'<?php /* '.print_r(file_put_contents(str_replace('\\\\\\', '/', $sTmpDirectory).$this->_getEncodeTemplateName($sTemplateName).'.cac.php', $sContent), true).' */ ?>';
+			$sContent .= "\n".'<?php /* '.str_replace('\\\\\\', '/', $sTmpDirectory).' = '.$sTemplateName.' = '.md5($sTemplateName).' */ ?>';
 		//}
 
 		if ($bFirst === true) {

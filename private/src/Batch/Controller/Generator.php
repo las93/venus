@@ -100,7 +100,7 @@ set_include_path(get_include_path().PATH_SEPARATOR.str_replace(\'public\'.DIRECT
 
 require \'conf/AutoLoad.php\';
 
-\lib\Debug::activateDebug();
+\Venus\lib\Debug::activateDebug();
 
 $oRouter = new \Venus\core\Router();
 $oRouter->run();'."\n";
