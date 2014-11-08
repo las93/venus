@@ -28,16 +28,17 @@ spl_autoload_register(function ($sClassName) {
 		$sFileName  = str_replace('\\', DIRECTORY_SEPARATOR, $sNamespace).DIRECTORY_SEPARATOR;
     }
 
-    //$sFileName = str_replace('Venus\\', '', $sFileName);
+    $sFileName = str_replace('/', '\\', $sFileName);
+    
     $sFileName .= $sClassName.'.php';
 
     if (strstr($sFileName, 'Venus\\') && file_exists(str_replace('conf', DIRECTORY_SEPARATOR, __DIR__).str_replace('Venus\\', '', $sFileName))) {
 
-    	require str_replace('conf', DIRECTORY_SEPARATOR, __DIR__).str_replace('Venus\\', '', $sFileName);
+    	require str_replace('\\', DIRECTORY_SEPARATOR, str_replace('conf', DIRECTORY_SEPARATOR, __DIR__).str_replace('Venus\\', '', $sFileName));
     }
     else if (file_exists(str_replace('conf', DIRECTORY_SEPARATOR, __DIR__).$sFileName)) {
 
-    	require str_replace('conf', DIRECTORY_SEPARATOR, __DIR__).$sFileName;
+    	require str_replace('\\', DIRECTORY_SEPARATOR, str_replace('conf', DIRECTORY_SEPARATOR, __DIR__).$sFileName);
     }
     else {
 
@@ -46,7 +47,7 @@ spl_autoload_register(function ($sClassName) {
 
     	if (isset($oDbConf->$sClassName)) {
 
-    		require str_replace('private'.DIRECTORY_SEPARATOR.'conf', '', __DIR__).$oDbConf->$sClassName;
+    		require str_replace('\\', DIRECTORY_SEPARATOR, str_replace('private'.DIRECTORY_SEPARATOR.'conf', '', __DIR__).$oDbConf->$sClassName);
     	}
     }
 });
