@@ -69,11 +69,18 @@ class Entity extends Controller {
 		else { $sRewrite = 'no'; }
 
 		/**
-		 * option -c [create]
+		 * option -c [create table]
 		 */
 
 		if (isset($aOptions['c'])) { $bCreate = $aOptions['c']; }
 		else { $bCreate = false; }
+
+		/**
+		 * option -c [create entity]
+		 */
+
+		if (isset($aOptions['e']) && $aOptions['e'] == false) { $bCreateEntity = $aOptions['e']; }
+		else { $bCreateEntity = true; }
 
 		$oConfiguration = Config::get('Db', $sPortail)->configuration;
 
@@ -154,7 +161,6 @@ class Entity extends Controller {
 					$sQuery .= ')';
 
 					$oPdo->query($sQuery);
-					echo $sQuery."\n";
 				}
 			}
 
@@ -162,333 +168,336 @@ class Entity extends Controller {
 			 * scaffolding of the entities
 			 */
 
-			foreach ($oConnection->tables as $sTableName => $oOneTable) {
-
-				$sContentFile = '<?php
-
-/**
- * Entity to '.$sTableName.'
- *
- * @category  	src
- * @package   	src\\'.$sPortail.'\Entity
- * @author    	'.AUTHOR.'
- * @copyright 	'.COPYRIGHT.'
- * @license   	'.LICENCE.'
- * @version   	Release: '.VERSION.'
- * @filesource	'.FILESOURCE.'
- * @link      	'.LINK.'
- * @since     	1.0
- */
-
-namespace Venus\src\\'.$sPortail.'\Entity;
-
-use \Venus\core\Entity as Entity;
-use \Venus\lib\Orm as Orm;
-
-/**
- * Entity to '.$sTableName.'
- *
- * @category  	src
- * @package   	src\\'.$sPortail.'\Entity
- * @author    	'.AUTHOR.'
- * @copyright 	'.COPYRIGHT.'
- * @license   	'.LICENCE.'
- * @version   	Release: '.VERSION.'
- * @filesource	'.FILESOURCE.'
- * @link      	'.LINK.'
- * @since     	1.0
- */
-
-class '.$sTableName.' extends Entity {'."\n";
-
-				foreach ($oOneTable->fields as $sFieldName => $oField) {
-
-					if ($oField->type == 'enum' || $oField->type == 'char' || $oField->type == 'varchar' || $oField->type == 'text'
-						|| $oField->type == 'date' || $oField->type == 'datetime' || $oField->type == 'time' || $oField->type == 'binary'
-						|| $oField->type == 'varbinary' || $oField->type == 'blob' || $oField->type == 'tinyblob'
-						|| $oField->type == 'tinytext' || $oField->type == 'mediumblob' || $oField->type == 'mediumtext'
-						|| $oField->type == 'longblob' || $oField->type == 'longtext' || $oField->type == 'char varying'
-						|| $oField->type == 'long varbinary' || $oField->type == 'long varchar' || $oField->type == 'long') {
-
-						$sType = 'string';
-					}
-					else if ($oField->type == 'int' || $oField->type == 'smallint' || $oField->type == 'tinyint'
-						|| $oField->type == 'bigint' || $oField->type == 'mediumint' || $oField->type == 'timestamp'
-						|| $oField->type == 'year' || $oField->type == 'integer' || $oField->type == 'int1' || $oField->type == 'int2'
-						|| $oField->type == 'int3' || $oField->type == 'int4' || $oField->type == 'int8' || $oField->type == 'middleint'
-						|| $oField->type == 'bit' || $oField->type == 'bool' || $oField->type == 'boolean') {
-
-						$sType = 'int';
-					}
-					else if ($oField->type == 'float' || $oField->type == 'decimal' || $oField->type == 'double'
-						|| $oField->type == 'precision' || $oField->type == 'real' || $oField->type == 'float4'
-						|| $oField->type == 'float8' || $oField->type == 'numeric') {
-
-						$sType = 'float';
-					}
-					else if ($oField->type == 'set') {
-
-						$sType = 'array';
-					}
-
-					$sContentFile .= '
+			if ($bCreateEntity) {
+					
+				foreach ($oConnection->tables as $sTableName => $oOneTable) {
+	
+					$sContentFile = '<?php
+	
 	/**
-	 * '.$sFieldName.'
+	 * Entity to '.$sTableName.'
 	 *
-	 * @access private
-	 * @var    '.$sType.'
-	 *
-';
-
-					if (isset($oField->key) && $oField->key == 'primary') {
-
-						$sContentFile .= '	 * @primary_key'."\n";
-					}
-
-					if (isset($oField->property)) {
-
-						$sContentFile .= '	 * @map '.$oField->property.''."\n";
-					}
-
-					$sContentFile .= '	 */
-
-	private $'.$sFieldName.' = null;
-
-
-';
-					if (isset($oField->join)) {
-
-						if (isset($oField->join_alias)) {
-
-							$sContentFile .= '
-	/**
-	 * '.$oField->join_alias.' Entity
-	 *
-	 * @access private
-	 * @var    '.$oField->join.'
-	 *
+	 * @category  	src
+	 * @package   	src\\'.$sPortail.'\Entity
+	 * @author    	'.AUTHOR.'
+	 * @copyright 	'.COPYRIGHT.'
+	 * @license   	'.LICENCE.'
+	 * @version   	Release: '.VERSION.'
+	 * @filesource	'.FILESOURCE.'
+	 * @link      	'.LINK.'
+	 * @since     	1.0
 	 */
-
-	private $'.$oField->join_alias.' = null;
-
-
-';
+	
+	namespace Venus\src\\'.$sPortail.'\Entity;
+	
+	use \Venus\core\Entity as Entity;
+	use \Venus\lib\Orm as Orm;
+	
+	/**
+	 * Entity to '.$sTableName.'
+	 *
+	 * @category  	src
+	 * @package   	src\\'.$sPortail.'\Entity
+	 * @author    	'.AUTHOR.'
+	 * @copyright 	'.COPYRIGHT.'
+	 * @license   	'.LICENCE.'
+	 * @version   	Release: '.VERSION.'
+	 * @filesource	'.FILESOURCE.'
+	 * @link      	'.LINK.'
+	 * @since     	1.0
+	 */
+	
+	class '.$sTableName.' extends Entity {'."\n";
+	
+					foreach ($oOneTable->fields as $sFieldName => $oField) {
+	
+						if ($oField->type == 'enum' || $oField->type == 'char' || $oField->type == 'varchar' || $oField->type == 'text'
+							|| $oField->type == 'date' || $oField->type == 'datetime' || $oField->type == 'time' || $oField->type == 'binary'
+							|| $oField->type == 'varbinary' || $oField->type == 'blob' || $oField->type == 'tinyblob'
+							|| $oField->type == 'tinytext' || $oField->type == 'mediumblob' || $oField->type == 'mediumtext'
+							|| $oField->type == 'longblob' || $oField->type == 'longtext' || $oField->type == 'char varying'
+							|| $oField->type == 'long varbinary' || $oField->type == 'long varchar' || $oField->type == 'long') {
+	
+							$sType = 'string';
 						}
-						else {
-
-							$sContentFile .= '
-	/**
-	 * '.$oField->join.' Entity
-	 *
-	 * @access private
-	 * @var    '.$oField->join.'
-	 *
-	 */
-
-	private $'.$oField->join.' = null;
-
-
-';
+						else if ($oField->type == 'int' || $oField->type == 'smallint' || $oField->type == 'tinyint'
+							|| $oField->type == 'bigint' || $oField->type == 'mediumint' || $oField->type == 'timestamp'
+							|| $oField->type == 'year' || $oField->type == 'integer' || $oField->type == 'int1' || $oField->type == 'int2'
+							|| $oField->type == 'int3' || $oField->type == 'int4' || $oField->type == 'int8' || $oField->type == 'middleint'
+							|| $oField->type == 'bit' || $oField->type == 'bool' || $oField->type == 'boolean') {
+	
+							$sType = 'int';
+						}
+						else if ($oField->type == 'float' || $oField->type == 'decimal' || $oField->type == 'double'
+							|| $oField->type == 'precision' || $oField->type == 'real' || $oField->type == 'float4'
+							|| $oField->type == 'float8' || $oField->type == 'numeric') {
+	
+							$sType = 'float';
+						}
+						else if ($oField->type == 'set') {
+	
+							$sType = 'array';
+						}
+	
+						$sContentFile .= '
+		/**
+		 * '.$sFieldName.'
+		 *
+		 * @access private
+		 * @var    '.$sType.'
+		 *
+	';
+	
+						if (isset($oField->key) && $oField->key == 'primary') {
+	
+							$sContentFile .= '	 * @primary_key'."\n";
+						}
+	
+						if (isset($oField->property)) {
+	
+							$sContentFile .= '	 * @map '.$oField->property.''."\n";
+						}
+	
+						$sContentFile .= '	 */
+	
+		private $'.$sFieldName.' = null;
+	
+	
+	';
+						if (isset($oField->join)) {
+	
+							if (isset($oField->join_alias)) {
+	
+								$sContentFile .= '
+		/**
+		 * '.$oField->join_alias.' Entity
+		 *
+		 * @access private
+		 * @var    '.$oField->join.'
+		 *
+		 */
+	
+		private $'.$oField->join_alias.' = null;
+	
+	
+	';
+							}
+							else {
+	
+								$sContentFile .= '
+		/**
+		 * '.$oField->join.' Entity
+		 *
+		 * @access private
+		 * @var    '.$oField->join.'
+		 *
+		 */
+	
+		private $'.$oField->join.' = null;
+	
+	
+	';
+							}
 						}
 					}
-				}
-
-				foreach ($oOneTable->fields as $sFieldName => $oField) {
-
-					if ($oField->type == 'enum' || $oField->type == 'char' || $oField->type == 'varchar' || $oField->type == 'text'
-									|| $oField->type == 'date' || $oField->type == 'datetime' || $oField->type == 'time' || $oField->type == 'binary'
-									|| $oField->type == 'varbinary' || $oField->type == 'blob' || $oField->type == 'tinyblob'
-									|| $oField->type == 'tinytext' || $oField->type == 'mediumblob' || $oField->type == 'mediumtext'
-									|| $oField->type == 'longblob' || $oField->type == 'longtext' || $oField->type == 'char varying'
-									|| $oField->type == 'long varbinary' || $oField->type == 'long varchar' || $oField->type == 'long') {
-
-						$sType = 'string';
-					}
-					else if ($oField->type == 'int' || $oField->type == 'smallint' || $oField->type == 'tinyint'
-									|| $oField->type == 'bigint' || $oField->type == 'mediumint' || $oField->type == 'timestamp'
-									|| $oField->type == 'year' || $oField->type == 'integer' || $oField->type == 'int1' || $oField->type == 'int2'
-									|| $oField->type == 'int3' || $oField->type == 'int4' || $oField->type == 'int8' || $oField->type == 'middleint'
-									|| $oField->type == 'bit' || $oField->type == 'bool' || $oField->type == 'boolean') {
-
-						$sType = 'int';
-					}
-					else if ($oField->type == 'float' || $oField->type == 'decimal' || $oField->type == 'double'
-									|| $oField->type == 'precision' || $oField->type == 'real' || $oField->type == 'float4'
-									|| $oField->type == 'float8' || $oField->type == 'numeric') {
-
-						$sType = 'float';
-					}
-					else if ($oField->type == 'set') {
-
-						$sType = 'array';
-					}
-
-					$sContentFile .= '
-	/**
-	 * get '.$sFieldName.' of '.$sTableName.'
-	 *
-	 * @access public
-	 * @return '.$sType.'
-	 */
-
-	public function get_'.$sFieldName.'() {
-
-		return $this->'.$sFieldName.';
-	}
-
-	/**
-	 * set '.$sFieldName.' of '.$sTableName.'
-	 *
-	 * @access public
-	 * @param  '.$sType.' $'.$sFieldName.' '.$sFieldName.' of '.$sTableName.'
-	 * @return \Venus\src\\'.$sPortail.'\Entity\\'.$sTableName.'
-	 */
-
-	public function set_'.$sFieldName.'($'.$sFieldName.') {
-
-		$this->'.$sFieldName.' = $'.$sFieldName.';
-		return $this;
-	}
-';
-					if (isset($oField->join)) {
-
-						/**
-						 * you could add join_by_field when you have a field name different in the join
-						 * @example		ON menu1.id = menu2.parent_id
-						 *
-						 * if the left field and the right field have the same name, you could ignore this param.
-						 */
-
-						if (isset($oField->join_by_field)) { $sJoinByField = $oField->join_by_field; }
-						else { $sJoinByField = $sFieldName; }
-
-						if (isset($oField->join_alias)) {
-
-							$sContentFile .= '
-	/**
-	 * get '.$oField->join_alias.' entity join by '.$sFieldName.' of '.$sTableName.'
-	 *
-	 * @access public
-	 * @return \Venus\src\\'.$sPortail.'\Entity\\'.$oField->join.'
-	 */
-
-	public function get_'.$oField->join_alias.'() {
-
-		if ($this->'.$oField->join_alias.' === null) {
-
-			$oOrm = new Orm;
-
-			$this->'.$oField->join_alias.' = $oOrm->select(\'*\')
-												  ->from('.$oField->join.')
-												  ->where(array(\''.$sJoinByField.'\' => $this->get_'.$sFieldName.'()))
-												  ->limit(1)
-												  ->load();
+	
+					foreach ($oOneTable->fields as $sFieldName => $oField) {
+	
+						if ($oField->type == 'enum' || $oField->type == 'char' || $oField->type == 'varchar' || $oField->type == 'text'
+										|| $oField->type == 'date' || $oField->type == 'datetime' || $oField->type == 'time' || $oField->type == 'binary'
+										|| $oField->type == 'varbinary' || $oField->type == 'blob' || $oField->type == 'tinyblob'
+										|| $oField->type == 'tinytext' || $oField->type == 'mediumblob' || $oField->type == 'mediumtext'
+										|| $oField->type == 'longblob' || $oField->type == 'longtext' || $oField->type == 'char varying'
+										|| $oField->type == 'long varbinary' || $oField->type == 'long varchar' || $oField->type == 'long') {
+	
+							$sType = 'string';
+						}
+						else if ($oField->type == 'int' || $oField->type == 'smallint' || $oField->type == 'tinyint'
+										|| $oField->type == 'bigint' || $oField->type == 'mediumint' || $oField->type == 'timestamp'
+										|| $oField->type == 'year' || $oField->type == 'integer' || $oField->type == 'int1' || $oField->type == 'int2'
+										|| $oField->type == 'int3' || $oField->type == 'int4' || $oField->type == 'int8' || $oField->type == 'middleint'
+										|| $oField->type == 'bit' || $oField->type == 'bool' || $oField->type == 'boolean') {
+	
+							$sType = 'int';
+						}
+						else if ($oField->type == 'float' || $oField->type == 'decimal' || $oField->type == 'double'
+										|| $oField->type == 'precision' || $oField->type == 'real' || $oField->type == 'float4'
+										|| $oField->type == 'float8' || $oField->type == 'numeric') {
+	
+							$sType = 'float';
+						}
+						else if ($oField->type == 'set') {
+	
+							$sType = 'array';
+						}
+	
+						$sContentFile .= '
+		/**
+		 * get '.$sFieldName.' of '.$sTableName.'
+		 *
+		 * @access public
+		 * @return '.$sType.'
+		 */
+	
+		public function get_'.$sFieldName.'() {
+	
+			return $this->'.$sFieldName.';
 		}
-
-		return $this->'.$oField->join_alias.';
-	}
-
-	/**
-	 * set '.$oField->join_alias.' entity join by '.$sFieldName.' of '.$sTableName.'
-	 *
-	 * @access public
-	 * @param  \Venus\src\\'.$sPortail.'\Entity\\'.$oField->join.'  $'.$oField->join_alias.' '.$oField->join.' entity
-	 * @return \Venus\src\\'.$sPortail.'\Entity\\'.$sTableName.'
-	 */
-
-	public function set_'.$oField->join_alias.'(\src\\'.$sPortail.'\Entity\\'.$oField->join.' $'.$oField->join_alias.') {
-
-		$this->'.$oField->join_alias.' = $'.$oField->join_alias.';
-		return $this;
-	}
-';
-						}
-						else {
-
-							$sContentFile .= '
-	/**
-	 * get '.$oField->join.' entity join by '.$sFieldName.' of '.$sTableName.'
-	 *
-	 * @access public
-	 * @return \Venus\src\\'.$sPortail.'\Entity\\'.$oField->join.'
-	 */
-
-	public function get_'.$oField->join.'() {
-
-		if ($this->'.$oField->join.' === null) {
-
-			$oOrm = new Orm;
-
-			$this->'.$oField->join.' = $oOrm->select(\'*\')
-											->from('.$oField->join.')
-											->where(array(\''.$sJoinByField.'\' => $this->get_'.$sFieldName.'()))
-											->limit(1)
-											->load();
+	
+		/**
+		 * set '.$sFieldName.' of '.$sTableName.'
+		 *
+		 * @access public
+		 * @param  '.$sType.' $'.$sFieldName.' '.$sFieldName.' of '.$sTableName.'
+		 * @return \Venus\src\\'.$sPortail.'\Entity\\'.$sTableName.'
+		 */
+	
+		public function set_'.$sFieldName.'($'.$sFieldName.') {
+	
+			$this->'.$sFieldName.' = $'.$sFieldName.';
+			return $this;
 		}
-
-		return $this->'.$oField->join.';
-	}
-
-	/**
-	 * set '.$oField->join.' entity join by '.$sFieldName.' of '.$sTableName.'
-	 *
-	 * @access public
-	 * @param  \Venus\src\\'.$sPortail.'\Entity\\'.$oField->join.'  $'.$oField->join.' '.$oField->join.' entity
-	 * @return \Venus\src\\'.$sPortail.'\Entity\\'.$sTableName.'
-	 */
-
-	public function set_'.$oField->join.'(\src\\'.$sPortail.'\Entity\\'.$oField->join.' $'.$oField->join.') {
-
-		$this->'.$oField->join.' = $'.$oField->join.';
-		return $this;
-	}
-';
+	';
+						if (isset($oField->join)) {
+	
+							/**
+							 * you could add join_by_field when you have a field name different in the join
+							 * @example		ON menu1.id = menu2.parent_id
+							 *
+							 * if the left field and the right field have the same name, you could ignore this param.
+							 */
+	
+							if (isset($oField->join_by_field)) { $sJoinByField = $oField->join_by_field; }
+							else { $sJoinByField = $sFieldName; }
+	
+							if (isset($oField->join_alias)) {
+	
+								$sContentFile .= '
+		/**
+		 * get '.$oField->join_alias.' entity join by '.$sFieldName.' of '.$sTableName.'
+		 *
+		 * @access public
+		 * @return \Venus\src\\'.$sPortail.'\Entity\\'.$oField->join.'
+		 */
+	
+		public function get_'.$oField->join_alias.'() {
+	
+			if ($this->'.$oField->join_alias.' === null) {
+	
+				$oOrm = new Orm;
+	
+				$this->'.$oField->join_alias.' = $oOrm->select(\'*\')
+													  ->from('.$oField->join.')
+													  ->where(array(\''.$sJoinByField.'\' => $this->get_'.$sFieldName.'()))
+													  ->limit(1)
+													  ->load();
+			}
+	
+			return $this->'.$oField->join_alias.';
+		}
+	
+		/**
+		 * set '.$oField->join_alias.' entity join by '.$sFieldName.' of '.$sTableName.'
+		 *
+		 * @access public
+		 * @param  \Venus\src\\'.$sPortail.'\Entity\\'.$oField->join.'  $'.$oField->join_alias.' '.$oField->join.' entity
+		 * @return \Venus\src\\'.$sPortail.'\Entity\\'.$sTableName.'
+		 */
+	
+		public function set_'.$oField->join_alias.'(\src\\'.$sPortail.'\Entity\\'.$oField->join.' $'.$oField->join_alias.') {
+	
+			$this->'.$oField->join_alias.' = $'.$oField->join_alias.';
+			return $this;
+		}
+	';
+							}
+							else {
+	
+								$sContentFile .= '
+		/**
+		 * get '.$oField->join.' entity join by '.$sFieldName.' of '.$sTableName.'
+		 *
+		 * @access public
+		 * @return \Venus\src\\'.$sPortail.'\Entity\\'.$oField->join.'
+		 */
+	
+		public function get_'.$oField->join.'() {
+	
+			if ($this->'.$oField->join.' === null) {
+	
+				$oOrm = new Orm;
+	
+				$this->'.$oField->join.' = $oOrm->select(\'*\')
+												->from('.$oField->join.')
+												->where(array(\''.$sJoinByField.'\' => $this->get_'.$sFieldName.'()))
+												->limit(1)
+												->load();
+			}
+	
+			return $this->'.$oField->join.';
+		}
+	
+		/**
+		 * set '.$oField->join.' entity join by '.$sFieldName.' of '.$sTableName.'
+		 *
+		 * @access public
+		 * @param  \Venus\src\\'.$sPortail.'\Entity\\'.$oField->join.'  $'.$oField->join.' '.$oField->join.' entity
+		 * @return \Venus\src\\'.$sPortail.'\Entity\\'.$sTableName.'
+		 */
+	
+		public function set_'.$oField->join.'(\src\\'.$sPortail.'\Entity\\'.$oField->join.' $'.$oField->join.') {
+	
+			$this->'.$oField->join.' = $'.$oField->join.';
+			return $this;
+		}
+	';
+							}
 						}
 					}
+	
+					$sContentFile .= '}';
+	
+					file_put_contents(__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.$sPortail.DIRECTORY_SEPARATOR.'Entity'.DIRECTORY_SEPARATOR.$sTableName.'.php', $sContentFile);
+	
+					$sContentFile = '<?php
+	
+	/**
+	 * Model to '.$sTableName.'
+	 *
+	 * @category  	src
+	 * @package   	src\\'.$sPortail.'\Model
+	 * @author    	'.AUTHOR.'
+	 * @copyright 	'.COPYRIGHT.'
+	 * @license   	'.LICENCE.'
+	 * @version   	Release: '.VERSION.'
+	 * @filesource	'.FILESOURCE.'
+	 * @link      	'.LINK.'
+	 * @since     	1.0
+	 */
+	
+	namespace Venus\src\\'.$sPortail.'\Model;
+	
+	use \Venus\core\Model as Model;
+	
+	/**
+	 * Model to '.$sTableName.'
+	 *
+	 * @category  	src
+	 * @package   	src\\'.$sPortail.'\Model
+	 * @author    	'.AUTHOR.'
+	 * @copyright 	'.COPYRIGHT.'
+	 * @license   	'.LICENCE.'
+	 * @version   	Release: '.VERSION.'
+	 * @filesource	'.FILESOURCE.'
+	 * @link      	'.LINK.'
+	 * @since     	1.0
+	 */
+	
+	class '.$sTableName.' extends Model {
+	}'."\n";
+	
+					file_put_contents(__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.$sPortail.DIRECTORY_SEPARATOR.'Model'.DIRECTORY_SEPARATOR.$sTableName.'.php', $sContentFile);
 				}
-
-				$sContentFile .= '}';
-
-				file_put_contents(__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.$sPortail.DIRECTORY_SEPARATOR.'Entity'.DIRECTORY_SEPARATOR.$sTableName.'.php', $sContentFile);
-
-				$sContentFile = '<?php
-
-/**
- * Model to '.$sTableName.'
- *
- * @category  	src
- * @package   	src\\'.$sPortail.'\Model
- * @author    	'.AUTHOR.'
- * @copyright 	'.COPYRIGHT.'
- * @license   	'.LICENCE.'
- * @version   	Release: '.VERSION.'
- * @filesource	'.FILESOURCE.'
- * @link      	'.LINK.'
- * @since     	1.0
- */
-
-namespace Venus\src\\'.$sPortail.'\Model;
-
-use \Venus\core\Model as Model;
-
-/**
- * Model to '.$sTableName.'
- *
- * @category  	src
- * @package   	src\\'.$sPortail.'\Model
- * @author    	'.AUTHOR.'
- * @copyright 	'.COPYRIGHT.'
- * @license   	'.LICENCE.'
- * @version   	Release: '.VERSION.'
- * @filesource	'.FILESOURCE.'
- * @link      	'.LINK.'
- * @since     	1.0
- */
-
-class '.$sTableName.' extends Model {
-}'."\n";
-
-				file_put_contents(__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.$sPortail.DIRECTORY_SEPARATOR.'Model'.DIRECTORY_SEPARATOR.$sTableName.'.php', $sContentFile);
 			}
 		}
 	}
