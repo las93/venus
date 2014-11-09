@@ -109,6 +109,11 @@ class Config {
 				$aBase = self::_mergeAndGetConf(str_replace('core', 'conf', __DIR__).DIRECTORY_SEPARATOR.$sName.'.conf', $aBase);
 			}
 
+			if ($aBase === '') {
+				
+				//@todo : Error à formater => Json mal formaté
+			}
+			
 			self::$_aConfCache[$sName] = $aBase;
 		}
 

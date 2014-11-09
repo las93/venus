@@ -72,15 +72,22 @@ class Entity extends Controller {
 		 * option -c [create table]
 		 */
 
-		if (isset($aOptions['c'])) { $bCreate = $aOptions['c']; }
+		if (isset($aOptions['c'])) { $bCreate = true; }
 		else { $bCreate = false; }
 
 		/**
 		 * option -c [create entity]
 		 */
 
-		if (isset($aOptions['e']) && $aOptions['e'] == false) { $bCreateEntity = $aOptions['e']; }
+		if (isset($aOptions['e'])) { $bCreateEntity = false; }
 		else { $bCreateEntity = true; }
+
+		/**
+		 * option -d [drop table]
+		 */
+
+		if (isset($aOptions['d'])) { $bDropTable = true; }
+		else { $bDropTable = false; }
 
 		$oConfiguration = Config::get('Db', $sPortail)->configuration;
 
@@ -96,6 +103,12 @@ class Entity extends Controller {
 
 				foreach ($oConnection->tables as $sTableName => $oOneTable) {
 
+					if ($bDropTable === true) {
+						
+						$sQuery = 'DROP TABLE IF EXISTS '.$sTableName.'(';
+						$oPdo->query($sQuery);
+					}
+					
 					$sQuery = 'CREATE TABLE IF NOT EXISTS '.$sTableName.'(';
 
 					$aIndex = array();

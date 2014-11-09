@@ -261,9 +261,11 @@ class Router {
 
 		if (isset($oRoute->route)) {
 
-			$sFinalRoute = preg_replace(
-				'|\[/{0,1}:([a-zA-Z_]+)\]|e',
-				'"/{0,1}(?P<$1>".$oRoute->constraints->$1.")"',
+			$sFinalRoute = preg_replace_callback(
+				'|\[/{0,1}:([a-zA-Z_]+)\]|',
+				function ($aMatches) use ($oRoute) {
+					return "/{0,1}(?P<".$aMatches[1].">".$oRoute->constraints->{$aMatches[1]}.")";
+				},
 				$oRoute->route
 			);
 		}

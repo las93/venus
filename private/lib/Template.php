@@ -423,7 +423,10 @@ class Template {
 		$_aProtectedVar['app']['post'] = $_POST;
 		$_aProtectedVar['app']['cookies'] = $_COOKIE;
 		$_aProtectedVar['app']['env'] = $_ENV;
-		$_aProtectedVar['app']['session'] = $_SESSION;
+		
+		if (isset($_SESSION)) { $_aProtectedVar['app']['session'] = $_SESSION; }
+		else { $_aProtectedVar['app']['session'] = array(); }
+		
 		$_aProtectedVar['app']['request'] = array_merge($_GET, $_POST, $_COOKIE, $_SERVER, $_ENV);
 		$_aProtectedVar['app']['now'] = time();
 		$_aProtectedVar['app']['const'] = get_defined_constants();
@@ -605,7 +608,10 @@ class Template {
 			foreach ($aMatchs as $aOne) {
 
 				$sName = ucfirst($aOne[1]);
-				$sName = preg_replace('|_([a-z])|e', 'strtoupper("$1")', $sName);
+
+				$sName = preg_replace_callback('|_([a-z])|', function ($aMatches) {
+					return strtoupper($aMatches[1]);
+				}, $sName);
 
 				if ($sName == 'Include') { $sName = 'ToInclude'; }
 				if ($sName == 'Foreach') { $sName = 'ToForeach'; }

@@ -53,15 +53,15 @@ abstract class Controller extends Mother {
 
 		$aClass = explode('\\', get_called_class());
 		$sClassName = $aClass[count($aClass) - 1];
-		$sNamespaceName = str_replace('\\'.$aClass[count($aClass) - 1], '', get_called_class());
-
+		$sNamespaceName = preg_replace('/\\\\'.$sClassName.'$/', '', get_called_class());
+		
 		if (isset($sClassName)) {
 
 			$sNamespaceBaseName = str_replace('\Controller', '', $sNamespaceName);
 			$defaultModel = $sNamespaceBaseName.'\Model\\'.$sClassName;
 			$defaultBusiness = $sNamespaceBaseName.'\Business\\'.$sClassName;
-			$defaultView = str_replace('\\', DIRECTORY_SEPARATOR, str_replace('Venus\\', '\\', $sNamespaceBaseName)).DIRECTORY_SEPARATOR.PORTAIL.DIRECTORY_SEPARATOR.'View'.DIRECTORY_SEPARATOR.$sClassName.'.tpl';
-			$defaultLayout = str_replace('\\', DIRECTORY_SEPARATOR, str_replace('Venus\\', '\\', $sNamespaceBaseName)).DIRECTORY_SEPARATOR.PORTAIL.DIRECTORY_SEPARATOR.'View'.DIRECTORY_SEPARATOR.'Layout.tpl';
+			$defaultView = str_replace('\\', DIRECTORY_SEPARATOR, str_replace('Venus\\', '\\', $sNamespaceBaseName)).DIRECTORY_SEPARATOR.'View'.DIRECTORY_SEPARATOR.$sClassName.'.tpl';
+			$defaultLayout = str_replace('\\', DIRECTORY_SEPARATOR, str_replace('Venus\\', '\\', $sNamespaceBaseName)).DIRECTORY_SEPARATOR.'View'.DIRECTORY_SEPARATOR.'Layout.tpl';
 
 			$this->model = function() use ($defaultModel) { return new $defaultModel; };
 
