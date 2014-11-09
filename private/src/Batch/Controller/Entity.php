@@ -65,11 +65,11 @@ class Entity extends Controller {
 		 * option -r [yes/no]
 		 */
 
-		if (isset($aOptions['r'])) { $sPortail = $aOptions['r']; }
+		if (isset($aOptions['r']) && $aOptions['r'] === 'yes') { $sRewrite = $aOptions['r']; }
 		else { $sRewrite = 'no'; }
 
 		/**
-		 * option -c [portail]
+		 * option -c [create]
 		 */
 
 		if (isset($aOptions['c'])) { $bCreate = $aOptions['c']; }
