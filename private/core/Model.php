@@ -110,29 +110,35 @@ abstract class Model extends Mother {
 		 */
 
         if (preg_match('/^findOneBy([a-zA-Z_]+)$/', $sName, $aMatchs)) {
-
+        	
+        	$sPortal = preg_replace('/^Venus\\\\src\\\\([a-zA-Z]+)\\\\Model\\\\.+$/', '$1', get_called_class());
+        	
         	$aResults = $this->orm
         					 ->select(array('*'))
         					 ->from($this->_sTableName)
         					 ->where(array($aMatchs[1] => $aArguments[0]))
         					 ->limit(1)
-        					 ->load();
+        					 ->load(false, $sPortal);
 
         	if (isset($aResults[0])) { return $aResults[0]; }
         	else { return array(); }
         }
         else if (preg_match('/^findBy([a-zA-Z_]+)$/', $sName, $aMatchs)) {
 
+        	$sPortal = preg_replace('/^Venus\\\\src\\\\([a-zA-Z]+)\\\\Model\\\\.+$/', '$1', get_called_class());
+        	 
         	$aResults = $this->orm
         					 ->select(array('*'))
         					 ->from($this->_sTableName)
         					 ->where(array($aMatchs[1] => $aArguments[0]))
-        					 ->load();
+        					 ->load(false, $sPortal);
 
         	return $aResults;
         }
         else if (preg_match('/^findOneOrderBy([a-zA-Z_]+)$/', $sName, $aMatchs)) {
 
+        	$sPortal = preg_replace('/^Venus\\\\src\\\\([a-zA-Z]+)\\\\Model\\\\.+$/', '$1', get_called_class());
+        	 
         	$aMatchs[1] = preg_replace('/^(.+)(Desc)$/', '$1 $2', $aMatchs[1]);
         	$aMatchs[1] = preg_replace('/^(.+)(Asc)$/', '$1 $2', $aMatchs[1]);
 
@@ -141,13 +147,15 @@ abstract class Model extends Mother {
         					 ->from($this->_sTableName)
         					 ->orderBy(array($aMatchs[1]))
         					 ->limit(1)
-        					 ->load();
+        					 ->load(false, $sPortal);
 
         	if (isset($aResults[0])) { return $aResults[0]; }
         	else { return array(); }
         }
         else if (preg_match('/^findOrderBy([a-zA-Z_]+)$/', $sName, $aMatchs)) {
 
+        	$sPortal = preg_replace('/^Venus\\\\src\\\\([a-zA-Z]+)\\\\Model\\\\.+$/', '$1', get_called_class());
+        	 
         	$aMatchs[1] = preg_replace('/^(.+)(Desc)$/', '$1 $2', $aMatchs[1]);
         	$aMatchs[1] = preg_replace('/^(.+)(Asc)$/', '$1 $2', $aMatchs[1]);
 
@@ -155,7 +163,7 @@ abstract class Model extends Mother {
         					 ->select(array('*'))
         					 ->from($this->_sTableName)
         					 ->orderBy(array($aMatchs[1]))
-        					 ->load();
+        					 ->load(false, $sPortal);
 
         	return $aResults;
         }
@@ -171,10 +179,12 @@ abstract class Model extends Mother {
 
     public function findAll() {
 
+    	$sPortal = preg_replace('/^Venus\\\\src\\\\([a-zA-Z]+)\\\\Model\\\\.+$/', '$1', get_called_class());
+    	
     	$aResults = $this->orm
     					 ->select(array('*'))
     					 ->from($this->_sTableName)
-    					 ->load();
+    					 ->load(false, $sPortal);
 
     	return $aResults;
     }
@@ -191,12 +201,14 @@ abstract class Model extends Mother {
 
     public function findOneBy(array $aArguments) {
 
+    	$sPortal = preg_replace('/^Venus\\\\src\\\\([a-zA-Z]+)\\\\Model\\\\.+$/', '$1', get_called_class());
+    	
     	$aResults = $this->orm
     					 ->select(array('*'))
     					 ->from($this->_sTableName)
     					 ->where($aArguments)
     					 ->limit(1)
-    					 ->load();
+    					 ->load(false, $sPortal);
 
     	if (isset($aResults[0])) { return $aResults[0]; }
     	else { return false; }
@@ -214,11 +226,13 @@ abstract class Model extends Mother {
 
     public function findBy(array $aArguments) {
 
+    	$sPortal = preg_replace('/^Venus\\\\src\\\\([a-zA-Z]+)\\\\Model\\\\.+$/', '$1', get_called_class());
+    	
     	$aResults = $this->orm
     					 ->select(array('*'))
     					 ->from($this->_sTableName)
     					 ->where($aArguments)
-    					 ->load();
+    					 ->load(false, $sPortal);
 
     	return $aResults;
     }
@@ -235,12 +249,14 @@ abstract class Model extends Mother {
 
     public function findOneOrderBy(array $aArguments) {
 
+    	$sPortal = preg_replace('/^Venus\\\\src\\\\([a-zA-Z]+)\\\\Model\\\\.+$/', '$1', get_called_class());
+    	 
     	$aResults = $this->orm
     					 ->select(array('*'))
     					 ->from($this->_sTableName)
     					 ->orderBy($aArguments)
     					 ->limit(1)
-    					 ->load();
+    					 ->load(false, $sPortal);
 
     	return $aResults[0];
     }
@@ -257,11 +273,13 @@ abstract class Model extends Mother {
 
     public function findOrderBy(array $aArguments) {
 
+    	$sPortal = preg_replace('/^Venus\\\\src\\\\([a-zA-Z]+)\\\\Model\\\\.+$/', '$1', get_called_class());
+    	
     	$aResults = $this->orm
     					 ->select(array('*'))
     					 ->from($this->_sTableName)
     					 ->orderBy($aArguments)
-    					 ->load();
+    					 ->load(false, $sPortal);
 
     	return $aResults;
     }
@@ -276,6 +294,8 @@ abstract class Model extends Mother {
 
 	public function get($oEntityCriteria = null) {
 
+		$sPortal = preg_replace('/^Venus\\\\src\\\\([a-zA-Z]+)\\\\Model\\\\.+$/', '$1', get_called_class());
+		
 		if ($oEntityCriteria !== null) {
 
 			$this->_checkEntity($oEntityCriteria);
@@ -299,7 +319,7 @@ abstract class Model extends Mother {
 			 			 ->select(array('*'))
 			 			 ->from($this->_sTableName)
 			 			 ->where($aEntity)
-						 ->load();
+    					 ->load(false, $sPortal);
 
 		return $aResults;
 	}
@@ -383,12 +403,14 @@ abstract class Model extends Mother {
 
 	public function getLastRow() {
 
+		$sPortal = preg_replace('/^Venus\\\\src\\\\([a-zA-Z]+)\\\\Model\\\\.+$/', '$1', get_called_class());
+		
 		$result = $this->orm
 					   ->select(array('*'))
 			 		   ->from($this->_sTableName)
 			 		   ->orderBy(array(LibEntity::getPrimaryKeyName($this->entity) => 'DESC'))
 			 		   ->limit(1)
-					   ->load();
+    				   ->load(false, $sPortal);
 
 		return $result[0];
 	}
@@ -421,6 +443,8 @@ abstract class Model extends Mother {
 
 	public function updateAndGet($oEntity) {
 
+		$sPortal = preg_replace('/^Venus\\\\src\\\\([a-zA-Z]+)\\\\Model\\\\.+$/', '$1', get_called_class());
+		
 		$result = $this->update($oEntity);
 
 		if ($result) {
@@ -430,7 +454,7 @@ abstract class Model extends Mother {
 					   ->select(array('*'))
 			 		   ->from($this->_sTableName)
 			 		   ->where(array($pk => $aEntity[$pk]))
-					   ->load();
+    				   ->load(false, $sPortal);
 		}
 
 		return $result;

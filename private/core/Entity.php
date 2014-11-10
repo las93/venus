@@ -16,6 +16,7 @@
 namespace Venus\core;
 
 use \Venus\lib\Entity as LibEntity;
+use \Venus\lib\Orm as Orm;
 
 /**
  * Entity Manager
@@ -101,6 +102,7 @@ abstract class Entity {
 	public function save() {
 
 		$mPrimaryKeyName = $this->_mPrimaryKeyName;
+		$bInsertMode = false;
 
 		if ($mPrimaryKeyName === false) {
 
@@ -108,8 +110,10 @@ abstract class Entity {
 		}
 		else if (is_string($mPrimaryKeyName)) {
 
-			$sMethodPrimaryKey = 'get_'.$this->$mPrimaryKeyNameWithoutMapping;
+			$sMethodPrimaryKey = 'get_'.$this->_mPrimaryKeyNameWithoutMapping;
 			$aPrimaryKey = array($mPrimaryKeyName => $this->$sMethodPrimaryKey());
+			
+			if ($this->$sMethodPrimaryKey() < 1) { $bInsertMode = true; }
 		}
 		else {
 
@@ -117,16 +121,39 @@ abstract class Entity {
 
 			foreach($mPrimaryKeyName as $sKey => $sPrimaryKey) {
 
-				$sMethodPrimaryKey = 'get_'.$this->$mPrimaryKeyNameWithoutMapping[$sKey];
+				$sMethodPrimaryKey = 'get_'.$this->_mPrimaryKeyNameWithoutMapping[$sKey];
 				$aPrimaryKey[$sPrimaryKey] = $this->$sMethodPrimaryKey();
+				
+				if ($this->$sMethodPrimaryKey() < 1) { $bInsertMode = true; }
 			}
 		}
 
-		$iResults = $this->orm
-			 			 ->update(get_called_class($this))
-			 			 ->set($aEntity)
-			 			 ->where($aPrimaryKey)
-						 ->save();
+		$aEntityTmp = get_object_vars(LibEntity::getRealEntity($this));
+		$aEntity = array();
+		
+		foreach ($aEntityTmp as $sKey => $mField) {
+		
+			if ($mField !== null) {
+		
+				$aEntity[$sKey] = $mField;
+			}
+		}
+		
+		$oOrm = new Orm;
+		
+		if ($bInsertMode === true) {
+			
+			$iResults = $oOrm->insert(preg_replace('/^.*\\\\([a-zA-Z0-9_]+)$/', '$1', get_called_class()))
+				 			 ->values($aEntity)
+							 ->save();
+		}
+		else {
+			
+			$iResults = $oOrm->update(preg_replace('/^.*\\\\([a-zA-Z0-9_]+)$/', '$1', get_called_class()))
+				 			 ->set($aEntity)
+				 			 ->where($aPrimaryKey)
+							 ->save();
+		}
 
 		return $iResults;
 	}
@@ -140,21 +167,34 @@ abstract class Entity {
 
 	public function remove() {
 
-		$aEntityTmp = get_object_vars(LibEntity::getRealEntity($this));
-		$aEntity = array();
-
-		foreach ($aEntityTmp as $sKey => $mField) {
-
-			if ($mField !== null) {
-
-				$aEntity[$sKey] = $mField;
+		$mPrimaryKeyName = $this->_mPrimaryKeyName;
+		$bInsertMode = false;
+		
+		if ($mPrimaryKeyName === false) {
+		
+			throw new Exception('['.__FILE__.' (l.'.__LINE__.'] no primary key on this table!');
+		}
+		else if (is_string($mPrimaryKeyName)) {
+		
+			$sMethodPrimaryKey = 'get_'.$this->_mPrimaryKeyNameWithoutMapping;
+			$aPrimaryKey = array($mPrimaryKeyName => $this->$sMethodPrimaryKey());
+		}
+		else {
+		
+			$aPrimaryKey = array();
+		
+			foreach($mPrimaryKeyName as $sKey => $sPrimaryKey) {
+		
+				$sMethodPrimaryKey = 'get_'.$this->_mPrimaryKeyNameWithoutMapping[$sKey];
+				$aPrimaryKey[$sPrimaryKey] = $this->$sMethodPrimaryKey();
 			}
 		}
-
-		$this->orm->delete(get_called_class($this))
-				  ->set($aEntity)
-				  ->where($aPrimaryKey)
-				  ->save();
+		
+		$oOrm = new Orm;
+		
+		$oOrm->delete(preg_replace('/^.*\\\\([a-zA-Z0-9_]+)$/', '$1', get_called_class()))
+			 ->where($aPrimaryKey)
+			 ->save();
 
 		return $this;
 	}

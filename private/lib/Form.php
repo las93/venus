@@ -84,6 +84,24 @@ class Form {
 	private $_iFormNumber = 0;
 
 	/**
+	 * Separator between fields of form
+	 *
+	 *  @access private
+	 *  @var    string
+	 */
+
+	private $_sSeparator = '<br/>';
+
+	/**
+	 * The entity to save with the formular
+	 *
+	 *  @access private
+	 *  @var    string
+	 */
+
+	private $_sSynchronizeEntity = null;
+
+	/**
 	 * constructor that it increment (static) for all use
 	 *
 	 * @access public
@@ -101,15 +119,17 @@ class Form {
 	 *
 	 * @access public
 	 * @param  string $sName name
-	 * @param  string $sType type of form
+	 * @param  string $sType type of field
+	 * @param  string $sLabel label of field
+	 * @param  string $sValue value of field
 	 * @return \Venus\lib\Form
 	 */
 
-	public function add($sName, $sType) {
+	public function add($sName, $sType, $sLabel = null, $sValue = null) {
 
 		if ($sType === 'text' || $sType === 'submit' || $sType === 'password') {
 
-			$this->_aElement[$sName] = new Input($sName, $sType);
+			$this->_aElement[$sName] = new Input($sName, $sType, $sLabel, $sValue);
 		}
 		else if ($sType === 'date') {
 
@@ -162,11 +182,24 @@ class Form {
 
 	public function getForm() {
 
+		if ($this->_sSynchronizeEntity !== null && isset($_POST) && count($_POST) > 0) {
+			
+			$oEntity = new $this->_sSynchronizeEntity;
+			
+			foreach ($this->_aElement as $sKey => $sValue) {
+				
+				$sMethodName = 'set_'.$sValue->getName().'';
+				call_user_func_array(array(&$oEntity, $sMethodName), array($_POST[$sValue->getName()]));
+			}
+			
+			$oEntity->save();
+		}
+		
 		$sFormContent = '<form name="form'.$this->_iFormNumber.'" method="post"><input type="hidden" value="1" name="validform'.$this->_iFormNumber.'">';
 
 		foreach ($this->_aElement as $sKey => $sValue) {
 
-			$sFormContent .= $sValue->fetch();
+			$sFormContent .= $sValue->fetch().$this->_sSeparator;
 		}
 
 		$sFormContent .= '</form>';
@@ -198,5 +231,45 @@ class Form {
 	public function get($sName) {
 
 		return $this->_aElement[$sName];
+	}
+
+	/**
+	 * get the form separator
+	 *
+	 * @access public
+	 * @return string
+	 */
+
+	public function getSeparator() {
+
+		return $this->_sSeparator;
+	}
+
+	/**
+	 * set the form separator
+	 *
+	 * @access public
+	 * @param  string $sSeparator separator between the fields
+	 * @return \Venus\lib\Form
+	 */
+
+	public function setSeparator($sSeparator) {
+
+		$this->_sSeparator = $sSeparator;
+		return $this;
+	}
+
+	/**
+	 * set the entity to synchronize with the formular
+	 *
+	 * @access public
+	 * @param  string $sSeparator separator between the fields
+	 * @return \Venus\lib\Form
+	 */
+
+	public function synchronizeEntity($sSynchronizeEntity) {
+
+		$this->_sSynchronizeEntity = $sSynchronizeEntity;
+		return $this;
 	}
 }

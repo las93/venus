@@ -417,10 +417,11 @@ class Orm extends RequestSql {
 	 *
 	 * @access public
 	 * @param  bool $sDebug
+	 * @param  string $sOtherPortail change the default portal to create the entity
 	 * @return array
 	 */
 
-	public function load($bDebug = false) {
+	public function load($bDebug = false, $sOtherPortail = null) {
 
 		$sQuery = $this->_prepare();
 
@@ -441,7 +442,7 @@ class Orm extends RequestSql {
 				if ($this->_sFromAs) { $sPrefix = $this->_sFromAs.'.'; }
 				else { $sPrefix = ''; }
 
-				$aReturn[$i] = Entity::autoLoadEntity($this->_sFrom, $aOneResult, $sPrefix, true);
+				$aReturn[$i] = Entity::autoLoadEntity($this->_sFrom, $aOneResult, $sPrefix, true, $sOtherPortail);
 
 				foreach ($this->_aJoin as $aJoin) {
 
@@ -450,7 +451,7 @@ class Orm extends RequestSql {
 						if ($aJoin['as']) { $sPrefixJoin = $aJoin['as'].'.'; }
 						else { $sPrefixJoin = ''; }
 
-						$aReturn[$i]->$aJoin['table'] = Entity::autoLoadEntity($aJoin['table'], $aOneResult, $sPrefixJoin, true);
+						$aReturn[$i]->$aJoin['table'] = Entity::autoLoadEntity($aJoin['table'], $aOneResult, $sPrefixJoin, true, $sOtherPortail);
 					}
 				}
 
@@ -476,7 +477,7 @@ class Orm extends RequestSql {
 
 		$sQuery = $this->_prepare();
 		Debug::log($sQuery);
-	 //if ($_SERVER['HTTP_HOST'] == 'back.iscreenway.com') { echo '<!-- '.$sQuery." -->";  }
+	 	//if ($_SERVER['HTTP_HOST'] == 'back.iscreenway.com') { echo '<!-- '.$sQuery." -->";  }
 
 		if (preg_match('/INSERT INTO/i', $sQuery)) {
 
