@@ -38,6 +38,7 @@
 
 namespace Venus\lib;
 
+use \Venus\lib\Entity as LibEntity;
 use \Venus\lib\Form\Input as Input;
 use \Venus\lib\Form\Select as Select;
 
@@ -100,6 +101,15 @@ class Form {
 	 */
 
 	private $_sSynchronizeEntity = null;
+
+	/**
+	 * The id of entity
+	 *
+	 *  @access private
+	 *  @var    string
+	 */
+
+	private $_sIdEntity = null;
 
 	/**
 	 * constructor that it increment (static) for all use
@@ -182,7 +192,26 @@ class Form {
 
 	public function getForm() {
 
-		if ($this->_sSynchronizeEntity !== null && isset($_POST) && count($_POST) > 0) {
+		if ($this->_sIdEntity > 0 && $this->_sSynchronizeEntity !== null && count($_POST) > 0) {
+
+			$sModelName = str_replace('Entity', 'Model', $this->_sSynchronizeEntity);
+			$oModel = new $sModelName;
+				
+			$oEntity = new $this->_sSynchronizeEntity;
+			$sPrimaryKey = LibEntity::getPrimaryKeyNameWithoutMapping($oEntity);
+			$sMethodName = 'set_'.$sPrimaryKey;
+
+			call_user_func_array(array(&$oEntity, $sMethodName), array($this->_sIdEntity));
+
+			foreach ($this->_aElement as $sKey => $sValue) {
+			
+				$sMethodName = 'set_'.$sValue->getName().'';
+				call_user_func_array(array(&$oEntity, $sMethodName), array($_POST[$sValue->getName()]));
+			}
+				
+			$oEntity->save();
+		}
+		else if ($this->_sSynchronizeEntity !== null && isset($_POST) && count($_POST) > 0) {
 			
 			$oEntity = new $this->_sSynchronizeEntity;
 			
@@ -193,6 +222,24 @@ class Form {
 			}
 			
 			$oEntity->save();
+		}
+		else if ($this->_sIdEntity > 0 && $this->_sSynchronizeEntity !== null && count($_POST) < 1) {
+
+			$sModelName = str_replace('Entity', 'Model', $this->_sSynchronizeEntity);
+			$oModel = new $sModelName;
+			
+			$oEntity = new $this->_sSynchronizeEntity;
+			$sPrimaryKey = LibEntity::getPrimaryKeyNameWithoutMapping($oEntity);
+			$sMethodName = 'findOneBy'.$sPrimaryKey;
+			$oCompleteEntity = call_user_func_array(array(&$oModel, $sMethodName), array($this->_sIdEntity));
+
+			foreach ($this->_aElement as $sKey => $sValue) {
+
+				$sMethodName = 'get_'.$sKey;
+				$mValue = $oCompleteEntity->$sMethodName();
+
+				if (isset($mValue)) { $this->_aElement[$sKey]->setValue($mValue); }
+			}			
 		}
 		
 		$sFormContent = '<form name="form'.$this->_iFormNumber.'" method="post"><input type="hidden" value="1" name="validform'.$this->_iFormNumber.'">';
@@ -264,11 +311,14 @@ class Form {
 	 *
 	 * @access public
 	 * @param  string $sSeparator separator between the fields
+	 * @param  int $iId id of the primary key
 	 * @return \Venus\lib\Form
 	 */
 
-	public function synchronizeEntity($sSynchronizeEntity) {
+	public function synchronizeEntity($sSynchronizeEntity, $iId = null) {
 
+		if ($iId !== null) { $this->_sIdEntity = $iId; }
+			
 		$this->_sSynchronizeEntity = $sSynchronizeEntity;
 		return $this;
 	}
