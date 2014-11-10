@@ -122,6 +122,21 @@ class Router {
 						$this->_getPage404();
 					}
 				}
+				else {
+					
+					//@todo : Error à formater => Host mal définit
+					
+					if ($sHost !== $_SERVER['HTTP_HOST']) {
+						
+						trigger_error("Votre host est mal définit : ".$sHost." = ".$_SERVER['HTTP_HOST']
+							, E_USER_NOTICE);
+					}
+					else {
+						
+						trigger_error("Votre route n'existe pas : ".$_SERVER['REQUEST_URI'], E_USER_NOTICE);
+					}
+					
+				}
 			}
 		}
 		else if (Request::isCliRequest()) {
