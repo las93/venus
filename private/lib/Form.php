@@ -41,6 +41,7 @@ namespace Venus\lib;
 use \Venus\lib\Entity as LibEntity;
 use \Venus\lib\Form\Input as Input;
 use \Venus\lib\Form\Select as Select;
+use \Venus\lib\Form\Textarea as Textarea;
 
 /**
  * This class manage the Form
@@ -141,7 +142,11 @@ class Form {
 
 			$this->_aElement[$sName] = new Input($sName, $sType, $sLabel, $sValue);
 		}
-		else if ($sType === 'date') {
+		elseif ($sType === 'textarea') {
+
+			$this->_aElement[$sName] = new Textarea($sName, $sLabel, $sValue);
+		}
+		else  if ($sType === 'date') {
 
 			$aDay = array();
 
