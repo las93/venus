@@ -42,18 +42,40 @@ class Select extends Common {
 	private $_aOptions = null;
 
 	/**
+	 * the label of element
+	 *
+	 * @access private
+	 * @var    string
+	 */
+	
+	private $_sLabel = null;
+	
+	/**
+	 * the value of element
+	 *
+	 * @access private
+	 * @var    string
+	 */
+	
+	private $_sValue = null;
+	
+	/**
 	 * constructor that it increment (static) for all use
 	 *
 	 * @access public
 	 * @param  string $sName name
 	 * @param  array $aOptions options
+	 * @param  string $sLabel label of input
+	 * @param  string $sValue value of input
 	 * @return \Venus\lib\Form\Input
 	 */
 
-	public function __construct($sName, $aOptions) {
+	public function __construct($sName, $aOptions, $sLabel = null, $sValue = null) {
 
 		$this->setName($sName);
 		$this->setOptions($aOptions);
+		$this->setValue($sValue);
+		$this->setLabel($sLabel); 
 	}
 
 	/**
@@ -82,6 +104,57 @@ class Select extends Common {
 		return $this;
 	}
 
+	/**
+	 * get the Value
+	 *
+	 * @access public
+	 * @return string
+	 */
+	
+	public function getValue() {
+	
+		return $this->_sValue;
+	}
+	
+	/**
+	 * set the Value
+	 *
+	 * @access public
+	 * @param  string $sValue Value of input;
+	 * @return \Venus\lib\Form\Input
+	 */
+	
+	public function setValue($sValue) {
+	
+		$this->_sValue = $sValue;
+		return $this;
+	}
+	
+	/**
+	 * get the Label
+	 *
+	 * @access public
+	 * @return string
+	 */
+	
+	public function getLabel() {
+	
+		return $this->_sLabel;
+	}
+	
+	/**
+	 * set the Label
+	 *
+	 * @access public
+	 * @param  string $sLabel Label of input;
+	 * @return \Venus\lib\Form\Input
+	 */
+	
+	public function setLabel($sLabel) {
+	
+		$this->_sLabel = $sLabel;
+		return $this;
+	}
 
 	/**
 	 * get the <html>
@@ -92,11 +165,19 @@ class Select extends Common {
 
 	public function fetch() {
 
-		$sContent = '<select name="'.$this->getName().'">';
+		$sContent = '';
+		
+		if ($this->getLabel() !== null) { $sContent .= '<label>'.$this->getLabel().'</label> '; }
+		
+		$sContent .= '<select name="'.$this->getName().'">';
 
 		foreach ($this->getOptions() as $sKey => $sValue) {
 
-			$sContent .= '<option value="'.$sKey.'">'.$sValue.'</option>';
+			$sContent .= '<option value="'.$sKey.'"';
+			
+			if ($this->getValue() == $sValue) { $sContent .= ' selected="selected"'; }
+			
+			$sContent .= '>'.$sValue.'</option>';
 		}
 
 		$sContent .= '</select> ';

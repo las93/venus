@@ -39,6 +39,8 @@
 namespace Venus\lib;
 
 use \Venus\lib\Entity as LibEntity;
+use \Venus\lib\Form\Checkbox as Checkbox;
+use \Venus\lib\Form\Label as Label;
 use \Venus\lib\Form\Input as Input;
 use \Venus\lib\Form\Select as Select;
 use \Venus\lib\Form\Textarea as Textarea;
@@ -132,19 +134,39 @@ class Form {
 	 * @param  string $sName name
 	 * @param  string $sType type of field
 	 * @param  string $sLabel label of field
-	 * @param  string $sValue value of field
+	 * @param  mixed $mValue value of field
+	 * @parma  mixed $mOptions options (for select)
 	 * @return \Venus\lib\Form
 	 */
 
-	public function add($sName, $sType, $sLabel = null, $sValue = null) {
+	public function add($sName, $sType, $sLabel = null, $mValue = null, $mOptions = null) {
 
 		if ($sType === 'text' || $sType === 'submit' || $sType === 'password') {
 
-			$this->_aElement[$sName] = new Input($sName, $sType, $sLabel, $sValue);
+			$this->_aElement[$sName] = new Input($sName, $sType, $sLabel, $mValue);
 		}
 		elseif ($sType === 'textarea') {
 
-			$this->_aElement[$sName] = new Textarea($sName, $sLabel, $sValue);
+			$this->_aElement[$sName] = new Textarea($sName, $sLabel, $mValue);
+		}
+		else  if ($sType === 'select') {
+
+			$this->_aElement[$sName] = new Select($sName, $mOptions, $sLabel, $mValue);
+		}
+		else  if ($sType === 'label') {
+
+			$this->_aElement[$sName] = new Label($sName);
+		}
+		else  if ($sType === 'list_checkbox') {
+
+			$i = 0;
+			
+			$this->_aElement[$sName.'_'.$i++] = new Label($sLabel);
+			
+			foreach ($mValue as $mKey => $sValue) {
+			
+				$this->_aElement[$sName.'_'.$i++] = new Checkbox($sName, $sValue, $mKey, $mOptions);
+			}
 		}
 		else  if ($sType === 'date') {
 
