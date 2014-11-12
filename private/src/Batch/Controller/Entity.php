@@ -22,9 +22,9 @@
 
 namespace Venus\src\Batch\Controller;
 
+use \Venus\lib\Db as Db;
 use \Venus\core\Config as Config;
 use \Venus\src\Batch\common\Controller as Controller;
-use \Venus\lib\Db as Db;
 
 /**
  * Batch that create entity
@@ -99,7 +99,7 @@ class Entity extends Controller {
 
 			if ($bCreate === true) {
 
-				$oPdo = DB::connect($sConnectionName);
+				$oPdo = Db::connect($sConnectionName);
 
 				foreach ($oConnection->tables as $sTableName => $oOneTable) {
 

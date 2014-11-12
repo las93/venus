@@ -21,7 +21,7 @@
 
 namespace Venus\src\Batch\Controller;
 
-use \Venus\core\Config as Config;
+use \Venus\src\Batch\common\Controller as Controller;
 
 /**
  * Batch that generate files and folders
@@ -60,7 +60,7 @@ class Generator extends Controller {
 		if (!preg_match('/^[a-zA-Z0-9]+$/', $sPortail)) {
 
 			echo 'You can`t create this portail :'.$sPortail.'! The name must containt just letters and numbers.';
-			throw new Exception('You can`t create this portail :'.$sPortail.'! The name must containt just letters and numbers.');
+			throw new \Exception('You can`t create this portail :'.$sPortail.'! The name must containt just letters and numbers.');
 		}
 
 		$sActualDirectory = str_replace(DIRECTORY_SEPARATOR, '/', __DIR__);

@@ -16,8 +16,6 @@
 namespace Venus\lib;
 
 use \Venus\core\Config as Config;
-use \Venus\lib\Db as Db;
-use \Venus\lib\Entity as Entity;
 
 /**
  * Db Manager
@@ -65,9 +63,9 @@ class Db {
 					self::$_oPdo[$sName]->setAttribute(\PDO::ATTR_FETCH_TABLE_NAMES, 1);
 					self::$_oPdo[$sName]->setAttribute(\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
 				}
-				catch (Exception $oException) {
+				catch (\Exception $oException) {
 
-					echo $e->getMessage();
+					echo $oException->getMessage();
 				}
 			}
 			else if ($oDbConf->{$sName}->type == 'mssql') {

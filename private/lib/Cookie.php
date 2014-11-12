@@ -58,4 +58,17 @@ class Cookie {
 
     	return $_COOKIE[$sName];
   	}
+
+  	/**
+  	 * set a value
+  	 *
+  	 * @access public
+  	 * @param  string $sName name of the Cookie
+  	 * @return bool
+  	 */
+
+  	public function exists($sName) {
+
+    	return isset($_COOKIE[$sName]);
+  	}
 }

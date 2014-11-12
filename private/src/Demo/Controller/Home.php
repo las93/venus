@@ -17,9 +17,6 @@
 namespace Venus\src\Demo\Controller;
 
 use \Venus\src\Demo\common\Controller as Controller;
-use \Venus\lib\Session as Session;
-use \Venus\src\Demo\Model\user as modelUser;
-use \Venus\src\Demo\Entity\user as entityUser;
 
 /**
  * Controller to test

@@ -17,7 +17,6 @@
 namespace Venus\src\Demo\common;
 
 use \Venus\core\Controller as CoreController;
-use \Venus\core\UrlManager as UrlManager;
 
 /**
  * Controller Manager
