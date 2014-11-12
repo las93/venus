@@ -66,7 +66,7 @@ class UrlManager {
 	 *				$sUrl = $oUrlManager->getUrl('menu_edit', array('language' => 'vn', 'id' => 125));
 	 */
 
-	public function getUrl($sCode, $aParams) {
+	public function getUrl($sCode, $aParams = array()) {
 
 		if (isset($_SERVER) && isset($_SERVER['HTTP_HOST'])) {
 
