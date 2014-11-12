@@ -109,10 +109,19 @@ class Form {
 	 * The id of entity
 	 *
 	 *  @access private
-	 *  @var    string
+	 *  @var    int
 	 */
 
-	private $_sIdEntity = null;
+	private $_iIdEntity = null;
+
+	/**
+	 * The entity to save with the formular
+	 *
+	 *  @access private
+	 *  @var    int
+	 */
+
+	private $_iIdEntityCreated = null;
 
 	/**
 	 * constructor that it increment (static) for all use
@@ -211,6 +220,18 @@ class Form {
 	}
 
 	/**
+	 * get id entity created by the formular
+	 *
+	 * @access public
+	 * @return int
+	 */
+
+	public function getIdEntityCreated() {
+		
+		return $this->_iIdEntityCreated;
+	}
+
+	/**
 	 * get global form
 	 *
 	 * @access public
@@ -219,7 +240,7 @@ class Form {
 
 	public function getForm() {
 
-		if ($this->_sIdEntity > 0 && $this->_sSynchronizeEntity !== null && count($_POST) > 0) {
+		if ($this->_iIdEntity > 0 && $this->_sSynchronizeEntity !== null && count($_POST) > 0) {
 
 			$sModelName = str_replace('Entity', 'Model', $this->_sSynchronizeEntity);
 			$oModel = new $sModelName;
@@ -228,7 +249,7 @@ class Form {
 			$sPrimaryKey = LibEntity::getPrimaryKeyNameWithoutMapping($oEntity);
 			$sMethodName = 'set_'.$sPrimaryKey;
 
-			call_user_func_array(array(&$oEntity, $sMethodName), array($this->_sIdEntity));
+			call_user_func_array(array(&$oEntity, $sMethodName), array($this->_iIdEntity));
 
 			foreach ($this->_aElement as $sKey => $sValue) {
 			
@@ -248,9 +269,9 @@ class Form {
 				call_user_func_array(array(&$oEntity, $sMethodName), array($_POST[$sValue->getName()]));
 			}
 			
-			$oEntity->save();
+			$this->_iIdEntityCreated = $oEntity->save();
 		}
-		else if ($this->_sIdEntity > 0 && $this->_sSynchronizeEntity !== null && count($_POST) < 1) {
+		else if ($this->_iIdEntity > 0 && $this->_sSynchronizeEntity !== null && count($_POST) < 1) {
 
 			$sModelName = str_replace('Entity', 'Model', $this->_sSynchronizeEntity);
 			$oModel = new $sModelName;
@@ -258,7 +279,7 @@ class Form {
 			$oEntity = new $this->_sSynchronizeEntity;
 			$sPrimaryKey = LibEntity::getPrimaryKeyNameWithoutMapping($oEntity);
 			$sMethodName = 'findOneBy'.$sPrimaryKey;
-			$oCompleteEntity = call_user_func_array(array(&$oModel, $sMethodName), array($this->_sIdEntity));
+			$oCompleteEntity = call_user_func_array(array(&$oModel, $sMethodName), array($this->_iIdEntity));
 
 			foreach ($this->_aElement as $sKey => $sValue) {
 
@@ -344,7 +365,7 @@ class Form {
 
 	public function synchronizeEntity($sSynchronizeEntity, $iId = null) {
 
-		if ($iId !== null) { $this->_sIdEntity = $iId; }
+		if ($iId !== null) { $this->_iIdEntity = $iId; }
 			
 		$this->_sSynchronizeEntity = $sSynchronizeEntity;
 		return $this;

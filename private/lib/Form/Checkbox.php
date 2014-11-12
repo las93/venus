@@ -192,7 +192,7 @@ class Checkbox extends Common {
 
 	public function fetch() {
 
-		$sContent = '<input type="checkbox" name="'.$this->getName().'" value="'.$this->getValue().'"';
+		$sContent = '<input type="checkbox" name="'.$this->getName().'[]" value="'.$this->getValue().'"';
 		
 		if ($this->getValueChecked() == $this->getValue()) { $sContent .= ' checked="checked"'; }
 		

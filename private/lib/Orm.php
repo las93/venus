@@ -512,7 +512,7 @@ class Orm extends RequestSql {
 		}
 		else if (count($this->_aSelect) > 0 && $this->_sFrom !== '') {
 
-			$sQuery = 'SELECT '.implode(',', $this->_aSelect).' FROM '.$this->_sFrom.' ';
+			$sQuery = 'SELECT '.implode(',', $this->_aSelect).' FROM `'.$this->_sFrom.'` ';
 			$sQuery = str_replace('SQL_CALC_FOUND_ROWS,', 'SQL_CALC_FOUND_ROWS ', $sQuery);
 
 			if ($this->_sFromAs !== null) {
@@ -535,7 +535,7 @@ class Orm extends RequestSql {
 		}
 		else if ($this->_sUpdate !== '') {
 
-			$sQuery = 'UPDATE '.$this->_sUpdate;
+			$sQuery = 'UPDATE `'.$this->_sUpdate.'` ';
 
 			if (count($this->_aSet) > 0) {
 
@@ -556,7 +556,7 @@ class Orm extends RequestSql {
 		}
 		else if ($this->_sInsertInto !== '') {
 
-			$sQuery = 'INSERT INTO '.$this->_sInsertInto.' (';
+			$sQuery = 'INSERT INTO `'.$this->_sInsertInto.'` (';
 
 			foreach ($this->_aValues as $sKey => $sValue) {
 
@@ -576,7 +576,7 @@ class Orm extends RequestSql {
 		}
 		else if ($this->_sDelete !== '') {
 
-			$sQuery = 'DELETE FROM '.$this->_sDelete;
+			$sQuery = 'DELETE FROM `'.$this->_sDelete.'`';
 			$sQuery .= $this->_prepareWhere();
 		}
 
@@ -662,11 +662,11 @@ class Orm extends RequestSql {
 
 				if (isset($aValue['type']) && $aValue['type'] == 'left') {
 
-					$sQuery .= " LEFT JOIN ".$aValue['table']." ";
+					$sQuery .= " LEFT JOIN `".$aValue['table']."` ";
 				}
 				else {
 
-					$sQuery .= " INNER JOIN ".$aValue['table']." ";
+					$sQuery .= " INNER JOIN `".$aValue['table']."` ";
 				}
 
 				if (isset($aValue['as']) && $aValue['as']) {

@@ -105,11 +105,11 @@ class Entity extends Controller {
 
 					if ($bDropTable === true) {
 						
-						$sQuery = 'DROP TABLE IF EXISTS '.$sTableName.'(';
+						$sQuery = 'DROP TABLE IF EXISTS `'.$sTableName.'` (';
 						$oPdo->query($sQuery);
 					}
 					
-					$sQuery = 'CREATE TABLE IF NOT EXISTS '.$sTableName.'(';
+					$sQuery = 'CREATE TABLE IF NOT EXISTS `'.$sTableName.'` (';
 
 					$aIndex = array();
 					$aPrimaryKey = array();
