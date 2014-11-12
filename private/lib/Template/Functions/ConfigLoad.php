@@ -56,7 +56,7 @@ class ConfigLoad {
 		$sFile = '';
 
 		if (isset($aParams['file'])) { $sFile = $aParams['file']; }
-		else { new Exception('ConfigLoad: file obligatory');}
+		else { new \Exception('ConfigLoad: file obligatory');}
 
 		$sViewDirectory = str_replace('lib'.DIRECTORY_SEPARATOR.'Template'.DIRECTORY_SEPARATOR.'Function',
 			'src'.DIRECTORY_SEPARATOR.PORTAIL.DIRECTORY_SEPARATOR.'View'.DIRECTORY_SEPARATOR, __DIR__);

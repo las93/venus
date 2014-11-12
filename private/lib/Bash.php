@@ -111,14 +111,14 @@ class Bash {
 
 	public static function setDecoration($sContent, $sStyleName) {
 
-		return self::_applyCode($sContent, self::$_aBackgroundCodes[$sColorName]);
+		return self::_applyCode($sContent, self::$_aBackgroundCodes[$sStyleName]);
 	}
 
 	/**
 	 * set a color of the background
 	 *
 	 * @access public
-	 * @param  string $sContent content to around by the style
+	 * @param  string $sContent content to around by the style 
 	 * @param  string $sColorName the name of the color
 	 * @return string
 	 */

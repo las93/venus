@@ -56,7 +56,7 @@ class Mailto {
 		$sAddress = '';
 
 		if (isset($aParams['address'])) { $sAddress = $aParams['address']; }
-		else { new Exception('mailto: address obligatory');}
+		else { new \Exception('mailto: address obligatory');}
 
 		return '<a href="mailto:'.$sAddress.'" >'.$sAddress.'</a>';
 	}

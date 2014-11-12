@@ -237,7 +237,7 @@ class Facebook {
 
 		try {
 
-			$this->_oFacebook->api('/'.$user.'/feed', 'post', array(
+			$this->_oFacebook->api('/'.$sUser.'/feed', 'post', array(
                     'message' => $sMessage,
                     'link'    => $sLink,
                     'picture' => $sImg,
@@ -248,7 +248,7 @@ class Facebook {
 		}
 		catch(Exception $e) {
 
-			throw new Exception(__FILE__.':'.__METHOD__.' : You can\'t ask: '.$sFql.' !');
+			throw new Exception(__FILE__.':'.__METHOD__.' : You can\'t ask: '.'/'.$sUser.'/feed'.' !');
 		}
 	}
 
@@ -264,7 +264,7 @@ class Facebook {
 
 		$user = $this->_oFacebook->getUser();
 
-		if($user){
+		if ($user){
 
 			try{
 
@@ -273,7 +273,8 @@ class Facebook {
 				echo '<pre>';
 				print_r($accounts); /* on affiche les informations retournées */
 			}
-			catch (FacebookApiException $e){
+			catch (\Exception $e) {
+				
 				print_r($e);
 				$user = null;
 			}
@@ -288,7 +289,7 @@ class Facebook {
 		try {
 
 			$this->_oFacebook->api('/'.$sPageId.'/feed', 'post', array(
-					'token' => $sToken,
+					'token' => $accessToken,
 					'message' => $sMessage,
 					'link'    => $sLink,
 					'picture' => $sImg,
@@ -299,7 +300,7 @@ class Facebook {
 		catch(Exception $e) {
 
 			var_dump($e);
-			throw new Exception(__FILE__.':'.__METHOD__.' : You can\'t ask: '.$sFql.' !');
+			throw new Exception(__FILE__.':'.__METHOD__.' : You can\'t ask: '.'/'.$sPageId.'/feed'.' !');
 		}
 	}
 

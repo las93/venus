@@ -56,7 +56,7 @@ class Cycle {
 		$sValues = '';
 
 		if (isset($aParams['values'])) { $sValues = $aParams['values']; }
-		else { new Exception('Cycle: values obligatory');}
+		else { new \Exception('Cycle: values obligatory');}
 
 		$sCycle = '';
 		$i = 0;

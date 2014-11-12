@@ -54,10 +54,10 @@ class Append {
 	public function replaceBy($aParams = array()) {
 
 		if (isset($aParams['var'])) { $sVar = '$_aProtectedVar['.$aParams['var'].']'; }
-		else { new Exception('Append: var obligatory');}
+		else { new \Exception('Append: var obligatory');}
 
 		if (isset($aParams['value'])) { $sValue = $aParams['value']; }
-		else { new Exception('Append: value obligatory');}
+		else { new \Exception('Append: value obligatory');}
 
 		if (isset($aParams['index'])) { $sIndex = $aParams['index']; }
 		else { $sIndex = null; }

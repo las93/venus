@@ -57,7 +57,7 @@ class HtmlOptions {
 		$mSelected = '';
 
 		if (isset($aParams['options'])) { $aOptions = $aParams['options']; }
-		else { new Exception('HtmlOptions: options obligatory');}
+		else { new \Exception('HtmlOptions: options obligatory');}
 
 		if (isset($aParams['selected'])) { $mSelected = $aParams['selected']; }
 

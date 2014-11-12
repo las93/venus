@@ -17,7 +17,6 @@
 namespace Venus\lib;
 
 use \Venus\lib\Db as Db;
-use \Venus\lib\Debug as Debug;
 use \Venus\lib\Entity as Entity;
 use \Venus\lib\Orm\Where as Where;
 

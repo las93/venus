@@ -75,7 +75,7 @@ class Di {
 		}
 		else {
 
-			throw new Exception("The class ".$sClass." not found!");
+			throw new \Exception("The class ".$sClass." not found!");
 		}
 	}
 
