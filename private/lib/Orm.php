@@ -112,10 +112,10 @@ class Orm extends RequestSql {
 	 * where of the request
 	 *
 	 * @access private
-	 * @var    array
+	 * @var    mixed
 	 */
 
-	private $_aWhere = array();
+	private $_mWhere = array();
 
 	/**
 	 * having of the request
@@ -288,13 +288,13 @@ class Orm extends RequestSql {
 	 * where
 	 *
 	 * @access public
-	 * @param  array $aWhere where
+	 * @param  mixed $mWhere where
 	 * @return \Venus\lib\Orm
 	 */
 
-	public function where($aWhere) {
+	public function where($mWhere) {
 
-		$this->_aWhere = $aWhere;
+		$this->_mWhere = $mWhere;
 		return $this;
 	}
 
@@ -460,7 +460,7 @@ class Orm extends RequestSql {
 
 		$this->flush();
 
-		if ($this->_aWhere instanceof Where) { $this->_aWhere->flush(); }
+		if ($this->_mWhere instanceof Where) { $this->_mWhere->flush(); }
 
 		return $aReturn;
 	}
@@ -487,7 +487,7 @@ class Orm extends RequestSql {
 
 			$this->flush();
 
-			if ($this->_aWhere instanceof Where) { $this->_aWhere->flush(); }
+			if ($this->_mWhere instanceof Where) { $this->_mWhere->flush(); }
 
 			return Db::connect(self::DB_CONF)->exec($sQuery);
 		}
@@ -591,20 +591,20 @@ class Orm extends RequestSql {
 
 		$sQuery = '';
 
-		if (is_array($this->_aWhere) && count($this->_aWhere) > 0) {
+		if (is_array($this->_mWhere) && count($this->_mWhere) > 0) {
 
 			$sQuery .= ' WHERE ';
 
-			foreach ($this->_aWhere as $sKey => $sValue) {
+			foreach ($this->_mWhere as $sKey => $sValue) {
 
 				$sQuery .= "".$sKey." = '".str_replace("'", "\'", $sValue)."' && ";
 			}
 
 			$sQuery = substr($sQuery, 0, -3);
 		}
-		else if ($this->_aWhere instanceof Where) {
+		else if ($this->_mWhere instanceof Where) {
 
-			$sQuery .= ' WHERE 1 '.$this->_aWhere->get();
+			$sQuery .= ' WHERE 1 '.$this->_mWhere->get();
 		}
 
 		$sQuery = str_replace('1  &&', '', $sQuery);
@@ -769,7 +769,7 @@ class Orm extends RequestSql {
 		$this->_sFromAs = '';
 		$this->_aJoin = array();
 		$this->_sUpdate = '';
-		$this->_aWhere = array();
+		$this->_mWhere = array();
 		$this->_aSet = array();
 		$this->_sInsertInto = '';
 		$this->_aValues = array();
