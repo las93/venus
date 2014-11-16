@@ -358,7 +358,7 @@ class Template {
 				$iFileModificationTime = filemtime(str_replace('lib', '', __DIR__).$this->_sTemplateName);
 			}
 
-			$sTmpDirectory = str_replace('private'.DIRECTORY_SEPARATOR.'lib', 'data'.DIRECTORY_SEPARATOR.'cache', __DIR__).DIRECTORY_SEPARATOR;
+			$sTmpDirectory = str_replace('private'.DIRECTORY_SEPARATOR.'lib', CACHE_DIR, __DIR__).DIRECTORY_SEPARATOR;
 
 			if (file_exists($sTmpDirectory.$this->_getEncodeTemplateName($this->_sTemplateName).'.cac.php')) {
 
@@ -410,7 +410,7 @@ class Template {
 		// {$foo[section_name]}? http://www.smarty.net/docs/en/language.syntax.variables.tpl
 		//*****************************************************************************************************************************
 
-		$sTmpDirectory = str_replace('private'.DIRECTORY_SEPARATOR.'lib', 'data'.DIRECTORY_SEPARATOR.'cache', __DIR__).DIRECTORY_SEPARATOR;
+		$sTmpDirectory = str_replace('private'.DIRECTORY_SEPARATOR.'lib', CACHE_DIR, __DIR__).DIRECTORY_SEPARATOR;
 		$sTmpDirectory = str_replace('\\', '\\\\\\', $sTmpDirectory);
 
 		$sViewDirectory = str_replace('lib', 'src'.DIRECTORY_SEPARATOR.PORTAIL.DIRECTORY_SEPARATOR.'View'.DIRECTORY_SEPARATOR, __DIR__).DIRECTORY_SEPARATOR;

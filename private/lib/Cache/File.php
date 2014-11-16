@@ -50,9 +50,7 @@ class File {
 
 	public function __construct() {
 
-		//$this->_sFolder = str_replace(DIRECTORY_SEPARATOR.'private'.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'Cache', '', __DIR__).DIRECTORY_SEPARATOR.
-		//	"data".DIRECTORY_SEPARATOR."cache".DIRECTORY_SEPARATOR;
-		$this->_sFolder = DIRECTORY_SEPARATOR.'var'.DIRECTORY_SEPARATOR.'www'.DIRECTORY_SEPARATOR.'cache'.DIRECTORY_SEPARATOR.PORTAIL.DIRECTORY_SEPARATOR;
+		$this->_sFolder = str_replace('private'.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'Cache', CACHE_DIR, __DIR__).DIRECTORY_SEPARATOR;
 	}
 
 	/**
