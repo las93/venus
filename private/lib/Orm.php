@@ -475,8 +475,6 @@ class Orm extends RequestSql {
 	public function save() {
 
 		$sQuery = $this->_prepare();
-		//Debug::log($sQuery);
-	 	//if ($_SERVER['HTTP_HOST'] == 'back.iscreenway.com') { echo '<!-- '.$sQuery." -->";  }
 
 		if (preg_match('/INSERT INTO/i', $sQuery)) {
 

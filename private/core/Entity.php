@@ -17,6 +17,7 @@ namespace Venus\core;
 
 use \Venus\lib\Entity as LibEntity;
 use \Venus\lib\Orm as Orm;
+use \Venus\lib\Orm\Where as Where;
 
 /**
  * Entity Manager
@@ -117,15 +118,28 @@ abstract class Entity {
 		}
 		else {
 
-			$aPrimaryKey = array();
+			$aPrimaryKey = array();	
 
+			$oOrm = new Orm;
+			
+			$iResults = $oOrm->select(array('*'))
+							 ->from(preg_replace('/^.*\\\\([a-zA-Z0-9_]+)$/', '$1', get_called_class()));
+
+			$oWhere = new Where;
+			
 			foreach($mPrimaryKeyName as $sKey => $sPrimaryKey) {
 
 				$sMethodPrimaryKey = 'get_'.$this->_mPrimaryKeyNameWithoutMapping[$sKey];
 				$aPrimaryKey[$sPrimaryKey] = $this->$sMethodPrimaryKey();
+
 				
-				if ($this->$sMethodPrimaryKey() < 1) { $bInsertMode = true; }
+				$oWhere->andWhereEqual($sPrimaryKey, $aPrimaryKey[$sPrimaryKey]);
 			}
+			
+			$aResults = $oOrm->where($oWhere)
+							 ->load();
+			
+			if (count($aResults) < 1) { $bInsertMode = true; }
 		}
 
 		$aEntityTmp = get_object_vars(LibEntity::getRealEntity($this));
