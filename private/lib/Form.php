@@ -42,6 +42,7 @@ use \Venus\lib\Entity as LibEntity;
 use \Venus\lib\Form\Checkbox as Checkbox;
 use \Venus\lib\Form\Label as Label;
 use \Venus\lib\Form\Input as Input;
+use \Venus\lib\Form\Radio as Radio;
 use \Venus\lib\Form\Select as Select;
 use \Venus\lib\Form\Textarea as Textarea;
 
@@ -176,6 +177,14 @@ class Form {
 			
 				$this->_aElement[$sName.'_'.$i++] = new Checkbox($sName, $sValue, $mKey, $mOptions);
 			}
+		}
+		else  if ($sType === 'checkbox') {
+
+			$this->_aElement[$sName] = new Checkbox($sName, $sLabel, $mValue, $mOptions);
+		}
+		else  if ($sType === 'radio') {
+
+			$this->_aElement[$sName] = new Radio($sName, $sLabel, $mValue, $mOptions);
 		}
 		else  if ($sType === 'date') {
 

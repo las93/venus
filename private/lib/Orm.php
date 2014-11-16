@@ -181,13 +181,22 @@ class Orm extends RequestSql {
 	private $_aGroupBy = array();
 
 	/**
+	 * truncate a table
+	 *
+	 * @access private
+	 * @var bool
+	 */
+
+	private $_sTruncate = '';
+
+	/**
 	 * limit of the result
 	 *
 	 * @access private
 	 * @var number
 	 */
 
-	private $_limit = null;
+	private $_iLimit = null;
 
 	/**
 	 * limit of the result
@@ -400,14 +409,29 @@ class Orm extends RequestSql {
 	 * order by
 	 *
 	 * @access public
-	 * @param  array $aOrderBy order by
+	 * @param  int $iLimit number of return
+	 * @param  int $iOffset offset
 	 * @return \Venus\lib\Orm
 	 */
 
-	public function limit($limit, $iOffset = null) {
+	public function limit($iLimit, $iOffset = null) {
 
-		$this->_limit = $limit;
+		$this->_iLimit = $iLimit;
 		$this->_iOffset = $iOffset;
+		return $this;
+	}
+
+	/**
+	 * truncate
+	 *
+	 * @access public
+	 * @param  string $sTruncate name of table
+	 * @return \Venus\lib\Orm
+	 */
+
+	public function truncate($sTruncate) {
+
+		$this->_sTruncate = $sTruncate;
 		return $this;
 	}
 
@@ -576,6 +600,11 @@ class Orm extends RequestSql {
 			$sQuery = 'DELETE FROM `'.$this->_sDelete.'`';
 			$sQuery .= $this->_prepareWhere();
 		}
+		else if ($this->_sTruncate !== '') {
+
+			$sQuery = 'TRUNCATE `'.$this->_sDelete.'`';
+			$sQuery .= $this->_prepareWhere();
+		}
 
 		return $sQuery;
 	}
@@ -731,7 +760,7 @@ class Orm extends RequestSql {
 	private function _prepareLimit() {
 
 		$sQuery = '';
-		$limit = (int) $this->_limit;
+		$limit = (int) $this->_iLimit;
 		$iOffset = $this->_iOffset;
 
 		if($limit != 0 || $iOffset > 0) { $sQuery .= ' LIMIT '; }
@@ -776,7 +805,7 @@ class Orm extends RequestSql {
 		$this->_sDelete = '';
 		$this->_aOrderBy = array();
 		$this->_aGroupBy = array();
-		$this->_limit = null;
+		$this->_iLimit = null;
 		return $this;
 	}
 }

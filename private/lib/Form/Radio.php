@@ -30,7 +30,7 @@ namespace Venus\lib\Form;
  * @since     	1.0
  */
 
-class Checkbox extends Common {
+class Radio extends Common {
 
 	/**
 	 * the name of element
@@ -63,27 +63,27 @@ class Checkbox extends Common {
 	 * the value of the checked element
 	 *
 	 * @access private
-	 * @var    array
+	 * @var    string
 	 */
 	
-	private $_aValuesChecked = null;
+	private $_sValueChecked = null;
 
 	/**
 	 * constructor that it increment (static) for all use
 	 *
 	 * @access public
 	 * @param  string $sName name
-	 * @param  string $sLabel label of checkbox
-	 * @param  string $sValue value of checkbox
-	 * @param  array $aValuesChecked value checked of checkbox
+	 * @param  string $sLabel label of radio
+	 * @param  string $sValue value of radio
+	 * @param  string $sValueChecked value checked of radio
 	 * @return \Venus\lib\Form\Input
 	 */
 
-	public function __construct($sName, $sLabel, $sValue, $aValuesChecked = null) {
+	public function __construct($sName, $sLabel, $sValue, $sValueChecked = null) {
 
 		$this->setName($sName);
 		$this->setValue($sValue);
-		$this->setValuesChecked($aValuesChecked);
+		$this->setValueChecked($sValueChecked);
 		$this->setLabel($sLabel);
 	}
 
@@ -117,25 +117,25 @@ class Checkbox extends Common {
 	 * get the Value Checked
 	 *
 	 * @access public
-	 * @return array
+	 * @return string
 	 */
 
-	public function getValuesChecked() {
+	public function getValueChecked() {
 
-		return $this->_aValuesChecked;
+		return $this->_sValueChecked;
 	}
 
 	/**
 	 * set the Value Checked
 	 *
 	 * @access public
-	 * @param  array $aValuesChecked Values of input;
+	 * @param  string $sValueChecked Value of input;
 	 * @return \Venus\lib\Form\Input
 	 */
 
-	public function setValuesChecked($aValuesChecked) {
+	public function setValueChecked($sValueChecked) {
 
-		$this->_aValuesChecked = $aValuesChecked;
+		$this->_sValueChecked = $sValueChecked;
 		return $this;
 	}
 
@@ -192,9 +192,9 @@ class Checkbox extends Common {
 
 	public function fetch() {
 
-		$sContent = '<input type="checkbox" name="'.$this->getName().'[]" value="'.$this->getValue().'"';
-
-		if (in_array($this->getValue(), $this->getValuesChecked())) { $sContent .= ' checked="checked"'; }
+		$sContent = '<input type="radio" name="'.$this->getName().'[]" value="'.$this->getValue().'"';
+		
+		if ($this->getValueChecked() == $this->getValue()) { $sContent .= ' checked="checked"'; }
 		
 		$sContent .= '/> '.$this->getLabel();
 
