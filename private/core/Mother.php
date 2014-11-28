@@ -219,11 +219,14 @@ class Mother implements \ArrayAccess {
 			$aPhpDoc = PhpDoc::getPhpDocOfMethod(get_called_class(), $sName);
 			$aParam = array();
 
-			foreach ($aPhpDoc['param'] as $iIndex => $aOne) {
-
-				if (!filter_var($aArguments[$iIndex], $this->_aFilterVar[$aOne[0]])) {
-
-					new Exception($aOne[1].' must be '.$aOne[0]);
+			if (isset($aPhpDoc['param'])) {
+				
+				foreach ($aPhpDoc['param'] as $iIndex => $aOne) {
+	
+					if (!filter_var($aArguments[$iIndex], $this->_aFilterVar[$aOne[0]])) {
+	
+						new Exception($aOne[1].' must be '.$aOne[0]);
+					}
 				}
 			}
 		}

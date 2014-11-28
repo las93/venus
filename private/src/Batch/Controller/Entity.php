@@ -76,11 +76,25 @@ class Entity extends Controller {
 		else { $bCreate = false; }
 
 		/**
-		 * option -c [create entity]
+		 * option -e [create entity and models]
 		 */
 
-		if (isset($aOptions['e'])) { $bCreateEntity = false; }
-		else { $bCreateEntity = true; }
+		if (isset($aOptions['e'])) { $bCreateEntity = true; }
+		else { $bCreateEntity = false; }
+
+		/**
+		 * option -e [create models if not exists]
+		 */
+
+		if (isset($aOptions['f'])) { 
+			
+			$bCreateModelIfNotExists = true;
+			$bCreateEntity = true;
+		}
+		else { 
+			
+			$bCreateModelIfNotExists = false;
+		}
 
 		/**
 		 * option -d [drop table]
@@ -105,7 +119,7 @@ class Entity extends Controller {
 
 					if ($bDropTable === true) {
 						
-						$sQuery = 'DROP TABLE IF EXISTS `'.$sTableName.'` (';
+						$sQuery = 'DROP TABLE IF EXISTS `'.$sTableName.'`';
 						$oPdo->query($sQuery);
 					}
 					
@@ -116,7 +130,7 @@ class Entity extends Controller {
 
 					foreach ($oOneTable->fields as $sFieldName => $oOneField) {
 
-						$sQuery .= $sFieldName.' '.$oOneField->type;
+						$sQuery .= '`'.$sFieldName.'` '.$oOneField->type;
 
 						if (isset($oOneField->values) && $oOneField->type === 'enum' && is_array($oOneField->values)) {
 
@@ -472,7 +486,10 @@ class Entity extends Controller {
 	
 					file_put_contents(__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.$sPortail.DIRECTORY_SEPARATOR.'Entity'.DIRECTORY_SEPARATOR.$sTableName.'.php', $sContentFile);
 	
-					$sContentFile = '<?php
+					if ($bCreateModelIfNotExists === false || ($bCreateModelIfNotExists === true 
+						&& !file_exists(__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.$sPortail.DIRECTORY_SEPARATOR.'Model'.DIRECTORY_SEPARATOR.$sTableName.'.php'))) {
+					
+						$sContentFile = '<?php
 	
 	/**
 	 * Model to '.$sTableName.'
@@ -509,7 +526,8 @@ class Entity extends Controller {
 	class '.$sTableName.' extends Model {
 	}'."\n";
 	
-					file_put_contents(__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.$sPortail.DIRECTORY_SEPARATOR.'Model'.DIRECTORY_SEPARATOR.$sTableName.'.php', $sContentFile);
+						file_put_contents(__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.$sPortail.DIRECTORY_SEPARATOR.'Model'.DIRECTORY_SEPARATOR.$sTableName.'.php', $sContentFile);
+					}
 				}
 			}
 		}

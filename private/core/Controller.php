@@ -7,7 +7,7 @@
  * @package   	core\Controller
  * @author    	Judicaël Paquet <judicael.paquet@gmail.com>
  * @copyright 	Copyright (c) 2013-2014 PAQUET Judicaël FR Inc. (https://github.com/las93)
- * @license   	http://www.iscreenway.com/framework/licence.php Tout droit rÃ©servÃ© Ã  http://www.iscreenway.com
+ * @license   	http://www.iscreenway.com/framework/licence.php Tout droit réservé à http://www.iscreenway.com
  * @version   	Release: 1.0.0
  * @filesource	https://github.com/las93/venus
  * @link      	https://github.com/las93
@@ -33,7 +33,7 @@ use \Venus\core\UrlManager as UrlManager;
  * @package   	core\Controller
  * @author    	Judicaël Paquet <judicael.paquet@gmail.com>
  * @copyright 	Copyright (c) 2013-2014 PAQUET Judicaël FR Inc. (https://github.com/las93)
- * @license   	http://www.iscreenway.com/framework/licence.php Tout droit rÃ©servÃ© Ã  http://www.iscreenway.com
+ * @license   	http://www.iscreenway.com/framework/licence.php Tout droit réservé à http://www.iscreenway.com
  * @version   	Release: 1.0.0
  * @filesource	https://github.com/las93/venus
  * @link      	https://github.com/las93
