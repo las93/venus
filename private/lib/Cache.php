@@ -15,8 +15,11 @@
 
 namespace Venus\lib;
 
+use \Venus\core\Config as Config;
+use \Venus\lib\Cache\Apc as Apc;
 use \Venus\lib\Cache\File as CacheFile;
 use \Venus\lib\Cache\Memcache as CacheMemcache;
+use \Venus\lib\Cache\Redis as Redis;
 
 /**
  * This class manage the Cache
@@ -64,6 +67,7 @@ class Cache {
 		if ($sCacheName === 'file') { $this->_sTypeOfCache = 'file'; }
 		else if ($sCacheName === 'memcache') { $this->_sTypeOfCache = 'memcache'; }
 		else if ($sCacheName === 'apc') { $this->_sTypeOfCache = 'apc'; }
+		else if ($sCacheName === 'redis') { $this->_sTypeOfCache = 'redis'; }
 	}
 
 	/**
@@ -72,49 +76,29 @@ class Cache {
 	 * @access public
 	 * @param  string $sName name of the session
 	 * @param  mixed $mValue value of this sesion var
-	 * @param  int $iTimeout expiration of cache
+	 * @param  int $iFlag unused
+	 * @param  int $iExpire expiration of cache
 	 * @return void
 	 */
 
-	public static function set($sName, $mValue, $iTimeout = 0) {
+	public static function set($sName, $mValue, $iFlag = 0, $iExpire = 0) {
 
-		if (self::$_sTypeOfCache === 'file') {
-
-			return self::_getCacheObject()->set($sName, $mValue);
-		}
-		else if (self::$_sTypeOfCache === 'memcache') {
-
-			return self::_getCacheObject()->set($sName, $mValue, 0, $iTimeout);
-		}
-		else if (self::$_sTypeOfCache === 'apc') {
-
-			return self::_getCacheObject()->set($sName, $mValue, $iTimeout);
-		}
+		return self::_getCacheObject()->set($sName, $mValue, $iFlag, $iExpire);
 	}
 
 	/**
-	 * set a value
+	 * get a value
 	 *
 	 * @access public
 	 * @param  string $sName name of the session
+	 * @param  int $iFlags flags
 	 * @param  int $iTimeout expiration of cache
 	 * @return void
 	 */
 
-	public static function get($sName, $iTimeout = 0) {
+	public static function get($sName, &$iFlags = null, $iTimeout = 0) {
 
-		if (self::$_sTypeOfCache === 'file') {
-
-			return self::_getCacheObject()->get($sName, $iTimeout);
-		}
-		else if (self::$_sTypeOfCache === 'memcache') {
-
-			return self::_getCacheObject()->get($sName);
-		}
-		else if (self::$_sTypeOfCache === 'apc') {
-
-			return self::_getCacheObject()->get($sName);
-		}
+		return self::_getCacheObject()->get($sName, &$iFlags, $iTimeout);
 	}
 
 	/**
@@ -159,10 +143,37 @@ class Cache {
 			return self::$_aCache['file'];
 		}
 		else if (self::$_sTypeOfCache === 'memcache') {
-
-			if (!isset(self::$_aCache['memcache'])) { self::$_aCache['memcache'] = new CacheMemcache; }
+  		  
+			if (!isset(self::$_aCache['memcache'])) { 
+			    
+			    $oDbConf = Config::get('Memcache')->configuration;
+			    
+			    if (isset($oDbConf->port)) { $sPort = $oDbConf->port; }
+			    else { $sPort = null; }
+			    
+			    if (isset($oDbConf->timeout)) { $iTimeout = $oDbConf->timeout; }
+			    else { $iTimeout = null; }
+			    
+			    self::$_aCache['memcache'] = new CacheMemcache($oDbConf->host, $sPort, $iTimeout); 
+			}
 
 			return self::$_aCache['memcache'];
+		}
+		else if (self::$_sTypeOfCache === 'apc') {
+
+			if (!isset(self::$_aCache['apc'])) { self::$_aCache['apc'] = new Apc; }
+
+			return self::$_aCache['apc'];
+		}
+		else if (self::$_sTypeOfCache === 'redis') {
+		    
+			if (!isset(self::$_aCache['redis'])) {
+			    
+			    $oDbConf = Config::get('Redis')->configuration;
+			    self::$_aCache['memcache'] = new Redis($oDbConf);
+			}
+
+			return self::$_aCache['redis'];
 		}
 	}
 }

@@ -30,7 +30,7 @@ namespace Venus\lib\Cache;
  * @since     	1.0
  */
 
-class File {
+class File implements CacheInterface {
 
 	/**
 	 * var containe this folder of cache
@@ -59,10 +59,12 @@ class File {
 	 * @access public
 	 * @param  string $sName name of the session
 	 * @param  mixed $mValue value of this sesion var
+	 * @param  int $iFlag flags
+	 * @param  int $iExpire expiration of cache
 	 * @return \Venus\lib\Cache\File
 	 */
 
-	public function set($sName, $mValue) {
+	public function set($sName, $mValue, $iFlag, $iExpire) {
 
 		file_put_contents($this->_sFolder.$this->_getSubDirectory($sName).md5($sName).'.fil.cac', serialize($mValue));
 		return $this;
@@ -73,11 +75,12 @@ class File {
 	 *
 	 * @access public
 	 * @param  string $sName name of the session
+	 * @param  int $iFlags flags
 	 * @param  int $iTimeout expiration of cache
 	 * @return mixed
 	 */
 
-	public function get($sName, $iTimeout = 0) {
+	public function get($sName, &$iFlags = null, $iTimeout = 0) {
 
 		if ($iTimeout > 0 && file_exists($this->_sFolder.$this->_getSubDirectory($sName).md5($sName).'.fil.cac')
 			&& time() - filemtime($this->_sFolder.$this->_getSubDirectory($sName).md5($sName).'.fil.cac') > $iTimeout) {

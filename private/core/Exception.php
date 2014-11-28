@@ -15,6 +15,8 @@
 
 namespace Venus\core;
 
+use \Exception as GlobalException;
+
 /**
  * Exception Manager
  *
@@ -28,7 +30,7 @@ namespace Venus\core;
  * @since     	1.0
  */
 
-class Exception {
+class Exception extends GlobalException {
 
 	/**
 	 * conf in a cache array
@@ -48,8 +50,6 @@ class Exception {
 	 */
 
 	public function __construct($message, $code = 0, Exception $previous = null) {
-
-    	;
 
 		parent::__construct($message, $code, $previous);
 	}

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Manage Cache by Memcache
+ * Manage Cache by Apc
  *
  * @category  	lib
  * @package		lib\Cache
@@ -16,10 +16,8 @@
 
 namespace Venus\lib\Cache;
 
-use \Memcache as RealMemcache;
-
 /**
- * This class manage the Cache by Memcache
+ * This class manage the Cache by Apc
  *
  * @category  	lib
  * @package		lib\Cache
@@ -32,7 +30,7 @@ use \Memcache as RealMemcache;
  * @since     	1.0
  */
 
-class Apc {
+class Apc implements CacheInterface {
 
 	/**
 	 * set a value
@@ -40,12 +38,14 @@ class Apc {
 	 * @access public
 	 * @param  string $sName name of the session
 	 * @param  mixed $mValue value of this sesion var
-	 * @return \Venus\lib\Cache\File
+	 * @param  int $iFlag unused
+	 * @param  int $iExpire expiration of cache
+	 * @return \Venus\lib\Cache\Apc
 	 */
 
-	public function set($sName, $mValue) {
+	public function set($sName, $mValue, $iFlag = 0, $iExpire = 0) {
 
-		apc_add($sName, $mValue);
+		apc_add($sName, $mValue, $iExpire);
 		return $this;
 	}
 
@@ -54,11 +54,12 @@ class Apc {
 	 *
 	 * @access public
 	 * @param  string $sName name of the session
+	 * @param  int $iFlags flags
 	 * @param  int $iTimeout expiration of cache
 	 * @return mixed
 	 */
 
-	public function get($sName, $iTimeout = 0) {
+	public function get($sName, &$iFlags = null, $iTimeout = 0) {
 
 		return apc_fetch($sName);
 	}

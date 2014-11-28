@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Manage Cache by Memcache
+ * Interface of all kind of Cache
  *
  * @category  	lib
  * @package		lib\Cache
@@ -16,10 +16,8 @@
 
 namespace Venus\lib\Cache;
 
-use \Memcache as RealMemcache;
-
 /**
- * This class manage the Cache by Memcache
+ * Interface of all kind of Cache
  *
  * @category  	lib
  * @package		lib\Cache
@@ -32,6 +30,45 @@ use \Memcache as RealMemcache;
  * @since     	1.0
  */
 
-class Memcache extends RealMemcache implements CacheInterface {
+interface CacheInterface {
 
+	/**
+	 * set a value
+	 *
+	 * @access public
+	 * @param  string $sName name of the session
+	 * @param  mixed $mValue value of this sesion var
+	 * @param  int $iFlag flags
+	 * @param  int $iExpire expiration of cache
+	 */
+
+	public function set($sName, $mValue, $iFlag, $iExpire);
+
+	/**
+	 * get a value
+	 *
+	 * @access public
+	 * @param  string $sName name of the session
+	 * @param  int $iFlags flags
+	 * @param  int $iTimeout expiration of cache
+	 */
+
+	public function get($sName, &$iFlags = null, $iTimeout = 0);
+
+	/**
+	 * delete a value
+	 *
+	 * @access public
+	 * @param  string $sName name of the session
+	 */
+
+	public function delete($sName);
+
+	/**
+	 * flush the cache
+	 *
+	 * @access public
+	 */
+
+	public function flush();
 }
