@@ -119,15 +119,31 @@ class Redis extends RealRedis implements CacheInterface {
         return $this->del($sName);
 	}
 
+	/**
+	 * close the redis connecction
+	 *
+	 * @access public
+	 * @return mixed
+	 */
 	
-	public function __sleep()
-	{
+	public function __sleep() {
+	    
 		$this->close();
 	}
 
-
-	//interface qui change au grès des saisons
-	public function add($key, $var, $ttl=false) {
-		return $this->set($key, $var, $ttl);
+	/**
+	 * add
+	 *
+	 * @access public
+	 * @param  string $sName name of the session
+	 * @param  mixed $mValue value of this sesion var
+	 * @param  int $iFlag unused
+	 * @param  int $iExpire expiration of cache
+	 * @return mixed
+	 */
+	
+	public function add($sName, $mValue, $iExpire = false) {
+	    
+		return $this->set($sName, $mValue, 0, $iExpire);
 	}
 }

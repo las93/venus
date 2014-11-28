@@ -98,7 +98,7 @@ class Cache {
 
 	public static function get($sName, &$iFlags = null, $iTimeout = 0) {
 
-		return self::_getCacheObject()->get($sName, &$iFlags, $iTimeout);
+		return self::_getCacheObject()->get($sName, $iFlags, $iTimeout);
 	}
 
 	/**
