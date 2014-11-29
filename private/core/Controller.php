@@ -86,12 +86,15 @@ abstract class Controller extends Mother {
 	 *
 	 * @access public
 	 * @param  string $sUrl url for the redirection
+	 * @param int $iHttpCode code of the http request
 	 * @return void
 	 */
 
-	public function redirect($sUrl) {
+	public function redirect($sUrl, $iHttpCode = 301) {
 
-		header('Status: 301 Moved Permanently', false, 301);
+		if ($iHttpCode === 301) { header('Status: 301 Moved Permanently', false, 301); }
+		else if ($iHttpCode === 302) { header('Status: Moved Temporarily', false, 301); }
+		
 		header('Location: '.$sUrl);
 		exit;
 	}
