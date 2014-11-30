@@ -58,13 +58,16 @@ class ToInclude {
 			$aParams['to_include'] = 'src/'.PORTAIL.'/View/'.$aParams['real_name'];
 			$aParams['real_name'] = ''.DIRECTORY_SEPARATOR.'src'.DIRECTORY_SEPARATOR.PORTAIL.DIRECTORY_SEPARATOR.'View'.DIRECTORY_SEPARATOR.$aParams['real_name'];
 		}
-
+		else {
+			
+			$aParams['to_include'] = $aParams['real_name'];
+		}
+		
 		$sViewDirectory = str_replace('lib'.DIRECTORY_SEPARATOR.'Template'.DIRECTORY_SEPARATOR.'Functions',
 			'src/'.PORTAIL.'/View/', __DIR__);
 
 		$sCacheDirectory = str_replace('private'.DIRECTORY_SEPARATOR.'lib'.DIRECTORY_SEPARATOR.'Template'.DIRECTORY_SEPARATOR.'Functions',
 						'data/cache/', __DIR__);
-
 
 		$oMobileDetect = new \Mobile_Detect;
 
@@ -75,7 +78,6 @@ class ToInclude {
 		else {
 
 			eval('$oTemplate = new \Venus\lib\Template("'.str_replace("\\", "/", $aParams['real_name']).'"); $oTemplate->fetch(null, false);');
-
 		}
 
 		if (strstr($aParams['file'], '$_aProtectedVar[\'model\']')) {

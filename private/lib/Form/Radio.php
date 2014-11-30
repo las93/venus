@@ -192,7 +192,7 @@ class Radio extends Common {
 
 	public function fetch() {
 
-		$sContent = '<input type="radio" name="'.$this->getName().'[]" value="'.$this->getValue().'"';
+		$sContent = '<input type="radio" name="'.$this->getName().'" value="'.$this->getValue().'"';
 		
 		if ($this->getValueChecked() == $this->getValue()) { $sContent .= ' checked="checked"'; }
 		

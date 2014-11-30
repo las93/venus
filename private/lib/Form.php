@@ -184,7 +184,7 @@ class Form {
 		}
 		else  if ($sType === 'radio') {
 
-			$this->_aElement[$sName] = new Radio($sName, $sLabel, $mValue, $mOptions);
+			$this->_aElement[$sName.rand(0,999999)] = new Radio($sName, $sLabel, $mValue, $mOptions);
 		}
 		else  if ($sType === 'date') {
 
