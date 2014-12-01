@@ -105,9 +105,14 @@ class UrlManager {
 											$sRoute = str_replace('[:'.$sName.']', $aParams[$sName], $sRoute);
 											continue;
 										}
+										else if (isset($oRoute->defaults_constraints) 
+											&& isset($oRoute->defaults_constraints->{$sName}) 
+											&& preg_match('#'.$sType.'#', $oRoute->defaults_constraints->{$sName})) {
+
+											continue;
+										}
 
 										throw new \Exception('For the route '.$sCode.' the parameter '.$sName.' is not good!');
-
 									}
 								}
 

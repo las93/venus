@@ -387,6 +387,11 @@ class Router {
 
 							$aEntries[] = $_GET[$sName];
 						}
+						else if (isset($oRoute->defaults_constraints) && is_object($oRoute->defaults_constraints)
+							&& isset($oRoute->defaults_constraints->{$sName})) {
+
+							$aEntries[] = $oRoute->defaults_constraints->{$sName};
+						}
 						else {
 
 							echo 'Error: Parameter '.$sName.' not exists!';
