@@ -184,7 +184,7 @@ class Form {
 		}
 		else  if ($sType === 'radio') {
 
-			$this->_aElement[$sName.rand(0,999999)] = new Radio($sName, $sLabel, $mValue, $mOptions);
+			$this->_aElement[$sName.rand(100000,999999)] = new Radio($sName, $sLabel, $mValue, $mOptions);
 		}
 		else  if ($sType === 'date') {
 
@@ -290,12 +290,28 @@ class Form {
 			$sMethodName = 'findOneBy'.$sPrimaryKey;
 			$oCompleteEntity = call_user_func_array(array(&$oModel, $sMethodName), array($this->_iIdEntity));
 
-			foreach ($this->_aElement as $sKey => $sValue) {
+			if (is_object($oCompleteEntity)) {
 
-				$sMethodName = 'get_'.$sKey;
-				$mValue = $oCompleteEntity->$sMethodName();
+				foreach ($this->_aElement as $sKey => $sValue) {
+	
+					if ($sValue instanceof \Venus\lib\Form\Radio) { 
+						
+						$sExKey = $sKey;
+						$sKey = substr($sKey, 0, -6);
+					}
+					
+					$sMethodNameInEntity = 'get_'.$sKey;
+					$mValue = $oCompleteEntity->$sMethodNameInEntity();
 
-				if (isset($mValue)) { $this->_aElement[$sKey]->setValue($mValue); }
+					if ($sValue instanceof \Venus\lib\Form\Radio && method_exists($this->_aElement[$sExKey], 'setValueChecked')) {
+						
+						$this->_aElement[$sExKey]->setValueChecked($mValue);
+					}
+					else if (isset($mValue) && method_exists($this->_aElement[$sKey], 'setValue')) { 
+						
+						$this->_aElement[$sKey]->setValue($mValue); 
+					}
+				}
 			}			
 		}
 		

@@ -175,7 +175,7 @@ class Select extends Common {
 
 			$sContent .= '<option value="'.$sKey.'"';
 			
-			if ($this->getValue() == $sValue) { $sContent .= ' selected="selected"'; }
+			if ($this->getValue() == $sKey) { $sContent .= ' selected="selected"'; }
 			
 			$sContent .= '>'.$sValue.'</option>';
 		}

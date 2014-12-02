@@ -442,7 +442,6 @@ class Template {
 		$_aProtectedVar['app']['ldelim'] = $this->_sLeftDelimiter;
 		$_aProtectedVar['app']['rdelim'] = $this->_sRightDelimiter;
 
-
 		//if ($bDoCompilation === true) {
 
 			//*****************************************************************************************************************************
