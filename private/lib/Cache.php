@@ -20,6 +20,7 @@ use \Venus\lib\Cache\Apc as Apc;
 use \Venus\lib\Cache\File as CacheFile;
 use \Venus\lib\Cache\Memcache as CacheMemcache;
 use \Venus\lib\Cache\Redis as Redis;
+use \Venus\lib\Cache\Mock as Mock;
 
 /**
  * This class manage the Cache
@@ -68,6 +69,7 @@ class Cache {
 		else if ($sCacheName === 'memcache') { $this->_sTypeOfCache = 'memcache'; }
 		else if ($sCacheName === 'apc') { $this->_sTypeOfCache = 'apc'; }
 		else if ($sCacheName === 'redis') { $this->_sTypeOfCache = 'redis'; }
+		else { $this->_sTypeOfCache = 'mock'; }
 	}
 
 	/**
@@ -174,6 +176,12 @@ class Cache {
 			}
 
 			return self::$_aCache['redis'];
+		}
+		else if (self::$_sTypeOfCache === 'mock') {
+		    
+			if (!isset(self::$_aCache['mock'])) { self::$_aCache['mock'] = new Mock; }
+
+			return self::$_aCache['mock'];
 		}
 	}
 }

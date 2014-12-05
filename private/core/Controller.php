@@ -18,7 +18,7 @@ namespace Venus\core;
 
 use \Venus\core\Router as Router;
 use \Venus\core\Security as Security;
-use \Venus\core\Translator as Translator;
+use \Venus\lib\I18n as I18n;
 use \Venus\lib\Template as Template;
 use \Venus\lib\Form as Form;
 use \Venus\lib\Mail as Mail;
@@ -76,7 +76,7 @@ abstract class Controller extends Mother {
 		$this->router = function() { return new Router; };
 		$this->mail = function() { return new Mail; };
 		$this->session = function() { return new Session; };
-		$this->translator = function() { return new Translator; };
+		$this->translator = function() { return new I18n; };
 		$this->url = function() { return new UrlManager; };
 		$this->cookie = function() { return new Cookie; };
 	}
