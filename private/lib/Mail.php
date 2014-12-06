@@ -71,6 +71,14 @@ class Mail {
 	private $_sFormat = "TXT"; // valeur : TXT ou HTML;
 
 	/**
+	 * file to send with mail
+	 * @access private
+	 * @var    array
+	 */
+	
+	private $_aAttachments = array();
+
+	/**
 	 * add a recipient of mail
 	 *
 	 * @access public private
@@ -81,6 +89,26 @@ class Mail {
 
 		$this->_aRecipient[] = $sRecipient;
 		return $this;
+	}
+
+	/**
+	 * add a file to the mail
+	 *
+	 * @access public private
+	 * @param  string $sFileName
+	 * @param  string $sContent
+	 * @param  string $sType
+	 */
+
+	public function attachFile($sFileName, $sContent, $sType) {
+
+		$this->_aAttachments[] = array(
+			"name" => $sFileName,
+			"content" => $sContent,
+			"type" => $sType
+		);
+		
+		return true;
 	}
 
 	/**
@@ -150,17 +178,41 @@ class Mail {
 	 * send the mail
 	 *
 	 * @access public private
+	 * @return bool
 	 */
 
 	public function send() {
 
 		$sHeaders = 'From: ' . $this->_sFrom . "\r\n";
 
-		if ( $this->_sFormat == "HTML") {
-
-			$sHeaders .= 'MIME-Version: 1.0' . "\r\n";
-			$sHeaders .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
+		if (empty($this->_aAttachments)) {
+			
+			if ($this->_sFormat == "HTML") {
+				
+				$sHeaders .= 'MIME-Version: 1.0' . "\r\n";
+				$sHeaders .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
+			}
+			
+			return mail(implode(',', $this->_aRecipient), $this->_sSubject, $this->_sMessage, $sHeaders);
 		}
-		return mail(implode(',' , $this->_aRecipient), $this->_sSubject , $this->_sMessage , $sHeaders);
+		else {
+
+			$sBoundary = "_" . md5(uniqid(rand()));
+
+			$sAttached = "";
+
+			foreach ($this->_aAttachments as $aAttachment) {
+				
+				$sAttached_file = chunk_split(base64_encode($aAttachment["content"]));
+				$sAttached = "\n\n" . "--" . $sBoundary . "\nContent-Type: application; name=\"" . $aAttachment["name"] . "\"\r\nContent-Transfer-Encoding: base64\r\nContent-Disposition: attachment; filename=\"" . $aAttachment["name"] . "\"\r\n\n" . $sAttached_file . "--" . $sBoundary . "--";
+			}
+
+			$sHeaders = 'From: ' . $this->_sFrom . "\r\n";
+			$sHeaders .= "MIME-Version: 1.0\r\nContent-Type: multipart/mixed; boundary=\"$sBoundary\"\r\n";
+
+			$sBody = "--" . $sBoundary . "\nContent-Type: " . ($this->_sFormat == "HTML" ? "text/html" : "text/plain") . "; charset=UTF-8\r\n\n" . $this->_sMessage . $sAttached;
+
+			return mail(implode(',', $this->_aRecipient), $this->_sSubject, $sBody, $sHeaders);
+		}
 	}
 }

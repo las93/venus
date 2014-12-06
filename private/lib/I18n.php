@@ -34,6 +34,27 @@ use \Venus\lib\I18n\Translator as Translator;
 
 class I18n {
 	
+	/**
+	 * the translation language
+	 * @var string
+	 */
+	
+	private $_sLanguage = LANGUAGE;
+	
+	/**
+	 * set the language if you don't want take the default language of the configuration file
+	 * 
+	 * @access public
+	 * @param  string $sLanguage
+	 * @return \Venus\lib\I18n
+	 */
+	
+	public function setLanguage($sLanguage) {
+		
+		$this->_sLanguage = $sLanguage;
+		return $this;
+	}
+	
     /**
      * get a translation
      *
