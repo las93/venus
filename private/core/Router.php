@@ -291,6 +291,7 @@ class Router {
 
 		$RequestUri = preg_replace('/^([^?]+)\?.*$/', '$1', $RequestUri);
 		$RequestUri = preg_replace('#^'.$this->_sBaseUri.'#', '', $RequestUri);
+		$sFinalRoute = str_replace("*", ".*", $sFinalRoute);
 
 		if (preg_match('#^'.$sFinalRoute.'$#', $RequestUri, $aMatch)) {
 

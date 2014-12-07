@@ -1,10 +1,9 @@
 <?php
 
 /**
- * Manage translation with a classic translator
+ * Manage Form
  *
  * @category  	lib
- * @package		lib\Cache
  * @author    	Judicaël Paquet <judicael.paquet@gmail.com>
  * @copyright 	Copyright (c) 2013-2014 PAQUET Judicaël FR Inc. (https://github.com/las93)
  * @license   	https://github.com/las93/venus/blob/master/LICENSE.md Tout droit réservé à PAQUET Judicaël
@@ -14,13 +13,16 @@
  * @since     	1.0
  */
 
-namespace Venus\lib\I18n;
+namespace Venus\lib;
+
+use \Venus\lib\Response\Json as Json;
+use \Venus\lib\Response\Mock as Mock;
+use \Venus\lib\Response\Yaml as Yaml;
 
 /**
- * Manage translation with a classic translator
+ * This class manage the Form
  *
  * @category  	lib
- * @package		lib\Cache
  * @author    	Judicaël Paquet <judicael.paquet@gmail.com>
  * @copyright 	Copyright (c) 2013-2014 PAQUET Judicaël FR Inc. (https://github.com/las93)
  * @license   	https://github.com/las93/venus/blob/master/LICENSE.md Tout droit réservé à PAQUET Judicaël
@@ -30,57 +32,41 @@ namespace Venus\lib\I18n;
  * @since     	1.0
  */
 
-class Translator {
+class Response {
 
 	/**
-	 * Indicate if the configuration is good or not
-	 * @var bool
+	 * the translation language
+	 * @var string
 	 */
 	
-	private static $_bConfigurated = false;
+	private $_sKinbfOfReturn = 'json';
 	
 	/**
-	 * Indicate if the configuration is good or not
-	 * @var bool
-	 */
-	
-	private static $_aTranslator = false;
-	
-	/**
-	 * set config jsut for the first time
-	 *
-	 * @access private
-	 * @return void
-	 */
-	
-	public static function setConfig($sFile) {
-	
-		$this->_aTranslator = json_decode($sFile);
-		$this->_bConfigurated = true;
-	}
-	
-	/**
-	 * set config jsut for the first time
-	 *
-	 * @access private
-	 * @return bool
-	 */
-	
-	public static function isConfigurated() {
-	
-		return $this->_bConfigurated;
-	}
-	
-	/**
-	 * get a value
+	 * set the language if you don't want take the default language of the configuration file
 	 *
 	 * @access public
-	 * @param  string $sValue value to translate
+	 * @param  string $sKinbfOfReturn
+	 * @return \Venus\lib\I18n
+	 */
+	
+	public function setKinbfOfReturn($sKinbfOfReturn) {
+	
+		$this->_sKinbfOfReturn = $sKinbfOfReturn;
+		return $this;
+	}
+	
+	/**
+	 * translate the content
+	 *
+	 * @access public
+	 * @param  mixed $mContent content to translate
 	 * @return mixed
 	 */
 
-	public static function _($sValue) {
+	public static function translate($mContent) {
 	    
-	    return $this->_aTranslator[$sValue];
+		if ($this->_sKinbfOfReturn === 'yaml') { return Yaml::translate($mContent); }
+		else if ($this->_sKinbfOfReturn === 'mock') { return Mock::translate($mContent); }
+		else { return Json::translate($mContent); }  
 	}
 }
