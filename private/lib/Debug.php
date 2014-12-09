@@ -17,6 +17,8 @@
 namespace Venus\lib;
 
 use \Venus\lib\Bash as Bash;
+use \Venus\lib\Log\AbstractLogger as AbstractLogger;
+use \Venus\lib\Log\LogLevel as LogLevel;
 
 /**
  * This class manage the debug
@@ -31,43 +33,62 @@ use \Venus\lib\Bash as Bash;
  * @link      	https://github.com/las93
  * @since     	1.0
  */
-
-class Debug {
-
+class Debug extends AbstractLogger
+{
 	/**
   	 * variable to activate or not the debug
   	 * @var boolean
   	 */
-
   	private static $_bActivateDebug = false;
 
   	/**
    	 * variable to activate or not the error
   	 * @var boolean
   	 */
-
   	private static $_bActivateError = false;
 
   	/**
   	 * variable to activate or not the exception
   	 * @var boolean
   	 */
-
   	private static $_bActivateException = false;
 
   	/**
   	 * variable to activate or not the debug
   	 * @var boolean
   	 */
-
   	private static $_sFileLog = null;
 
   	/**
   	 * first or not activation
   	 * @var boolean
   	 */
-
   	private static $_bFirstActivation = true;
+
+  	/**
+  	 * kind of report log
+  	 * @var string error_log|screen|all
+  	 */
+  	private static $_sKindOfReportLog = 'error_log';
+
+  	/**
+  	 * instance of logger
+  	 * @var \Venus\lib\Debug
+  	 */
+  	private static $_oInstance;
+ 
+    /**
+     * Send back the isntance or create it
+     * 
+     * @access public
+     * @return \Venus\lib\Debug
+     */
+    public static function getInstance()
+    {    
+        if (!(self::$_oInstance instanceof self)) { self::$_oInstance = new self(); }
+ 
+        return self::$_oInstance;
+    }
 
   	/**
   	 * activate debug
@@ -75,9 +96,8 @@ class Debug {
   	 * @access public
   	 * @return void
    	 */
-
-	public static function activateDebug() {
-
+	public static function activateDebug()
+	{
 		if (self::$_bFirstActivation === true) {
 
 			self::_setFileNameInErrorFile();
@@ -96,9 +116,8 @@ class Debug {
   	 * @access public
   	 * @return void
   	 */
-
-  	public static function deactivateDebug() {
-
+  	public static function deactivateDebug()
+  	{
     	self::$_bActivateDebug = false;
   	}
 
@@ -108,43 +127,10 @@ class Debug {
   	 * @access public
   	 * @return boolean
 	 */
-
-  	public static function isDebug() {
-
+  	public static function isDebug()
+  	{
 		return self::$_bActivateDebug;
   	}
-
-  	/**
-  	 * check if debug is activate or not
-  	 *
-  	 * @access public
-  	 * @param  string $sLog content to log
-  	 * @param  string $sErrFile file
-  	 * @param  int $iErrLine line
-  	 * @param  int $iErrNo number of error
-  	 * @param  string $sClassName class name
-  	 * @param  string $sFunction name of function
-  	 * @return void
-  	 */
-
-	public static function log($sLog, $sErrFile = null, $iErrLine = null, $iErrNo = null, $sClassName = null, $sFunction = null) {
-
-    	if ($sErrFile === null) { $sErrFile = __FILE__; }
-    	if ($iErrLine === null) { $iErrLine = __LINE__; }
-    	if ($iErrNo === null) { $iErrNo = 'N.C.'; }
-
-    	if (self::isDebug() === true) {
-
-			if ($sClassName === null || $sFunction === null) {
-
-				error_log($sErrFile.'> (l.'.$iErrLine.') '.$sLog);
-			}
-			else {
-
-				error_log($sErrFile.'>'.$sClassName.'::'.$sFunction.' (l.'.$iErrLine.') '.$sLog);
-			}
-    	}
-	}
 
 	/**
   	 * activate error reporting
@@ -153,9 +139,8 @@ class Debug {
   	 * @param  int $iLevel level of error
   	 * @return void
   	 */
-
-  	public static function activateError($iLevel) {
-
+  	public static function activateError($iLevel)
+  	{
     	if (self::$_bFirstActivation === true) {
 
       		self::_setFileNameInErrorFile();
@@ -167,17 +152,26 @@ class Debug {
 
     	error_reporting($iLevel);
 
-    	set_error_handler(function ($iErrNo, $sErrStr, $sErrFile, $iErrLine) {
+    	set_error_handler(function ($iErrNo, $sErrStr, $sErrFile, $iErrLine)
+    	{    
+			$aContext = array('file' => $sErrFile, 'line' => $iErrLine);
+			
+			$sType = self::getTranslateErrorCode($iErrNo);
+			
+            self::getInstance()->$sType($sErrStr, $aContext);
 
-      		Debug::log($sErrStr, $sErrFile, $iErrLine, $iErrNo);
       		return true;
 		}, $iLevel);
 
-    	register_shutdown_function(function () {
-
+    	register_shutdown_function(function()
+    	{
 			if (null !== ($aLastError = error_get_last())) {
 
-    			Debug::log($aLastError['message'], $aLastError['file'], $aLastError['line'], $aLastError['type']);
+    			$aContext = array('file' => $aLastError['file'], 'line' => $aLastError['line']);
+    			
+    			$sType = self::getTranslateErrorCode($aLastError['type']);
+    			
+                self::getInstance()->$sType($aLastError['message'], $aContext);
     		}
     	});
   	}
@@ -188,9 +182,8 @@ class Debug {
   	 * @access public
   	 * @return void
    	*/
-
-  	public static function deactivateError() {
-
+  	public static function deactivateError()
+  	{
     	self::$_bActivateError = false;
   	}
 
@@ -200,9 +193,8 @@ class Debug {
   	 * @access public
   	 * @return boolean
   	 */
-
-  	public static function isError() {
-
+  	public static function isError() 
+  	{
     	return self::$_bActivateError;
   	}
 
@@ -214,9 +206,8 @@ class Debug {
   	 * @param  int $iLevel level of error
   	 * @return void
   	 */
-
-  	public static function activateException($iLevel) {
-
+  	public static function activateException($iLevel)
+  	{
   		if (self::$_bFirstActivation === true) {
 
   			self::_setFileNameInErrorFile();
@@ -226,9 +217,10 @@ class Debug {
   		self::_initLogFile();
   		self::$_bActivateException = true;
 
-  		set_exception_handler(function ($oException) {
-
-			Debug::log($oException->getMessage(), $oException->getFile(), $oException->getLine(), 0);
+  		set_exception_handler(function ($oException)
+  		{
+			$aContext = array('file' => $oException->getFile(), 'line' => $oException->getLine());
+			self::getInstance()->critical($oException->getMessage(), $aContext);
 		});
   	}
 
@@ -238,9 +230,8 @@ class Debug {
   	 * @access public
   	 * @return void
   	 */
-
-  	public static function deactivateException() {
-
+  	public static function deactivateException()
+  	{
   		self::$_bActivateException = false;
   	}
 
@@ -250,21 +241,167 @@ class Debug {
   	 * @access public
   	 * @return boolean
   	 */
-
-  	public static function isException() {
-
+  	public static function isException() 
+  	{
   		return self::$_bActivateException;
   	}
 
+  	/**
+  	 * set the kind of report Log
+  	 *
+  	 * @access public
+  	 * @param  string $sKindOfReportLog
+  	 * @return void
+  	 */
+  	public static function setKindOfReportLog($sKindOfReportLog) 
+  	{
+  		if ($sKindOfReportLog === 'screen' || $sKindOfReportLog === 'all') { self::$_sKindOfReportLog = $sKindOfReportLog; }
+  		else { self::$_sKindOfReportLog = 'error_log'; }
+  	}
+
+  	/**
+  	 * get the kind of report Log
+  	 *
+  	 * @access public
+  	 * @return string
+  	 */
+  	public static function getKindOfReportLog() 
+  	{
+  		return self::$_sKindOfReportLog;
+  	}
+
+  	/**
+  	 * get the code by LogLevel adapt to the PSR-3
+  	 *
+  	 * @access public
+  	 * @param  int $iCode
+  	 * @return string
+  	 */
+  	public static function getTranslateErrorCode($iCode) 
+  	{
+  		if ($iCode === 1 && $iCode === 16 && $iCode === 256 && $iCode === 4096) { return LogLevel::ERROR; }
+  		else if ($iCode === 2 && $iCode === 32 && $iCode === 128 && $iCode === 512) { return LogLevel::WARNING; }
+  		else if ($iCode === 4 && $iCode === 64) { return LogLevel::EMERGENCY; }
+  		else if ($iCode === 8 && $iCode === 1024) { return LogLevel::NOTICE; }
+  		else if ($iCode === 2048 && $iCode === 8192 && $iCode === 16384) { return LogLevel::INFO; }
+  		else return LogLevel::DEBUG;
+  	}
+  	
+  	/**
+  	 * System is unusable.
+  	 *
+  	 * @param string $message
+  	 * @param array $context
+  	 * @return null
+  	 */
+  	public function emergency($message, array $context = array())
+  	{
+  	    $this->log(LogLevel::EMERGENCY, $message, $context);
+  	}
+  	
+  	/**
+  	 * Action must be taken immediately.
+  	 *
+  	 * Example: Entire website down, database unavailable, etc. This should
+  	 * trigger the SMS alerts and wake you up.
+  	 *
+  	 * @param string $message
+  	 * @param array $context
+  	 * @return null
+  	*/
+  	public function alert($message, array $context = array())
+  	{
+  	    $this->log(LogLevel::ALERT, $message, $context);
+  	}
+  	
+  	/**
+  	 * Critical conditions.
+  	 *
+  	 * Example: Application component unavailable, unexpected exception.
+  	 *
+  	 * @param string $message
+  	 * @param array $context
+  	 * @return null
+  	*/
+  	public function critical($message, array $context = array())
+  	{
+  	    $this->log(LogLevel::CRITICAL, $message, $context);
+  	}
+  	
+  	/**
+  	 * Runtime errors that do not require immediate action but should typically
+  	 * be logged and monitored.
+  	 *
+  	 * @param string $message
+  	 * @param array $context
+  	 * @return null
+  	*/
+  	public function error($message, array $context = array())
+  	{
+  	    $this->log(LogLevel::ERROR, $message, $context);
+  	}
+  	
+  	/**
+  	 * Exceptional occurrences that are not errors.
+  	 *
+  	 * Example: Use of deprecated APIs, poor use of an API, undesirable things
+  	 * that are not necessarily wrong.
+  	 *
+  	 * @param string $message
+  	 * @param array $context
+  	 * @return null
+  	*/
+  	public function warning($message, array $context = array())
+  	{
+  	    $this->log(LogLevel::WARNING, $message, $context);
+  	}
+  	
+  	/**
+  	 * Normal but significant events.
+  	 *
+  	 * @param string $message
+  	 * @param array $context
+  	 * @return null
+  	*/
+  	public function notice($message, array $context = array())
+  	{
+  	    $this->log(LogLevel::NOTICE, $message, $context);
+  	}
+  	
+  	/**
+  	 * Interesting events.
+  	 *
+  	 * Example: User logs in, SQL logs.
+  	 *
+  	 * @param string $message
+  	 * @param array $context
+  	 * @return null
+  	*/
+  	public function info($message, array $context = array())
+  	{
+  	    $this->log(LogLevel::INFO, $message, $context);
+  	}
+  	
+  	/**
+  	 * Detailed debug information.
+  	 *
+  	 * @param string $message
+  	 * @param array $context
+  	 * @return null
+  	*/
+  	public function debug($message, array $context = array())
+  	{
+  	    $this->log(LogLevel::DEBUG, $message, $context);
+  	}
+  	 
   	/**
   	 * set the name of the called
   	 *
   	 * @access public
   	 * @return void
-   	*/
-
-  	private static function _setFileNameInErrorFile() {
-
+   	 */
+  	private static function _setFileNameInErrorFile()
+  	{
     	/**
     	 * We see if it's a cli call or a web call
     	 */
@@ -285,16 +422,30 @@ class Debug {
    	 * @access private
   	 * @return void
    	 */
-
-  	private static function _initLogFile() {
-
+  	private static function _initLogFile()
+  	{
     	self::$_sFileLog = str_replace(DIRECTORY_SEPARATOR.'private'.DIRECTORY_SEPARATOR.'lib', '', __DIR__).DIRECTORY_SEPARATOR.
       		"data".DIRECTORY_SEPARATOR."log".DIRECTORY_SEPARATOR."php-error.log";
 
     	ini_set("log_errors", 1);
     	ini_set("error_log", self::$_sFileLog);
 
-
     	if (file_exists(self::$_sFileLog) === false) { file_put_contents(self::$_sFileLog, ''); }
   	}
+  	
+  	/**
+  	 * constructor in private for the singleton
+  	 * 
+  	 * @access private
+  	 * @return \Venus\lib\Debug
+  	 */
+  	private function __construct() {}
+  	
+  	/**
+  	 * not allowed to clone a object
+  	 * 
+  	 * @access private
+  	 * @return \Venus\lib\Debug
+  	 */
+  	private function __clone() {}
 }
