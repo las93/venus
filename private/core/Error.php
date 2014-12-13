@@ -12,7 +12,6 @@
  * @link      	https://github.com/las93
  * @since     	1.0
  */
-
 namespace Venus\core;
 
 use \Venus\Exception as Exception;
@@ -29,9 +28,8 @@ use \Venus\Exception as Exception;
  * @link      	https://github.com/las93
  * @since     	1.0
  */
-
-class Error {
-
+class Error
+{
 	/**
 	 * get a Erroruration
 	 *
@@ -39,9 +37,8 @@ class Error {
 	 * @param  string sName name of the Erroruration
 	 * @return void
 	 */
-
-	public static function activateDebug() {
-
+	public static function activateDebug()
+	{
 		error_reporting(E_ALL);
 		ini_set('display_error', 0);
 		set_error_handler(array('\Venus\core\Error', 'setErrorHandler'));
@@ -59,9 +56,8 @@ class Error {
 	 * @param  int $iLine number of line
 	 * @return array
 	 */
-
-	public static function setErrorHandler($iNumber, $sMessage, $sFile, $iLine) {
-
+	public static function setErrorHandler($iNumber, $sMessage, $sFile, $iLine)
+	{
 		self::showError(array('code' => $iNumber, 'message' => $sMessage, 'line' => $iLine, 'file' => $sFile));
 		self::showDebugBacktrace(debug_backtrace());
 	}
@@ -74,9 +70,8 @@ class Error {
 	 * @param  array $aBase base
 	 * @return array
 	 */
-
-	public static function setExceptionHandler(Exception $e) {
-
+	public static function setExceptionHandler(Exception $e)
+	{
 		self::showDebugBacktrace(debug_backtrace());
 	}
 
@@ -86,9 +81,8 @@ class Error {
 	 * @access private
 	 * @return array
 	 */
-
-	public static function setShudownHandler() {
-
+	public static function setShudownHandler()
+	{
 	    $aError = error_get_last();
 
 	    if (($aError['type'] === E_ERROR) || ($aError['type'] === E_USER_ERROR)) {
@@ -103,9 +97,8 @@ class Error {
 	 * @access private
 	 * @return array
 	 */
-
-	public static function showDebugBacktrace(array $aDebugbacktrace) {
-
+	public static function showDebugBacktrace(array $aDebugbacktrace)
+	{
 		foreach ($aDebugbacktrace as $iKey => $aOne) {
 
 			self::showDebug($aOne);
@@ -118,9 +111,8 @@ class Error {
 	 * @access private
 	 * @return array
 	 */
-
-	private static function showDebug($mDebug) {
-
+	private static function showDebug($mDebug)
+	{
 		if (is_object($mDebug) && !$mDebug instanceof \StdClass) {
 
 			$aDebug = array();
@@ -165,9 +157,8 @@ class Error {
 	 * @access private
 	 * @return array
 	 */
-
-	private static function showError($aDebug) {
-
+	private static function showError($aDebug)
+	{
 		echo '<table style="background-color:red" cellpadding="10" cellspacing="10" width="100%"><tr><td style="background-color:orange;">';
 		echo ' line '.$aDebug["line"].'&nbsp;';
 		echo ' in file '.$aDebug["file"].'<br/>';

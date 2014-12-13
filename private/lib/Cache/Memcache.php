@@ -32,6 +32,6 @@ use \Memcache as RealMemcache;
  * @since     	1.0
  */
 
-class Memcache extends RealMemcache implements CacheInterface {
+class Memcache extends RealMemcache {
 
 }

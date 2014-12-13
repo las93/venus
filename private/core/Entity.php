@@ -12,7 +12,6 @@
  * @link      	https://github.com/las93
  * @since     	1.0
  */
-
 namespace Venus\core;
 
 use \Venus\lib\Entity as LibEntity;
@@ -31,16 +30,14 @@ use \Venus\lib\Orm\Where as Where;
  * @link      	https://github.com/las93
  * @since     	1.0
  */
-
-abstract class Entity {
-
+abstract class Entity
+{
 	/**
 	 * name(s) of primary key
 	 *
 	 * @access private
 	 * @var    mixed
 	 */
-
 	private $_mPrimaryKeyName;
 
 	/**
@@ -49,7 +46,6 @@ abstract class Entity {
 	 * @access private
 	 * @var    mixed
 	 */
-
 	private $_mPrimaryKeyNameWithoutMapping;
 
 	/**
@@ -58,9 +54,8 @@ abstract class Entity {
 	 * @access public
 	 * @return object
 	 */
-
-	public function __construct() {
-
+	public function __construct()
+	{
 		$this->_loadPrimaryKeyName(LibEntity::getPrimaryKeyName($this));
 		$this->_loadPrimaryKeyNameWithoutMapping(LibEntity::getPrimaryKeyNameWithoutMapping($this));
 	}
@@ -72,9 +67,8 @@ abstract class Entity {
 	 * @param  mixed $mName name of primary key (array if it's a multiple key)
 	 * @return object
 	 */
-
-	private function _loadPrimaryKeyName($mName) {
-
+	private function _loadPrimaryKeyName($mName)
+	{
 	 	$this->_mPrimaryKeyName = $mName;
 	 	return $this;
 	}
@@ -86,9 +80,8 @@ abstract class Entity {
 	 * @param  mixed $mName name of primary key (array if it's a multiple key)
 	 * @return object
 	 */
-
-	private function _loadPrimaryKeyNameWithoutMapping($mName) {
-
+	private function _loadPrimaryKeyNameWithoutMapping($mName)
+	{
 	 	$this->_mPrimaryKeyNameWithoutMapping = $mName;
 	 	return $this;
 	}
@@ -99,9 +92,8 @@ abstract class Entity {
 	 * @access public
 	 * @return object
 	 */
-
-	public function save() {
-
+	public function save()
+	{
 		$mPrimaryKeyName = $this->_mPrimaryKeyName;
 		$bInsertMode = false;
 
@@ -178,9 +170,8 @@ abstract class Entity {
 	 * @access public
 	 * @return object
 	 */
-
-	public function remove() {
-
+	public function remove()
+	{
 		$mPrimaryKeyName = $this->_mPrimaryKeyName;
 		$bInsertMode = false;
 		
@@ -221,9 +212,8 @@ abstract class Entity {
 	 * @param  array $aArguments
 	 * @return mixed
 	 */
-
-	public function __call($sName, $aArguments) {
-
+	public function __call($sName, $aArguments)
+	{
 		if (preg_match('/^get_/', $sName) && property_exists($this, preg_replace('/^get_/', '', $sName))) {
 
 			$sPropertyName = preg_replace('/^get_/', '', $sName);

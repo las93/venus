@@ -12,8 +12,9 @@
  * @link      	https://github.com/las93
  * @since     	1.0
  */
-
 namespace Venus\core;
+
+use \Venus\lib\Debug as Debug;
 
 /**
  * Config Manager
@@ -27,29 +28,27 @@ namespace Venus\core;
  * @link      	https://github.com/las93
  * @since     	1.0
  */
-
-class Config {
-
+class Config
+{
 	/**
 	 * conf in a cache array
 	 *
 	 * @access private
 	 * @var    array
 	 */
-
 	private static $_aConfCache = array();
 
 	/**
 	 * get a configuration
 	 *
 	 * @access public
-	 * @param  string sName name of the configuration
+	 * @param  string $sName name of the configuration
 	 * @param  string $sPortal portal name if you specify it
+	 * @param  bool $bNoDoRedirect not allowed the redirect parameter
 	 * @return void
 	 */
-
-	public static function get($sName, $sPortal = null) {
-
+	public static function get($sName, $sPortal = null, $bNoDoRedirect = false) 
+	{
 		if ($sPortal === null || !is_string($sPortal)) { $sPortal = PORTAIL; }
 
 		if (!isset(self::$_aConfCache[$sName])) {
@@ -129,7 +128,7 @@ class Config {
 				trigger_error("Error in your Json format in this file : ".$sJsonFile, E_USER_NOTICE);
 			}
 
-			if (isset($aBase->redirect)) {
+			if (isset($aBase->redirect) && $bNoDoRedirect === false) {
 			
 				$aBase = self::get($sName, $aBase->redirect);
 			}
@@ -137,7 +136,28 @@ class Config {
 			self::$_aConfCache[$sName] = $aBase;
 		}
 
+		if (!self::$_aConfCache[$sName]) {
+			
+			$oDebug = new Debug;
+			$oDebug->error('The configuration file '.$sName.' is in error!');
+		}
+		
 		return self::$_aConfCache[$sName];
+	}
+	
+	/**
+	 * get the bundle name location or the actualy bundle name if they isn't location
+	 *
+	 * @access public
+	 * @param  string $sName name of the configuration
+	 * @return string
+	 */
+	public static function getBundleLocationName($sName) {
+	    
+	    $oConfig = self::get($sName, null, true);
+	    
+	    if (isset($oConfig->redirect)) { return $oConfig->redirect; }
+	    else { return PORTAIL; }
 	}
 
 	/**
@@ -148,9 +168,8 @@ class Config {
 	 * @param  array $aBase base
 	 * @return array
 	 */
-
-	private static function  _mergeAndGetConf($sFileToMerge, $aBase) {
-
+	private static function  _mergeAndGetConf($sFileToMerge, $aBase)
+	{
 		$aConfFiles = json_decode(file_get_contents($sFileToMerge));
 		list($aConfFiles, $aBase) = self::_recursiveGet($aConfFiles, $aBase);
 		return $aBase;
@@ -164,9 +183,8 @@ class Config {
 	 * @param  array $aBase
 	 * @return multitype:array multitype:array
 	 */
-
-	private static function _recursiveGet($aConfFiles, $aBase) {
-
+	private static function _recursiveGet($aConfFiles, $aBase)
+	{
 		foreach ($aConfFiles as $sKey => $mOne) {
 
 			if (!isset($aBase->$sKey)) {

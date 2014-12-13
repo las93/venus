@@ -13,7 +13,6 @@
  * @link      	https://github.com/las93
  * @since     	1.0
  */
-
 namespace Venus\core;
 
 use \Venus\core\Router as Router;
@@ -39,18 +38,16 @@ use \Venus\core\UrlManager as UrlManager;
  * @link      	https://github.com/las93
  * @since     	1.0
  */
-
-abstract class Controller extends Mother {
-
+abstract class Controller extends Mother 
+{
 	/**
 	 * Constructor
 	 *
 	 * @access public
 	 * @return object
 	 */
-
-	public function __construct() {
-
+	public function __construct()
+	{
 		$aClass = explode('\\', get_called_class());
 		$sClassName = $aClass[count($aClass) - 1];
 		$sNamespaceName = preg_replace('/\\\\'.$sClassName.'$/', '', get_called_class());
@@ -89,9 +86,8 @@ abstract class Controller extends Mother {
 	 * @param int $iHttpCode code of the http request
 	 * @return void
 	 */
-
-	public function redirect($sUrl, $iHttpCode = 301) {
-
+	public function redirect($sUrl, $iHttpCode = 301)
+	{
 		if ($iHttpCode === 301) { header('Status: 301 Moved Permanently', false, 301); }
 		else if ($iHttpCode === 302) { header('Status: Moved Temporarily', false, 301); }
 		
@@ -107,9 +103,8 @@ abstract class Controller extends Mother {
 	 * @param  array $aParams parameters
 	 * @return void
 	 */
-
-	public function forward($sUri, $aParams = array()) {
-
+	public function forward($sUri, $aParams = array())
+	{
 		$this->router->runByFoward($sUri, $aParams);
 	}
 
@@ -119,9 +114,8 @@ abstract class Controller extends Mother {
 	 * @access public
 	 * @return void
 	 */
-
-	public function NotFound() {
-
+	public function NotFound()
+	{
 		$$this->router->runHttpErrorPage(404);
 	}
 
@@ -131,9 +125,8 @@ abstract class Controller extends Mother {
 	 * @access public
 	 * @return void
 	 */
-
-	public function Forbidden() {
-
+	public function Forbidden()
+	{
 		$$this->router->runHttpErrorPage(403);
 	}
 }
