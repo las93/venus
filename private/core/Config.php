@@ -49,9 +49,12 @@ class Config
 	 */
 	public static function get($sName, $sPortal = null, $bNoDoRedirect = false) 
 	{
+	    if ($bNoDoRedirect === true) { $sNameCache = $sName.'_true'; }
+	    else { $sNameCache = $sName; }
+	    
 		if ($sPortal === null || !is_string($sPortal)) { $sPortal = PORTAIL; }
 
-		if (!isset(self::$_aConfCache[$sName])) {
+		if (!isset(self::$_aConfCache[$sNameCache])) {
 
 			$aBase = new \StdClass;
 
@@ -133,16 +136,16 @@ class Config
 				$aBase = self::get($sName, $aBase->redirect);
 			}
 			
-			self::$_aConfCache[$sName] = $aBase;
+			self::$_aConfCache[$sNameCache] = $aBase;
 		}
 
-		if (!self::$_aConfCache[$sName]) {
+		if (!self::$_aConfCache[$sNameCache]) {
 			
 			$oDebug = new Debug;
 			$oDebug->error('The configuration file '.$sName.' is in error!');
 		}
 		
-		return self::$_aConfCache[$sName];
+		return self::$_aConfCache[$sNameCache];
 	}
 	
 	/**
@@ -153,9 +156,9 @@ class Config
 	 * @return string
 	 */
 	public static function getBundleLocationName($sName) {
-	    
+
 	    $oConfig = self::get($sName, null, true);
-	    
+
 	    if (isset($oConfig->redirect)) { return $oConfig->redirect; }
 	    else { return PORTAIL; }
 	}

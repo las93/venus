@@ -1,48 +1,64 @@
 <?php
 
 /**
- * Manage Response by Json 
+ * Manipulate objects
  *
  * @category  	lib
- * @package		lib\Cache
  * @author    	Judicaël Paquet <judicael.paquet@gmail.com>
  * @copyright 	Copyright (c) 2013-2014 PAQUET Judicaël FR Inc. (https://github.com/las93)
  * @license   	https://github.com/las93/venus/blob/master/LICENSE.md Tout droit réservé à PAQUET Judicaël
  * @version   	Release: 1.0.0
  * @filesource	https://github.com/las93/venus
  * @link      	https://github.com/las93
- * @since     	1.0
  */
+namespace Venus\lib;
 
-namespace Venus\lib\Response;
-
-use \Venus\lib\Object as Object;
-use \Venus\lib\Response\ResponseInterface as ResponseInterface;
+use \ReflectionClass as ReflectionClass;
 
 /**
- * Manage Response by Json
+ * This class manage object
  *
  * @category  	lib
- * @package		lib\Cache
  * @author    	Judicaël Paquet <judicael.paquet@gmail.com>
  * @copyright 	Copyright (c) 2013-2014 PAQUET Judicaël FR Inc. (https://github.com/las93)
  * @license   	https://github.com/las93/venus/blob/master/LICENSE.md Tout droit réservé à PAQUET Judicaël
  * @version   	Release: 1.0.0
  * @filesource	https://github.com/las93/venus
  * @link      	https://github.com/las93
- * @since     	1.0
  */
-class Json implements ResponseInterface
+class Object
 {
 	/**
-	 * translate the content
+	 * create an array with an object
 	 *
 	 * @access public
-	 * @param  mixed $mContent content to translate
-	 * @return mixed
+	 * @param  unknown $sServiceName
+	 * @param  unknown $aParams
+	 * @return
 	 */
-	public static function translate($mContent) {
+	public static function object_to_array($mObject)
+	{
+		if ( is_object($mObject)) {
+			
+		    $mObject = (array) $mObject;
+		}
 
-	    return json_encode(Object::object_to_array($mContent));
+
+		if (is_array($mObject)) {
+
+			$aNew = array();
+
+			foreach($mObject as $sKey => $mValues) {
+
+				$sKey = preg_replace("/^\\0(.*)\\0/", "", $sKey);
+				$aNew[$sKey] = self::object_to_array($mValues);
+			}
+		}
+		else {
+
+			$aNew = $mObject;
+		}
+
+		return $aNew;
 	}
 }

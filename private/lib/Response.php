@@ -39,7 +39,7 @@ class Response {
 	 * @var string
 	 */
 	
-	private $_sKinbfOfReturn = 'json';
+	private static $_sKinbfOfReturn = 'json';
 	
 	/**
 	 * set the language if you don't want take the default language of the configuration file
@@ -49,9 +49,9 @@ class Response {
 	 * @return \Venus\lib\I18n
 	 */
 	
-	public function setKinbfOfReturn($sKinbfOfReturn) {
+	public static function setKinbfOfReturn($sKinbfOfReturn) {
 	
-		$this->_sKinbfOfReturn = $sKinbfOfReturn;
+		self::$_sKinbfOfReturn = $sKinbfOfReturn;
 		return $this;
 	}
 	
@@ -63,10 +63,10 @@ class Response {
 	 * @return mixed
 	 */
 
-	public static function translate($mContent) {
-	    
-		if ($this->_sKinbfOfReturn === 'yaml') { return Yaml::translate($mContent); }
-		else if ($this->_sKinbfOfReturn === 'mock') { return Mock::translate($mContent); }
+	public function translate($mContent) {
+
+		if (self::$_sKinbfOfReturn === 'yaml') { return Yaml::translate($mContent); }
+		else if (self::$_sKinbfOfReturn === 'mock') { return Mock::translate($mContent); }
 		else { return Json::translate($mContent); }  
 	}
 }
