@@ -10,7 +10,7 @@
  * @version   	Release: 1.0.0
  * @filesource	https://github.com/las93/venus
  * @link      	https://github.com/las93
- * @since     	1.0
+ * @since     	1.0.1
  */
 namespace Venus\lib;
 
@@ -24,7 +24,7 @@ namespace Venus\lib;
  * @version   	Release: 1.0.0
  * @filesource	https://github.com/las93/venus
  * @link      	https://github.com/las93
- * @since     	1.0
+ * @since     	1.0.1
  */
 class Http
 {
@@ -45,11 +45,16 @@ class Http
 	{	    
 	    $aPut = array();
 	    
-	    foreach($_SERVER as $sKey => $sValue) {
+	    $rPutResource = fopen("php://input", "r");
+	    
+	    while ($sData = fread($rPutResource, 1024)) {
+
+	        $aSeparatePut = explode('&', $sData);
 	        
-	        if (!in_array($sKey, self::$_aHttpClassicParameter) && preg_match('/^HTTP_/', $sKey)) {
+	        foreach($aSeparatePut as $sOne) {
 	            
-	            $aPut[str_replace('HTTP_', '', $sKey)] = $sValue;
+	            $aOnePut = explode('=', $sOne);
+	            $aPut[$aOnePut[0]] = $aOnePut[1];
 	        }
 	    }
 	    

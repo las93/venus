@@ -90,12 +90,15 @@ abstract class Entity
 	 * save the entity
 	 *
 	 * @access public
+	 * @param  bool $bOnDuplicateKeyUpdate (to do insert on duplicate key)
 	 * @return object
 	 */
-	public function save()
+	public function save($bOnDuplicateKeyUpdate = false)
 	{
 		$mPrimaryKeyName = $this->_mPrimaryKeyName;
-		$bInsertMode = false;
+		
+		if ($bOnDuplicateKeyUpdate === false) { $bInsertMode = false; }
+		else { $bInsertMode = true; }
 
 		if ($mPrimaryKeyName === false) {
 
@@ -149,9 +152,15 @@ abstract class Entity
 		
 		if ($bInsertMode === true) {
 			
-			$iResults = $oOrm->insert(preg_replace('/^.*\\\\([a-zA-Z0-9_]+)$/', '$1', get_called_class()))
-				 			 ->values($aEntity)
-							 ->save();
+			$oOrm->insert(preg_replace('/^.*\\\\([a-zA-Z0-9_]+)$/', '$1', get_called_class()))
+				 ->values($aEntity);
+			
+			if ($bOnDuplicateKeyUpdate === true) {
+			    
+			    $oOrm->onDuplicateKeyUpdate($aEntity);
+			}
+			
+			$iResults = $oOrm->save();
 		}
 		else {
 			

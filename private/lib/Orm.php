@@ -13,7 +13,6 @@
  * @link      	https://github.com/las93
  * @since     	1.0
  */
-
 namespace Venus\lib;
 
 use \Venus\lib\Db as Db;
@@ -33,16 +32,14 @@ use \Venus\lib\Orm\Where as Where;
  * @link      	https://github.com/las93
  * @since     	1.0
  */
-
-class Orm extends RequestSql {
-
+class Orm extends RequestSql 
+{
 	/**
 	 * const of the default DB_CONF
 	 *
 	 * @access private
 	 * @var    array
 	 */
-
 	const DB_CONF = DB_CONF;
 
 	/**
@@ -51,7 +48,6 @@ class Orm extends RequestSql {
 	 * @access public
 	 * @var    \Venus\lib\Orm\Where
 	 */
-
 	public $where = null;
 
 	/**
@@ -60,7 +56,6 @@ class Orm extends RequestSql {
 	 * @access private
 	 * @var    int
 	 */
-
 	private $_iAlias = 0;
 
 	/**
@@ -69,7 +64,6 @@ class Orm extends RequestSql {
 	 * @access private
 	 * @var    array
 	 */
-
 	private $_aSelect = array();
 
 	/**
@@ -78,7 +72,6 @@ class Orm extends RequestSql {
 	 * @access private
 	 * @var    string
 	 */
-
 	private $_sFrom = '';
 
 	/**
@@ -87,7 +80,6 @@ class Orm extends RequestSql {
 	 * @access private
 	 * @var    string
 	 */
-
 	private $_sFromAs = '';
 
 	/**
@@ -96,7 +88,6 @@ class Orm extends RequestSql {
 	 * @access private
 	 * @var    array
 	 */
-
 	private $_aJoin = array();
 
 	/**
@@ -105,7 +96,6 @@ class Orm extends RequestSql {
 	 * @access private
 	 * @var    string
 	 */
-
 	private $_sUpdate = '';
 
 	/**
@@ -114,7 +104,6 @@ class Orm extends RequestSql {
 	 * @access private
 	 * @var    mixed
 	 */
-
 	private $_mWhere = array();
 
 	/**
@@ -123,7 +112,6 @@ class Orm extends RequestSql {
 	 * @access private
 	 * @var    array
 	 */
-
 	private $_aHaving = array();
 
 	/**
@@ -132,7 +120,6 @@ class Orm extends RequestSql {
 	 * @access private
 	 * @var    array
 	 */
-
 	private $_aSet = array();
 
 	/**
@@ -141,7 +128,6 @@ class Orm extends RequestSql {
 	 * @access private
 	 * @var    string
 	 */
-
 	private $_sInsertInto = '';
 
 	/**
@@ -150,62 +136,63 @@ class Orm extends RequestSql {
 	 * @access private
 	 * @var    array
 	 */
-
 	private $_aValues = array();
 
 	/**
 	 * delete of the request
 	 *
 	 * @access private
-	 * @var string
+	 * @var    string
 	 */
-
 	private $_sDelete = '';
 
 	/**
 	 * order by of the request
 	 *
 	 * @access private
-	 * @var array
+	 * @var    array
 	 */
-
 	private $_aOrderBy = array();
 
 	/**
 	 * group by of the request
 	 *
 	 * @access private
-	 * @var array
+	 * @var    array
 	 */
-
 	private $_aGroupBy = array();
 
 	/**
 	 * truncate a table
 	 *
 	 * @access private
-	 * @var bool
+	 * @var    bool
 	 */
-
 	private $_sTruncate = '';
 
 	/**
 	 * limit of the result
 	 *
 	 * @access private
-	 * @var number
+	 * @var    number
 	 */
-
 	private $_iLimit = null;
 
 	/**
 	 * limit of the result
 	 *
 	 * @access private
-	 * @var int
+	 * @var    int
 	 */
-
 	private $_iOffset = null;
+	
+	/**
+	 * the on duplicate key update parameter
+	 * 
+	 * @access private
+	 * @var    array
+	 */
+	private $_aOnDuplicateKeyUpdate = array();
 
 	/**
 	 * constructor to create the symlink to \Venus\lib\Orm\Where
@@ -214,9 +201,8 @@ class Orm extends RequestSql {
 	 * @param  array $aSelect select
 	 * @return \Venus\lib\Orm
 	 */
-
-	public function __construct() {
-
+	public function __construct() 
+	{
 		$this->where = new Where;
 	}
 
@@ -227,9 +213,8 @@ class Orm extends RequestSql {
 	 * @param  array $aSelect select
 	 * @return \Venus\lib\Orm
 	 */
-
-	public function select($aSelect) {
-
+	public function select($aSelect)
+	{
 		$this->_aSelect = $aSelect;
 		return $this;
 	}
@@ -257,9 +242,8 @@ class Orm extends RequestSql {
 	 *   ),
 	 * ))
 	 */
-
-	public function join(array $aJoin) {
-
+	public function join(array $aJoin) 
+	{
 		$this->_aJoin = $aJoin;
 		return $this;
 	}
@@ -271,9 +255,8 @@ class Orm extends RequestSql {
 	 * @param  string $sFrom from
 	 * @return \Venus\lib\Orm
 	 */
-
-	public function from($sFrom, $sAs = null) {
-
+	public function from($sFrom, $sAs = null)
+	{
 		$this->_sFrom = $sFrom;
 		$this->_sFromAs = $sAs;
 		return $this;
@@ -286,9 +269,8 @@ class Orm extends RequestSql {
 	 * @param  string $sUpdate update
 	 * @return \Venus\lib\Orm
 	 */
-
-	public function update($sUpdate) {
-
+	public function update($sUpdate)
+	{
 		$this->_sUpdate = $sUpdate;
 		return $this;
 	}
@@ -300,9 +282,8 @@ class Orm extends RequestSql {
 	 * @param  mixed $mWhere where
 	 * @return \Venus\lib\Orm
 	 */
-
-	public function where($mWhere) {
-
+	public function where($mWhere)
+	{
 		$this->_mWhere = $mWhere;
 		return $this;
 	}
@@ -314,9 +295,8 @@ class Orm extends RequestSql {
 	 * @param  array $aHaving having
 	 * @return \Venus\lib\Orm
 	 */
-
-	public function having($aHaving) {
-
+	public function having($aHaving) 
+	{
 		$this->_aHaving = $aHaving;
 		return $this;
 	}
@@ -328,9 +308,8 @@ class Orm extends RequestSql {
 	 * @param  array $aSet set
 	 * @return \Venus\lib\Orm
 	 */
-
-	public function set($aSet) {
-
+	public function set($aSet)
+	{
 		$this->_aSet = $aSet;
 		return $this;
 	}
@@ -342,9 +321,8 @@ class Orm extends RequestSql {
 	 * @param  string $sInsertInto insert into
 	 * @return \Venus\lib\Orm
 	 */
-
-	public function insert($sInsertInto) {
-
+	public function insert($sInsertInto)
+	{
 		$this->_sInsertInto = $sInsertInto;
 		return $this;
 	}
@@ -356,9 +334,8 @@ class Orm extends RequestSql {
 	 * @param  array $aValues values
 	 * @return \Venus\lib\Orm
 	 */
-
-	public function values($aValues) {
-
+	public function values($aValues)
+	{
 		$this->_aValues = $aValues;
 		return $this;
 	}
@@ -370,9 +347,8 @@ class Orm extends RequestSql {
 	 * @param  string $sDelete delete from
 	 * @return \Venus\lib\Orm
 	 */
-
-	public function delete($sDelete) {
-
+	public function delete($sDelete)
+	{
 		$this->_sDelete = $sDelete;
 		return $this;
 	}
@@ -384,9 +360,8 @@ class Orm extends RequestSql {
 	 * @param  array $aOrderBy order by
 	 * @return \Venus\lib\Orm
 	 */
-
-	public function orderBy($aOrderBy) {
-
+	public function orderBy($aOrderBy)
+	{
 		$this->_aOrderBy = $aOrderBy;
 		return $this;
 	}
@@ -398,9 +373,8 @@ class Orm extends RequestSql {
 	 * @param  array $aGroupBy group by
 	 * @return \Venus\lib\Orm
 	 */
-
-	public function groupBy($aGroupBy) {
-
+	public function groupBy($aGroupBy)
+	{
 		$this->_aGroupBy = $aGroupBy;
 		return $this;
 	}
@@ -413,11 +387,23 @@ class Orm extends RequestSql {
 	 * @param  int $iOffset offset
 	 * @return \Venus\lib\Orm
 	 */
-
-	public function limit($iLimit, $iOffset = null) {
-
+	public function limit($iLimit, $iOffset = null)
+	{
 		$this->_iLimit = $iLimit;
 		$this->_iOffset = $iOffset;
+		return $this;
+	}
+
+	/**
+	 * on duplicate key update
+	 *
+	 * @access public
+	 * @param  array $aOnDuplicateKeyUpdate on duplicate key update array
+	 * @return \Venus\lib\Orm
+	 */
+	public function onDuplicateKeyUpdate($aOnDuplicateKeyUpdate = array())
+	{
+		$this->_aOnDuplicateKeyUpdate = $aOnDuplicateKeyUpdate;
 		return $this;
 	}
 
@@ -428,9 +414,8 @@ class Orm extends RequestSql {
 	 * @param  string $sTruncate name of table
 	 * @return \Venus\lib\Orm
 	 */
-
-	public function truncate($sTruncate) {
-
+	public function truncate($sTruncate)
+	{
 		$this->_sTruncate = $sTruncate;
 		return $this;
 	}
@@ -443,9 +428,8 @@ class Orm extends RequestSql {
 	 * @param  string $sOtherPortail change the default portal to create the entity
 	 * @return array
 	 */
-
-	public function load($bDebug = false, $sOtherPortail = null) {
-
+	public function load($bDebug = false, $sOtherPortail = null)
+	{
 		$sQuery = $this->_prepare();
 
 		if ($bDebug === true) { echo $sQuery;  }
@@ -495,9 +479,8 @@ class Orm extends RequestSql {
 	 * @access public
 	 * @return int
 	 */
-
-	public function save() {
-
+	public function save()
+	{
 		$sQuery = $this->_prepare();
 
 		if (preg_match('/INSERT INTO/i', $sQuery)) {
@@ -524,9 +507,8 @@ class Orm extends RequestSql {
 	 * @access private
 	 * @return string
 	 */
-
-	private function _prepare() {
-
+	private function _prepare()
+	{
 		if (count($this->_aSelect) > 0 && $this->_aSelect[0] === 'FOUND_ROWS()' && $this->_sFrom === '') {
 
 			$sQuery = 'SELECT FOUND_ROWS()';
@@ -594,6 +576,18 @@ class Orm extends RequestSql {
 
 			$sQuery = substr($sQuery, 0, -1);
 			$sQuery .= ")";
+			
+			if (count($this->_aOnDuplicateKeyUpdate) > 0) {
+			    
+			    $sQuery .= " ON DUPLICATE KEY UPDATE ";
+			    
+    			foreach ($this->_aOnDuplicateKeyUpdate as $sKey => $sValue) {
+    			    
+    			    $sQuery .= " ".$sKey." = ".Db::connect(self::DB_CONF)->quote($sValue).",";
+    			}
+    			
+    			$sQuery = substr($sQuery, 0, -1);
+			}
 		}
 		else if ($this->_sDelete !== '') {
 
@@ -614,9 +608,8 @@ class Orm extends RequestSql {
 	 * @access private
 	 * @return string
 	 */
-
-	private function _prepareWhere() {
-
+	private function _prepareWhere()
+	{
 		$sQuery = '';
 
 		if (is_array($this->_mWhere) && count($this->_mWhere) > 0) {
@@ -646,9 +639,8 @@ class Orm extends RequestSql {
 	 * @access private
 	 * @return string
 	 */
-
-	private function _prepareHaving() {
-
+	private function _prepareHaving()
+	{
 		$sQuery = '';
 
 		if (is_array($this->_aHaving) && count($this->_aHaving) > 0) {
@@ -676,9 +668,8 @@ class Orm extends RequestSql {
 	 * @access private
 	 * @return string
 	 */
-
-	private function _prepareJoin() {
-
+	private function _prepareJoin() 
+	{
 		$sQuery = '';
 
 		if (is_array($this->_aJoin) && count($this->_aJoin) > 0) {
@@ -717,9 +708,8 @@ class Orm extends RequestSql {
 	 * @access private
 	 * @return string
 	 */
-
-	private function _prepareOrderBy() {
-
+	private function _prepareOrderBy()
+	{
 		$sQuery = '';
 
 		if (is_array($this->_aOrderBy) && count($this->_aOrderBy) > 0) {
@@ -736,9 +726,8 @@ class Orm extends RequestSql {
 	 * @access private
 	 * @return string
 	 */
-
-	private function _prepareGroupBy() {
-
+	private function _prepareGroupBy()
+	{
 		$sQuery = '';
 
 		if (is_array($this->_aGroupBy) && count($this->_aGroupBy) > 0) {
@@ -755,9 +744,8 @@ class Orm extends RequestSql {
 	 * @access private
 	 * @return string
 	 */
-
-	private function _prepareLimit() {
-
+	private function _prepareLimit()
+	{
 		$sQuery = '';
 		$limit = (int) $this->_iLimit;
 		$iOffset = $this->_iOffset;
@@ -776,9 +764,8 @@ class Orm extends RequestSql {
 	 * @access public
 	 * @return string
 	 */
-
-	public function getQuery() {
-
+	public function getQuery()
+	{
 		return $this->_prepare();
 	}
 
@@ -788,9 +775,8 @@ class Orm extends RequestSql {
 	 * @access public
 	 * @return string
 	 */
-
-	public function flush() {
-
+	public function flush()
+	{
 		$this->where = null;
 		$this->_aSelect = array();
 		$this->_sFrom = '';
