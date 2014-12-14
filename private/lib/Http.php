@@ -60,4 +60,20 @@ class Http
 	    
 	    return $aPut;
 	}
+	
+	/**
+	 * Set the HTTP status
+	 * 
+	 * @access public
+	 * @param  int $iCode
+	 * @return void
+	 */
+	public static function setStatus($iCode)
+	{
+        if ($iCode === 200) { header('HTTP/1.1 200 Ok');  }
+        else if ($iCode === 201) { header('HTTP/1.1 201 Created');  }
+        else if ($iCode === 204) { header("HTTP/1.0 204 No Content");  }
+        else if ($iCode === 403) { header('HTTP/1.1 403 Forbidden'); }
+        else if ($iCode === 404) { header('HTTP/1.1 404 Not Found'); }
+	}
 }
