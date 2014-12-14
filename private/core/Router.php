@@ -13,7 +13,6 @@
  * @link      	https://github.com/las93
  * @since     	1.0
  */
-
 namespace Venus\core;
 
 use \Venus\core\Security as Security;
@@ -36,16 +35,14 @@ use \Venus\core\UrlManager as UrlManager;
  * @link      	https://github.com/las93
  * @since     	1.0
  */
-
-class Router {
-
+class Router 
+{
 	/**
 	 * The base Uri to construct the route
 	 *
 	 * @access private
 	 * @var    string
 	 */
-
 	private $_sBaseUri = '';
 
 	/**
@@ -54,7 +51,6 @@ class Router {
 	 * @access private
 	 * @var    \Venus\core\Security
 	 */
-
 	private $_oSecurity = null;
 
 	/**
@@ -63,7 +59,6 @@ class Router {
 	 * @access private
 	 * @var    object
 	 */
-
 	private $_oRoutes = null;
 
 	/**
@@ -72,9 +67,8 @@ class Router {
 	 * @access public
 	 * @return void
 	 */
-
-	public function run() {
-
+	public function run() 
+	{
 		date_default_timezone_set(Config::get('Const')->timezone);
 
 		$this->_create_constant();
@@ -195,9 +189,8 @@ class Router {
 	 * @param  array $aParams parameters to passe
 	 * @return void
 	 */
-
-	public function runByFoward($sRoute, $aParams) {
-
+	public function runByFoward($sRoute, $aParams) 
+	{
 		$this->_create_constant();
 
 		if (isset($_SERVER) && isset($_SERVER['HTTP_HOST'])) {
@@ -235,9 +228,8 @@ class Router {
 	 * @param  int iError http error
 	 * @return void
 	 */
-
-	public function runHttpErrorPage($iError) {
-
+	public function runHttpErrorPage($iError) 
+	{
 		$this->_create_constant();
 
 		if (isset($_SERVER) && isset($_SERVER['HTTP_HOST'])) {
@@ -269,19 +261,20 @@ class Router {
 	 * @param  string $RequestUri URI
 	 * @return void
 	 */
-
-	private function _route($oRoute, $RequestUri) {
-
+	private function _route($oRoute, $RequestUri) 
+	{
 		$sCharset = 'UTF-8';
 
 		if (isset($oRoute->route)) {
 
+		    $sRoute = str_replace("*", ".*", $oRoute->route);
+		    
 			$sFinalRoute = preg_replace_callback(
 				'|\[/{0,1}:([a-zA-Z_]+)\]|',
 				function ($aMatches) use ($oRoute) {
 					return "/{0,1}(?P<".$aMatches[1].">".$oRoute->constraints->{$aMatches[1]}.")";
 				},
-				$oRoute->route
+				$sRoute
 			);
 		}
 		else {
@@ -291,7 +284,6 @@ class Router {
 
 		$RequestUri = preg_replace('/^([^?]+)\?.*$/', '$1', $RequestUri);
 		$RequestUri = preg_replace('#^'.$this->_sBaseUri.'#', '', $RequestUri);
-		$sFinalRoute = str_replace("*", ".*", $sFinalRoute);
 
 		if (preg_match('#^'.$sFinalRoute.'$#', $RequestUri, $aMatch)) {
 
@@ -480,9 +472,8 @@ class Router {
 	 * @access private
 	 * @return void
 	 */
-
-	private function _create_constant() {
-
+	private function _create_constant() 
+	{
 		foreach (Config::get('Const') as $sKey => $mValue) {
 
 			if (is_string($mValue) || is_int($mValue) || is_float($mValue) || is_bool($mValue)) {
@@ -501,9 +492,8 @@ class Router {
 	 * @param  array $aParams parameters
 	 * @return mixed
 	 */
-
-	private function _loadController($sControllerName, $sActionName, array $aParams = array()) {
-
+	private function _loadController($sControllerName, $sActionName, array $aParams = array()) 
+	{
 		$aPhpDoc = PhpDoc::getPhpDocOfMethod($sControllerName, $sActionName);
 
 		if (isset($aPhpDoc['Cache'])) {
@@ -562,9 +552,8 @@ class Router {
 	 * @access private
 	 * @return void
 	 */
-
-	private function _getPage403() {
-
+	private function _getPage403() 
+	{
 		header("HTTP/1.0 403 Forbidden");
 
 		if (isset($this->_oRoutes->e403)) {
@@ -583,9 +572,8 @@ class Router {
 	 * @access private
 	 * @return void
 	 */
-
-	private function _getPage404() {
-
+	private function _getPage404() 
+	{
 		header("HTTP/1.0 404 Not Found");
 
 		if (isset($this->_oRoutes->e404)) {
@@ -605,9 +593,8 @@ class Router {
 	 * @param  object $oCache object of cache configuration
 	 * @return void
 	 */
-
-	private function _checkCache($oCache) {
-
+	private function _checkCache($oCache) 
+	{
 		/**
 		 * cache-control http
 		 */
