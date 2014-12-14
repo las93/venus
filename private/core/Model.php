@@ -461,7 +461,7 @@ abstract class Model extends Mother {
 	}
 
 	/**
-	 * classic method to get a list of entities
+	 * classic method to delete one entities
 	 *
 	 * @access private
 	 * @param  object $oEntityCriteria
@@ -478,6 +478,24 @@ abstract class Model extends Mother {
 		 				 ->delete($this->_sTableName)
 		 				 ->where($aEntity)
 		 				 ->save();
+	}
+
+	/**
+	 * classic method to truncate a table
+	 *
+	 * @access private
+	 * @return void
+	 */
+	
+	public function truncate() {
+	
+	    
+		$aClass = explode('\\', get_called_class());
+		$sClassName = $aClass[count($aClass) - 1];
+	
+	    $aResults = $this->orm
+	                     ->truncate($sClassName)
+	                     ->save();
 	}
 
 	/**

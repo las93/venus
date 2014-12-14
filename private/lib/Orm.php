@@ -602,8 +602,7 @@ class Orm extends RequestSql {
 		}
 		else if ($this->_sTruncate !== '') {
 
-			$sQuery = 'TRUNCATE `'.$this->_sDelete.'`';
-			$sQuery .= $this->_prepareWhere();
+			$sQuery = 'TRUNCATE `'.$this->_sTruncate.'`';
 		}
 
 		return $sQuery;
