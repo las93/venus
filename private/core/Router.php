@@ -21,6 +21,9 @@ use \Venus\lib\PhpDoc as PhpDoc;
 use \Venus\lib\Request as Request;
 use \Venus\lib\Template as Template;
 use \Venus\core\UrlManager as UrlManager;
+use \Venus\lib\Debug as Debug;
+use \Venus\lib\Log\LoggerAwareInterface as LoggerAwareInterface;
+use \Venus\lib\Log\LoggerInterface as LoggerInterface;
 
 /**
  * Router
@@ -35,7 +38,7 @@ use \Venus\core\UrlManager as UrlManager;
  * @link      	https://github.com/las93
  * @since     	1.0
  */
-class Router 
+class Router implements LoggerAwareInterface
 {
 	/**
 	 * The base Uri to construct the route
@@ -60,6 +63,26 @@ class Router
 	 * @var    object
 	 */
 	private $_oRoutes = null;
+
+	/**
+	 * Logger
+	 *
+	 * @access private
+	 * @var    object
+	 */
+	private $_oLogger = null;
+
+	/**
+	 * constructor
+	 *
+	 * @access public
+	 * @return void
+	 */
+	public function __construct() 
+	{
+	    $oLogger = Debug::getInstance();
+	    $this->setLogger($oLogger);
+	}
 
 	/**
 	 * run the routeur
@@ -385,9 +408,13 @@ class Router
 
 							$aEntries[] = $oRoute->defaults_constraints->{$sName};
 						}
+						else if (preg_match('/'.$sType.'/', '')) {
+
+							$aEntries[] = '';
+						}
 						else {
 
-							echo 'Error: Parameter '.$sName.' not exists!';
+						    $this->_oLogger->warning('Error: Parameter '.$sName.' not exists!');
 							break;
 						}
 					}
@@ -650,5 +677,17 @@ class Router
 		 */
 
 		if (isset($oCache->vary)) { header('Vary: '.$oCache->vary); }
+	}
+
+	/**
+	 * Sets a logger instance on the object
+	 *
+	 * @access private
+	 * @param  LoggerInterface $logger
+	 * @return null
+	 */
+	public function setLogger(LoggerInterface $logger) {
+	    
+	    $this->_oLogger = $logger;
 	}
 }

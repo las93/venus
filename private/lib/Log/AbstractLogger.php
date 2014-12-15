@@ -45,8 +45,8 @@ abstract class AbstractLogger implements LoggerInterface
      */   
     public function log($level, $message, array $context = array())
     {    
-        if ($context['file'] === null) { $context['file'] = __FILE__; }
-        if ($context['line'] === null) { $context['line'] = __LINE__; }
+        if (!isset($context['file'])) { $context['file'] = __FILE__; }
+        if (!isset($context['line'])) { $context['line'] = __LINE__; }
         if ($level === null) { $level = LogLevel::INFO; }
         
         if (Debug::isDebug() === true) {
