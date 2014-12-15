@@ -140,9 +140,14 @@ class Entity extends Controller {
 
 							$sQuery .= '('.$oOneField->value.') ';
 						}
-						else if (in_array($oOneField->type, array('varchar', 'char', 'blob'))) {
+						else if (in_array($oOneField->type, array('varchar', 'char', 'blob')) && isset($oOneField->value)) {
 
-							$sQuery .= '(250) ';
+							$sQuery .= '('.isset($oOneField->value).') ';
+						}
+
+						if (isset($oOneField->unsigned) && $oOneField->unsigned === true) {
+
+							$sQuery .= ' UNSIGNED ';
 						}
 
 						if (isset($oOneField->null) && $oOneField->null === true) { $sQuery .= ' NULL '; }
@@ -155,11 +160,6 @@ class Entity extends Controller {
 						else if (isset($oOneField->default)) {
 
 							$sQuery .= ' DEFAULT '.$oOneField->default.' ';
-						}
-
-						if (isset($oOneField->unsigned) && $oOneField->unsigned === true) {
-
-							$sQuery .= ' UNSIGNED ';
 						}
 
 						if (isset($oOneField->autoincrement) && $oOneField->autoincrement === true) {
@@ -250,10 +250,13 @@ class Entity extends Controller {
 						else if ($oField->type == 'int' || $oField->type == 'smallint' || $oField->type == 'tinyint'
 							|| $oField->type == 'bigint' || $oField->type == 'mediumint' || $oField->type == 'timestamp'
 							|| $oField->type == 'year' || $oField->type == 'integer' || $oField->type == 'int1' || $oField->type == 'int2'
-							|| $oField->type == 'int3' || $oField->type == 'int4' || $oField->type == 'int8' || $oField->type == 'middleint'
-							|| $oField->type == 'bit' || $oField->type == 'bool' || $oField->type == 'boolean') {
+							|| $oField->type == 'int3' || $oField->type == 'int4' || $oField->type == 'int8' || $oField->type == 'middleint') {
 	
 							$sType = 'int';
+						}
+						else if ($oField->type == 'bit' || $oField->type == 'bool' || $oField->type == 'boolean') {
+	
+							$sType = 'bool';
 						}
 						else if ($oField->type == 'float' || $oField->type == 'decimal' || $oField->type == 'double'
 							|| $oField->type == 'precision' || $oField->type == 'real' || $oField->type == 'float4'
