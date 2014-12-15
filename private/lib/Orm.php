@@ -563,7 +563,7 @@ class Orm extends RequestSql
 
 			foreach ($this->_aValues as $sKey => $sValue) {
 
-				$sQuery .= " `".$sKey."`,";
+			    if (!is_array($sValue)) { $sQuery .= " `".$sKey."`,"; }
 			}
 
 			$sQuery = substr($sQuery, 0, -1);
@@ -571,7 +571,7 @@ class Orm extends RequestSql
 
 			foreach ($this->_aValues as $sKey => $sValue) {
 
-				$sQuery .= "".Db::connect(self::DB_CONF)->quote($sValue).",";
+				if (!is_array($sValue)) { $sQuery .= "".Db::connect(self::DB_CONF)->quote($sValue).","; }
 			}
 
 			$sQuery = substr($sQuery, 0, -1);

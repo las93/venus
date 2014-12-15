@@ -214,7 +214,6 @@ class Entity extends Controller {
 	 * @link      	'.LINK.'
 	 * @since     	1.0
 	 */
-	
 	namespace Venus\src\\'.$sPortail.'\Entity;
 	
 	use \Venus\core\Entity as Entity;
@@ -233,8 +232,8 @@ class Entity extends Controller {
 	 * @link      	'.LINK.'
 	 * @since     	1.0
 	 */
-	
-	class '.$sTableName.' extends Entity {'."\n";
+	class '.$sTableName.' extends Entity 
+	{'."\n";
 	
 					foreach ($oOneTable->fields as $sFieldName => $oField) {
 	
@@ -289,7 +288,6 @@ class Entity extends Controller {
 						}
 	
 						$sContentFile .= '	 */
-	
 		private $'.$sFieldName.' = null;
 	
 	
@@ -306,7 +304,6 @@ class Entity extends Controller {
 		 * @var    '.$oField->join.'
 		 *
 		 */
-	
 		private $'.$oField->join_alias.' = null;
 	
 	
@@ -322,7 +319,6 @@ class Entity extends Controller {
 		 * @var    '.$oField->join.'
 		 *
 		 */
-	
 		private $'.$oField->join.' = null;
 	
 	
@@ -334,25 +330,29 @@ class Entity extends Controller {
 					foreach ($oOneTable->fields as $sFieldName => $oField) {
 	
 						if ($oField->type == 'enum' || $oField->type == 'char' || $oField->type == 'varchar' || $oField->type == 'text'
-										|| $oField->type == 'date' || $oField->type == 'datetime' || $oField->type == 'time' || $oField->type == 'binary'
-										|| $oField->type == 'varbinary' || $oField->type == 'blob' || $oField->type == 'tinyblob'
-										|| $oField->type == 'tinytext' || $oField->type == 'mediumblob' || $oField->type == 'mediumtext'
-										|| $oField->type == 'longblob' || $oField->type == 'longtext' || $oField->type == 'char varying'
-										|| $oField->type == 'long varbinary' || $oField->type == 'long varchar' || $oField->type == 'long') {
+							|| $oField->type == 'date' || $oField->type == 'datetime' || $oField->type == 'time' || $oField->type == 'binary'
+							|| $oField->type == 'varbinary' || $oField->type == 'blob' || $oField->type == 'tinyblob'
+							|| $oField->type == 'tinytext' || $oField->type == 'mediumblob' || $oField->type == 'mediumtext'
+							|| $oField->type == 'longblob' || $oField->type == 'longtext' || $oField->type == 'char varying'
+							|| $oField->type == 'long varbinary' || $oField->type == 'long varchar' || $oField->type == 'long') {
 	
 							$sType = 'string';
 						}
 						else if ($oField->type == 'int' || $oField->type == 'smallint' || $oField->type == 'tinyint'
-										|| $oField->type == 'bigint' || $oField->type == 'mediumint' || $oField->type == 'timestamp'
-										|| $oField->type == 'year' || $oField->type == 'integer' || $oField->type == 'int1' || $oField->type == 'int2'
-										|| $oField->type == 'int3' || $oField->type == 'int4' || $oField->type == 'int8' || $oField->type == 'middleint'
-										|| $oField->type == 'bit' || $oField->type == 'bool' || $oField->type == 'boolean') {
+						    || $oField->type == 'bigint' || $oField->type == 'mediumint' || $oField->type == 'timestamp'
+						    || $oField->type == 'year' || $oField->type == 'integer' || $oField->type == 'int1' || $oField->type == 'int2'
+						    || $oField->type == 'int3' || $oField->type == 'int4' || $oField->type == 'int8' 
+							|| $oField->type == 'middleint') {
 	
 							$sType = 'int';
 						}
+						else if ($oField->type == 'bit' || $oField->type == 'bool' || $oField->type == 'boolean') {
+	
+							$sType = 'bool';
+						}
 						else if ($oField->type == 'float' || $oField->type == 'decimal' || $oField->type == 'double'
-										|| $oField->type == 'precision' || $oField->type == 'real' || $oField->type == 'float4'
-										|| $oField->type == 'float8' || $oField->type == 'numeric') {
+							|| $oField->type == 'precision' || $oField->type == 'real' || $oField->type == 'float4'
+							|| $oField->type == 'float8' || $oField->type == 'numeric') {
 	
 							$sType = 'float';
 						}
@@ -368,9 +368,8 @@ class Entity extends Controller {
 		 * @access public
 		 * @return '.$sType.'
 		 */
-	
-		public function get_'.$sFieldName.'() {
-	
+		public function get_'.$sFieldName.'()
+		{
 			return $this->'.$sFieldName.';
 		}
 	
@@ -381,9 +380,8 @@ class Entity extends Controller {
 		 * @param  '.$sType.' $'.$sFieldName.' '.$sFieldName.' of '.$sTableName.'
 		 * @return \Venus\src\\'.$sPortail.'\Entity\\'.$sTableName.'
 		 */
-	
-		public function set_'.$sFieldName.'($'.$sFieldName.') {
-	
+		public function set_'.$sFieldName.'($'.$sFieldName.') 
+		{
 			$this->'.$sFieldName.' = $'.$sFieldName.';
 			return $this;
 		}
@@ -409,15 +407,14 @@ class Entity extends Controller {
 		 * @access public
 		 * @return \Venus\src\\'.$sPortail.'\Entity\\'.$oField->join.'
 		 */
-	
-		public function get_'.$oField->join_alias.'() {
-	
+		public function get_'.$oField->join_alias.'()
+		{
 			if ($this->'.$oField->join_alias.' === null) {
 	
 				$oOrm = new Orm;
 	
-				$this->'.$oField->join_alias.' = $oOrm->select(\'*\')
-													  ->from('.$oField->join.')
+				$this->'.$oField->join_alias.' = $oOrm->select(array(\'*\'))
+													  ->from(\''.$oField->join.'\')
 													  ->where(array(\''.$sJoinByField.'\' => $this->get_'.$sFieldName.'()))
 													  ->limit(1)
 													  ->load();
@@ -433,9 +430,8 @@ class Entity extends Controller {
 		 * @param  \Venus\src\\'.$sPortail.'\Entity\\'.$oField->join.'  $'.$oField->join_alias.' '.$oField->join.' entity
 		 * @return \Venus\src\\'.$sPortail.'\Entity\\'.$sTableName.'
 		 */
-	
-		public function set_'.$oField->join_alias.'(\src\\'.$sPortail.'\Entity\\'.$oField->join.' $'.$oField->join_alias.') {
-	
+		public function set_'.$oField->join_alias.'(\src\\'.$sPortail.'\Entity\\'.$oField->join.' $'.$oField->join_alias.')
+		{
 			$this->'.$oField->join_alias.' = $'.$oField->join_alias.';
 			return $this;
 		}
@@ -450,15 +446,14 @@ class Entity extends Controller {
 		 * @access public
 		 * @return \Venus\src\\'.$sPortail.'\Entity\\'.$oField->join.'
 		 */
-	
-		public function get_'.$oField->join.'() {
-	
+		public function get_'.$oField->join.'() 
+		{
 			if ($this->'.$oField->join.' === null) {
 	
 				$oOrm = new Orm;
 	
-				$this->'.$oField->join.' = $oOrm->select(\'*\')
-												->from('.$oField->join.')
+				$this->'.$oField->join.' = $oOrm->select(array(\'*\'))
+												->from(\''.$oField->join.'\')
 												->where(array(\''.$sJoinByField.'\' => $this->get_'.$sFieldName.'()))
 												->limit(1)
 												->load();
@@ -474,9 +469,8 @@ class Entity extends Controller {
 		 * @param  \Venus\src\\'.$sPortail.'\Entity\\'.$oField->join.'  $'.$oField->join.' '.$oField->join.' entity
 		 * @return \Venus\src\\'.$sPortail.'\Entity\\'.$sTableName.'
 		 */
-	
-		public function set_'.$oField->join.'(\src\\'.$sPortail.'\Entity\\'.$oField->join.' $'.$oField->join.') {
-	
+		public function set_'.$oField->join.'(\src\\'.$sPortail.'\Entity\\'.$oField->join.' $'.$oField->join.') 
+		{
 			$this->'.$oField->join.' = $'.$oField->join.';
 			return $this;
 		}
@@ -507,7 +501,6 @@ class Entity extends Controller {
 	 * @link      	'.LINK.'
 	 * @since     	1.0
 	 */
-	
 	namespace Venus\src\\'.$sPortail.'\Model;
 	
 	use \Venus\core\Model as Model;
@@ -525,8 +518,8 @@ class Entity extends Controller {
 	 * @link      	'.LINK.'
 	 * @since     	1.0
 	 */
-	
-	class '.$sTableName.' extends Model {
+	class '.$sTableName.' extends Model 
+	{
 	}'."\n";
 	
 						file_put_contents(__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.$sPortail.DIRECTORY_SEPARATOR.'Model'.DIRECTORY_SEPARATOR.$sTableName.'.php', $sContentFile);
