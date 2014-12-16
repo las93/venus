@@ -136,13 +136,9 @@ class Entity extends Controller {
 
 							$sQuery .= '("'.implode('","', $oOneField->values).'") ';
 						}
-						else if (isset($oOneField->value) && is_int($oOneField->value)) {
+						else if (isset($oOneField->value) && (is_int($oOneField->value) || preg_match('/^[0-9,]+$/', $oOneField->value))) {
 
 							$sQuery .= '('.$oOneField->value.') ';
-						}
-						else if (in_array($oOneField->type, array('varchar', 'char', 'blob')) && isset($oOneField->value)) {
-
-							$sQuery .= '('.isset($oOneField->value).') ';
 						}
 
 						if (isset($oOneField->unsigned) && $oOneField->unsigned === true) {
@@ -171,9 +167,31 @@ class Entity extends Controller {
 
 						if (isset($oOneField->key) && $oOneField->key === 'primary') { $aPrimaryKey[] = $sFieldName; }
 						else if (isset($oOneField->key) && $oOneField->key === 'index') { $aIndex[] = $sFieldName; }
+						
+
+						if (isset($oOneField->join)) {
+						
+						    if (isset($oOneField->join_by_field)) {
+
+						        if (!isset($oConnection->tables->{$oOneField->join}->fields->{$oOneField->join_by_field}->join)) {
+						        
+						            $oConnection->tables->{$oOneField->join}->fields->{$oOneField->join_by_field}->join = $sTableName;
+                                    $oConnection->tables->{$oOneField->join}->fields->{$oOneField->join_by_field}->join_by_field = $sFieldName;
+						        }
+						    }
+						    else {
+						        
+						        if (!isset($oConnection->tables->{$oOneField->join}->fields->$sFieldName->join)) {
+						        
+						            $oConnection->tables->{$oOneField->join}->fields->$sFieldName->join = $sTableName;
+                                    $oConnection->tables->{$oOneField->join}->fields->$sFieldName->join_by_field = $sFieldName;
+						        }
+						    } 
+						}
 					}
 
 					if (count($aPrimaryKey) > 0) { $sQuery .= 'PRIMARY KEY('.implode(',', $aPrimaryKey).') , '; }
+					
 					if (count($aIndex) > 0) { $sQuery .= 'KEY('.implode(',', $aIndex).') , '; }
 
 					if (isset($oOneTable->index)) {
@@ -413,12 +431,31 @@ class Entity extends Controller {
 	
 				$oOrm = new Orm;
 	
-				$this->'.$oField->join_alias.' = $oOrm->select(array(\'*\'))
+				';
+		 
+								if (isset($oField->key) && $oField->key == 'primary') { 
+
+								    $sContentFile .= '$this->'.$oField->join.'';
+								}
+								else {
+								    
+								    $sContentFile .= '$aResult';
+								}
+			                     
+								$sContentFile .= ' = $oOrm->select(array(\'*\'))
 													  ->from(\''.$oField->join.'\')
 													  ->where(array(\''.$sJoinByField.'\' => $this->get_'.$sFieldName.'()))
 													  ->limit(1)
 													  ->load();
-			}
+			';
+		 
+								if (!isset($oField->key) || (isset($oField->key) && $oField->key == 'primary')) { 
+								    
+								    $sContentFile .= '  $this->'.$oField->join.' = $aResult[0];';
+								}
+			                     
+								$sContentFile .= '
+							}
 	
 			return $this->'.$oField->join_alias.';
 		}
@@ -428,9 +465,31 @@ class Entity extends Controller {
 		 *
 		 * @access public
 		 * @param  \Venus\src\\'.$sPortail.'\Entity\\'.$oField->join.'  $'.$oField->join_alias.' '.$oField->join.' entity
-		 * @return \Venus\src\\'.$sPortail.'\Entity\\'.$sTableName.'
+		 * @return ';
+		 
+								if (isset($oField->key) && $oField->key == 'primary') { 
+
+								    $sContentFile .= 'array';
+								}
+								else {
+								    
+								    $sContentFile .= '\Venus\src\\'.$sPortail.'\Entity\\'.$sTableName;
+								}
+			                     
+								$sContentFile .= '
 		 */
-		public function set_'.$oField->join_alias.'(\src\\'.$sPortail.'\Entity\\'.$oField->join.' $'.$oField->join_alias.')
+		public function set_'.$oField->join_alias.'(';
+		 
+								if (isset($oField->key) && $oField->key == 'primary') { 
+
+								    $sContentFile .= 'array';
+								}
+								else {
+								    
+								    $sContentFile .= '\Venus\src\\'.$sPortail.'\Entity\\'.$oField->join;
+								}
+			                     
+								$sContentFile .= ' $'.$oField->join_alias.')
 		{
 			$this->'.$oField->join_alias.' = $'.$oField->join_alias.';
 			return $this;
@@ -444,7 +503,18 @@ class Entity extends Controller {
 		 * get '.$oField->join.' entity join by '.$sFieldName.' of '.$sTableName.'
 		 *
 		 * @access public
-		 * @return \Venus\src\\'.$sPortail.'\Entity\\'.$oField->join.'
+		 * @return ';
+								
+								if (isset($oField->key) && $oField->key == 'primary') { 
+
+								    $sContentFile .= 'array';
+								}
+								else {
+								    
+								    $sContentFile .= '\Venus\src\\'.$sPortail.'\Entity\\'.$sTableName;
+								}
+			                     
+								$sContentFile .= '
 		 */
 		public function get_'.$oField->join.'() 
 		{
@@ -452,11 +522,30 @@ class Entity extends Controller {
 	
 				$oOrm = new Orm;
 	
-				$this->'.$oField->join.' = $oOrm->select(array(\'*\'))
+				';
+		 
+								if (isset($oField->key) && $oField->key == 'primary') { 
+
+								    $sContentFile .= '$this->'.$oField->join.'';
+								}
+								else {
+
+								    $sContentFile .= '$aResult';
+								}
+			                     
+								$sContentFile .= ' = $oOrm->select(array(\'*\'))
 												->from(\''.$oField->join.'\')
 												->where(array(\''.$sJoinByField.'\' => $this->get_'.$sFieldName.'()))
 												->limit(1)
 												->load();
+			';
+
+								if (!isset($oField->key) || (isset($oField->key) && $oField->key != 'primary')) { 
+								    
+								    $sContentFile .= '  $this->'.$oField->join.' = $aResult[0];';
+								}
+			                     
+								$sContentFile .= '
 			}
 	
 			return $this->'.$oField->join.';
@@ -469,7 +558,18 @@ class Entity extends Controller {
 		 * @param  \Venus\src\\'.$sPortail.'\Entity\\'.$oField->join.'  $'.$oField->join.' '.$oField->join.' entity
 		 * @return \Venus\src\\'.$sPortail.'\Entity\\'.$sTableName.'
 		 */
-		public function set_'.$oField->join.'(\src\\'.$sPortail.'\Entity\\'.$oField->join.' $'.$oField->join.') 
+		public function set_'.$oField->join.'(';
+		 
+								if (isset($oField->key) && $oField->key == 'primary') { 
+								    
+								    $sContentFile .= '\Venus\src\\'.$sPortail.'\Entity\\'.$oField->join;
+								}
+								else {
+								    
+								    $sContentFile .= 'array';
+								}
+			                     
+								$sContentFile .= ' $'.$oField->join.') 
 		{
 			$this->'.$oField->join.' = $'.$oField->join.';
 			return $this;
