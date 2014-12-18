@@ -457,10 +457,20 @@ class Orm extends RequestSql
 
 						if ($aJoin['as']) { $sPrefixJoin = $aJoin['as'].'.'; }
 						else { $sPrefixJoin = ''; }
+ 
+						$sPropertieName = 'get_'.$aJoin['table'];
 
-						$aReturn[$i]->$aJoin['table'] = Entity::autoLoadEntity($aJoin['table'], $aOneResult, $sPrefixJoin, true, $sOtherPortail);
+						if (method_exists($aReturn[$i], $sPropertieName)) {
+						    
+						    $sPropertieName = $aJoin['table'].'2';
+						    $aReturn[$i]->$sPropertieName = Entity::autoLoadEntity($aJoin['table'], $aOneResult, $sPrefixJoin, true, $sOtherPortail);
+						}
+						else {
+						
+						    $aReturn[$i]->$aJoin['table'] = Entity::autoLoadEntity($aJoin['table'], $aOneResult, $sPrefixJoin, true, $sOtherPortail);
+						}
 					}
-				}
+				} 
 
 				$i++;
 			}

@@ -116,6 +116,41 @@ class Entity extends Controller {
 				$oPdo = Db::connect($sConnectionName);
 
 				foreach ($oConnection->tables as $sTableName => $oOneTable) {
+				    
+    				foreach ($oOneTable->fields as $sFieldName => $oOneField) {
+    				
+    				    if (isset($oOneField->join)) {
+    				        	
+    				        if (isset($oOneField->join_by_field)) { $sJoinByField = $oOneField->join_by_field; }
+    				        else { $sJoinByField = $oOneField->join; }
+
+				            if (isset($oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->key)
+				                && $oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->key == 'primary'
+				                && !isset($oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->join)) {
+
+				                $oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->join = array();
+				                $oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->join[0] = $sTableName;
+				                $oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->join_by_field[0] = $sFieldName;
+				            }
+				            else if (isset($oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->key)
+				                && $oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->key == 'primary'
+				                && isset($oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->join)
+				                && !in_array($sTableName, $oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->join)) {
+				                
+                                $iIndex = count($oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->join);
+				                $oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->join[$iIndex] = $sTableName;
+				                $oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->join_by_field[$iIndex] = $sFieldName;
+				            }
+				            else if (!isset($oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->join)) {
+
+				                $oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->join = $sTableName;
+				                $oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->join_by_field = $sFieldName;
+				            }
+    				    }
+    				}
+    			}
+    			
+				foreach ($oConnection->tables as $sTableName => $oOneTable) {
 
 					if ($bDropTable === true) {
 						
@@ -167,27 +202,6 @@ class Entity extends Controller {
 
 						if (isset($oOneField->key) && $oOneField->key === 'primary') { $aPrimaryKey[] = $sFieldName; }
 						else if (isset($oOneField->key) && $oOneField->key === 'index') { $aIndex[] = $sFieldName; }
-						
-
-						if (isset($oOneField->join)) {
-						
-						    if (isset($oOneField->join_by_field)) {
-
-						        if (!isset($oConnection->tables->{$oOneField->join}->fields->{$oOneField->join_by_field}->join)) {
-						        
-						            $oConnection->tables->{$oOneField->join}->fields->{$oOneField->join_by_field}->join = $sTableName;
-                                    $oConnection->tables->{$oOneField->join}->fields->{$oOneField->join_by_field}->join_by_field = $sFieldName;
-						        }
-						    }
-						    else {
-						        
-						        if (!isset($oConnection->tables->{$oOneField->join}->fields->$sFieldName->join)) {
-						        
-						            $oConnection->tables->{$oOneField->join}->fields->$sFieldName->join = $sTableName;
-                                    $oConnection->tables->{$oOneField->join}->fields->$sFieldName->join_by_field = $sFieldName;
-						        }
-						    } 
-						}
 					}
 
 					if (count($aPrimaryKey) > 0) { $sQuery .= 'PRIMARY KEY('.implode(',', $aPrimaryKey).') , '; }
@@ -219,39 +233,39 @@ class Entity extends Controller {
 	
 					$sContentFile = '<?php
 	
-	/**
-	 * Entity to '.$sTableName.'
-	 *
-	 * @category  	src
-	 * @package   	src\\'.$sPortail.'\Entity
-	 * @author    	'.AUTHOR.'
-	 * @copyright 	'.COPYRIGHT.'
-	 * @license   	'.LICENCE.'
-	 * @version   	Release: '.VERSION.'
-	 * @filesource	'.FILESOURCE.'
-	 * @link      	'.LINK.'
-	 * @since     	1.0
-	 */
-	namespace Venus\src\\'.$sPortail.'\Entity;
-	
-	use \Venus\core\Entity as Entity;
-	use \Venus\lib\Orm as Orm;
-	
-	/**
-	 * Entity to '.$sTableName.'
-	 *
-	 * @category  	src
-	 * @package   	src\\'.$sPortail.'\Entity
-	 * @author    	'.AUTHOR.'
-	 * @copyright 	'.COPYRIGHT.'
-	 * @license   	'.LICENCE.'
-	 * @version   	Release: '.VERSION.'
-	 * @filesource	'.FILESOURCE.'
-	 * @link      	'.LINK.'
-	 * @since     	1.0
-	 */
-	class '.$sTableName.' extends Entity 
-	{'."\n";
+/**
+ * Entity to '.$sTableName.'
+ *
+ * @category  	src
+ * @package   	src\\'.$sPortail.'\Entity
+ * @author    	'.AUTHOR.'
+ * @copyright 	'.COPYRIGHT.'
+ * @license   	'.LICENCE.'
+ * @version   	Release: '.VERSION.'
+ * @filesource	'.FILESOURCE.'
+ * @link      	'.LINK.'
+ * @since     	1.0
+ */
+namespace Venus\src\\'.$sPortail.'\Entity;
+
+use \Venus\core\Entity as Entity;
+use \Venus\lib\Orm as Orm;
+
+/**
+ * Entity to '.$sTableName.'
+ *
+ * @category  	src
+ * @package   	src\\'.$sPortail.'\Entity
+ * @author    	'.AUTHOR.'
+ * @copyright 	'.COPYRIGHT.'
+ * @license   	'.LICENCE.'
+ * @version   	Release: '.VERSION.'
+ * @filesource	'.FILESOURCE.'
+ * @link      	'.LINK.'
+ * @since     	1.0
+ */
+class '.$sTableName.' extends Entity 
+{';
 	
 					foreach ($oOneTable->fields as $sFieldName => $oField) {
 	
@@ -287,12 +301,12 @@ class Entity extends Controller {
 						}
 	
 						$sContentFile .= '
-		/**
-		 * '.$sFieldName.'
-		 *
-		 * @access private
-		 * @var    '.$sType.'
-		 *
+	/**
+	 * '.$sFieldName.'
+	 *
+	 * @access private
+	 * @var    '.$sType.'
+	 *
 	';
 	
 						if (isset($oField->key) && $oField->key == 'primary') {
@@ -306,42 +320,37 @@ class Entity extends Controller {
 						}
 	
 						$sContentFile .= '	 */
-		private $'.$sFieldName.' = null;
+    private $'.$sFieldName.' = null;
 	
 	
 	';
 						if (isset($oField->join)) {
 	
-							if (isset($oField->join_alias)) {
+						    if (!is_array($oField->join)) {
+						        
+						        $oField->join = array($oField->join);
+						        if (isset($oField->join_alias)) { $oField->join_alias = array($oField->join_alias); }
+						        if (isset($oField->join_by_field)) { $oField->join_by_field = array($oField->join_by_field); }
+						    }
+						    
+						    for ($i = 0 ; $i < count($oField->join) ; $i++) {
+						    
+						        if (isset($oField->join_alias[$i])) { $sJoinUsedName = $oField->join_alias[$i]; }
+							    else { $sJoinUsedName = $oField->join[$i]; }
 	
 								$sContentFile .= '
-		/**
-		 * '.$oField->join_alias.' Entity
-		 *
-		 * @access private
-		 * @var    '.$oField->join.'
-		 *
-		 */
-		private $'.$oField->join_alias.' = null;
+	/**
+	 * '.$sJoinUsedName.' Entity
+	 *
+	 * @access private
+	 * @var    '.$oField->join[$i].'
+	 *
+	 */
+    private $'.$sJoinUsedName.' = null;
 	
 	
 	';
-							}
-							else {
-	
-								$sContentFile .= '
-		/**
-		 * '.$oField->join.' Entity
-		 *
-		 * @access private
-		 * @var    '.$oField->join.'
-		 *
-		 */
-		private $'.$oField->join.' = null;
-	
-	
-	';
-							}
+						    }
 						}
 					}
 	
@@ -380,29 +389,29 @@ class Entity extends Controller {
 						}
 	
 						$sContentFile .= '
-		/**
-		 * get '.$sFieldName.' of '.$sTableName.'
-		 *
-		 * @access public
-		 * @return '.$sType.'
-		 */
-		public function get_'.$sFieldName.'()
-		{
-			return $this->'.$sFieldName.';
-		}
-	
-		/**
-		 * set '.$sFieldName.' of '.$sTableName.'
-		 *
-		 * @access public
-		 * @param  '.$sType.' $'.$sFieldName.' '.$sFieldName.' of '.$sTableName.'
-		 * @return \Venus\src\\'.$sPortail.'\Entity\\'.$sTableName.'
-		 */
-		public function set_'.$sFieldName.'($'.$sFieldName.') 
-		{
-			$this->'.$sFieldName.' = $'.$sFieldName.';
-			return $this;
-		}
+	/**
+	 * get '.$sFieldName.' of '.$sTableName.'
+	 *
+	 * @access public
+	 * @return '.$sType.'
+	 */
+	public function get_'.$sFieldName.'()
+	{
+		return $this->'.$sFieldName.';
+	}
+
+	/**
+	 * set '.$sFieldName.' of '.$sTableName.'
+	 *
+	 * @access public
+	 * @param  '.$sType.' $'.$sFieldName.' '.$sFieldName.' of '.$sTableName.'
+	 * @return \Venus\src\\'.$sPortail.'\Entity\\'.$sTableName.'
+	 */
+	public function set_'.$sFieldName.'($'.$sFieldName.') 
+	{
+		$this->'.$sFieldName.' = $'.$sFieldName.';
+		return $this;
+	}
 	';
 						if (isset($oField->join)) {
 	
@@ -413,170 +422,117 @@ class Entity extends Controller {
 							 * if the left field and the right field have the same name, you could ignore this param.
 							 */
 	
-							if (isset($oField->join_by_field)) { $sJoinByField = $oField->join_by_field; }
-							else { $sJoinByField = $sFieldName; }
+						    if (!is_array($oField->join)) {
+						        
+						        $oField->join = array($oField->join);
+						        if (isset($oField->join_alias)) { $oField->join_alias = array($oField->join_alias); }
+						        if (isset($oField->join_by_field)) { $oField->join_by_field = array($oField->join_by_field); }
+						    }
+						    
+						    for ($i = 0 ; $i < count($oField->join) ; $i++) {
 	
-							if (isset($oField->join_alias)) {
-	
-								$sContentFile .= '
-		/**
-		 * get '.$oField->join_alias.' entity join by '.$sFieldName.' of '.$sTableName.'
-		 *
-		 * @access public
-		 * @return \Venus\src\\'.$sPortail.'\Entity\\'.$oField->join.'
-		 */
-		public function get_'.$oField->join_alias.'()
-		{
-			if ($this->'.$oField->join_alias.' === null) {
-	
-				$oOrm = new Orm;
-	
-				';
-		 
-								if (isset($oField->key) && $oField->key == 'primary') { 
-
-								    $sContentFile .= '$this->'.$oField->join.'';
-								}
-								else {
-								    
-								    $sContentFile .= '$aResult';
-								}
-			                     
-								$sContentFile .= ' = $oOrm->select(array(\'*\'))
-													  ->from(\''.$oField->join.'\')
-													  ->where(array(\''.$sJoinByField.'\' => $this->get_'.$sFieldName.'()))
-													  ->limit(1)
-													  ->load();
-			';
-		 
-								if (!isset($oField->key) || (isset($oField->key) && $oField->key == 'primary')) { 
-								    
-								    $sContentFile .= '  $this->'.$oField->join.' = $aResult[0];';
-								}
-			                     
-								$sContentFile .= '
-							}
-	
-			return $this->'.$oField->join_alias.';
-		}
-	
-		/**
-		 * set '.$oField->join_alias.' entity join by '.$sFieldName.' of '.$sTableName.'
-		 *
-		 * @access public
-		 * @param  \Venus\src\\'.$sPortail.'\Entity\\'.$oField->join.'  $'.$oField->join_alias.' '.$oField->join.' entity
-		 * @return ';
-		 
-								if (isset($oField->key) && $oField->key == 'primary') { 
-
-								    $sContentFile .= 'array';
-								}
-								else {
-								    
-								    $sContentFile .= '\Venus\src\\'.$sPortail.'\Entity\\'.$sTableName;
-								}
-			                     
-								$sContentFile .= '
-		 */
-		public function set_'.$oField->join_alias.'(';
-		 
-								if (isset($oField->key) && $oField->key == 'primary') { 
-
-								    $sContentFile .= 'array';
-								}
-								else {
-								    
-								    $sContentFile .= '\Venus\src\\'.$sPortail.'\Entity\\'.$oField->join;
-								}
-			                     
-								$sContentFile .= ' $'.$oField->join_alias.')
-		{
-			$this->'.$oField->join_alias.' = $'.$oField->join_alias.';
-			return $this;
-		}
-	';
-							}
-							else {
-	
-								$sContentFile .= '
-		/**
-		 * get '.$oField->join.' entity join by '.$sFieldName.' of '.$sTableName.'
-		 *
-		 * @access public
-		 * @return ';
+    							if (isset($oField->join_by_field[$i])) { $sJoinByField = $oField->join_by_field[$i]; }
+    							else { $sJoinByField = $sFieldName; }
+    	
+    							if (isset($oField->join_alias[$i])) { $sJoinUsedName = $oField->join_alias[$i]; }
+    							else { $sJoinUsedName = $oField->join[$i]; }
+    	
+    							$sContentFile .= '
+	/**
+	 * get '.$sJoinUsedName.' entity join by '.$sFieldName.' of '.$sTableName.'
+	 *
+	 * @access public
+	   @param  array $aWhere
+	 * @return ';
 								
-								if (isset($oField->key) && $oField->key == 'primary') { 
+    							if (isset($oField->key) && $oField->key == 'primary') { 
+    
+    							    $sContentFile .= 'array';
+    							}
+    							else {
+    								    
+    							    $sContentFile .= '\Venus\src\\'.$sPortail.'\Entity\\'.$sTableName;
+    							}
+    			                     
+    							$sContentFile .= '
+	 */
+	public function get_'.$sJoinUsedName.'($aWhere = array())
+	{
+		if ($this->'.$sJoinUsedName.' === null) {
 
-								    $sContentFile .= 'array';
-								}
-								else {
-								    
-								    $sContentFile .= '\Venus\src\\'.$sPortail.'\Entity\\'.$sTableName;
-								}
-			                     
-								$sContentFile .= '
-		 */
-		public function get_'.$oField->join.'() 
-		{
-			if ($this->'.$oField->join.' === null) {
-	
-				$oOrm = new Orm;
-	
-				';
+			$oOrm = new Orm;
+
+			$oOrm->select(array(\'*\'))
+				 ->from(\''.$oField->join[$i].'\');
+												   
+	        $aWhere[\''.$sJoinByField.'\'] = $this->get_'.$sFieldName.'();
+											
+													  ';
+								
+							    $sContentFile .= '
+            ';
 		 
-								if (isset($oField->key) && $oField->key == 'primary') { 
-
-								    $sContentFile .= '$this->'.$oField->join.'';
-								}
-								else {
-
-								    $sContentFile .= '$aResult';
-								}
-			                     
-								$sContentFile .= ' = $oOrm->select(array(\'*\'))
-												->from(\''.$oField->join.'\')
-												->where(array(\''.$sJoinByField.'\' => $this->get_'.$sFieldName.'()))
-												->limit(1)
-												->load();
-			';
-
-								if (!isset($oField->key) || (isset($oField->key) && $oField->key != 'primary')) { 
-								    
-								    $sContentFile .= '  $this->'.$oField->join.' = $aResult[0];';
-								}
-			                     
-								$sContentFile .= '
-			}
-	
-			return $this->'.$oField->join.';
-		}
-	
-		/**
-		 * set '.$oField->join.' entity join by '.$sFieldName.' of '.$sTableName.'
-		 *
-		 * @access public
-		 * @param  \Venus\src\\'.$sPortail.'\Entity\\'.$oField->join.'  $'.$oField->join.' '.$oField->join.' entity
-		 * @return \Venus\src\\'.$sPortail.'\Entity\\'.$sTableName.'
-		 */
-		public function set_'.$oField->join.'(';
+    							if (isset($oField->key) && $oField->key == 'primary') { 
+    
+    							    $sContentFile .= '$this->'.$oField->join[$i].'';
+    							}
+    							else {
+    								    
+    							    $sContentFile .= '$aResult';
+    							}
+    			                     
+    							$sContentFile .= ' = $oOrm->where($aWhere)
+                                   ->limit(1)
+						           ->load();';
 		 
-								if (isset($oField->key) && $oField->key == 'primary') { 
-								    
-								    $sContentFile .= '\Venus\src\\'.$sPortail.'\Entity\\'.$oField->join;
-								}
-								else {
-								    
-								    $sContentFile .= 'array';
-								}
+    							if (!isset($oField->key) || (isset($oField->key) && $oField->key != 'primary')) { 
+    								    
+    							    $sContentFile .= "\n".'          $this->'.$oField->join[$i].' = $aResult[0];';
+    							}
+    			                     
+    							$sContentFile .= '
+        }
+
+		return $this->'.$sJoinUsedName.';
+	}
+	
+	/**
+	 * set '.$sJoinUsedName.' entity join by '.$sFieldName.' of '.$sTableName.'
+	 *
+	 * @access public
+	 * @param  \Venus\src\\'.$sPortail.'\Entity\\'.$oField->join[$i].'  $'.$sJoinUsedName.' '.$oField->join[$i].' entity
+	 * @return ';
+		 
+    							if (isset($oField->key) && $oField->key == 'primary') { 
+    
+    							    $sContentFile .= 'array';
+    							}
+    							else {
+    								    
+    							    $sContentFile .= '\Venus\src\\'.$sPortail.'\Entity\\'.$sTableName;
+    							}
+    			                     
+    							$sContentFile .= '
+	 */
+	public function set_'.$sJoinUsedName.'(';
+		 
+    							if (isset($oField->key) && $oField->key == 'primary') { 
+    
+    							    $sContentFile .= 'array';
+    							}
+    							else {
+    								    
+    							    $sContentFile .= '\Venus\src\\'.$sPortail.'\Entity\\'.$oField->join[$i];
+    							}
 			                     
-								$sContentFile .= ' $'.$oField->join.') 
-		{
-			$this->'.$oField->join.' = $'.$oField->join.';
-			return $this;
-		}
-	';
-							}
-						}
+							    $sContentFile .= ' $'.$sJoinUsedName.')
+	{
+		$this->'.$sJoinUsedName.' = $'.$sJoinUsedName.';
+		return $this;
+	}
+';
+						    }
+						}	
 					}
 	
 					$sContentFile .= '}';
@@ -588,39 +544,39 @@ class Entity extends Controller {
 					
 						$sContentFile = '<?php
 	
-	/**
-	 * Model to '.$sTableName.'
-	 *
-	 * @category  	src
-	 * @package   	src\\'.$sPortail.'\Model
-	 * @author    	'.AUTHOR.'
-	 * @copyright 	'.COPYRIGHT.'
-	 * @license   	'.LICENCE.'
-	 * @version   	Release: '.VERSION.'
-	 * @filesource	'.FILESOURCE.'
-	 * @link      	'.LINK.'
-	 * @since     	1.0
-	 */
-	namespace Venus\src\\'.$sPortail.'\Model;
+/**
+ * Model to '.$sTableName.'
+ *
+ * @category  	src
+ * @package   	src\\'.$sPortail.'\Model
+ * @author    	'.AUTHOR.'
+ * @copyright 	'.COPYRIGHT.'
+ * @license   	'.LICENCE.'
+ * @version   	Release: '.VERSION.'
+ * @filesource	'.FILESOURCE.'
+ * @link      	'.LINK.'
+ * @since     	1.0
+ */
+namespace Venus\src\\'.$sPortail.'\Model;
+
+use \Venus\core\Model as Model;
 	
-	use \Venus\core\Model as Model;
-	
-	/**
-	 * Model to '.$sTableName.'
-	 *
-	 * @category  	src
-	 * @package   	src\\'.$sPortail.'\Model
-	 * @author    	'.AUTHOR.'
-	 * @copyright 	'.COPYRIGHT.'
-	 * @license   	'.LICENCE.'
-	 * @version   	Release: '.VERSION.'
-	 * @filesource	'.FILESOURCE.'
-	 * @link      	'.LINK.'
-	 * @since     	1.0
-	 */
-	class '.$sTableName.' extends Model 
-	{
-	}'."\n";
+/**
+ * Model to '.$sTableName.'
+ *
+ * @category  	src
+ * @package   	src\\'.$sPortail.'\Model
+ * @author    	'.AUTHOR.'
+ * @copyright 	'.COPYRIGHT.'
+ * @license   	'.LICENCE.'
+ * @version   	Release: '.VERSION.'
+ * @filesource	'.FILESOURCE.'
+ * @link      	'.LINK.'
+ * @since     	1.0
+ */
+class '.$sTableName.' extends Model 
+{
+}'."\n";
 	
 						file_put_contents(__DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.$sPortail.DIRECTORY_SEPARATOR.'Model'.DIRECTORY_SEPARATOR.$sTableName.'.php', $sContentFile);
 					}
