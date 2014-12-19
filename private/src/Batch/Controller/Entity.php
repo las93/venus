@@ -487,7 +487,8 @@ class '.$sTableName.' extends Entity
 		 
     							if (!isset($oField->key) || (isset($oField->key) && $oField->key != 'primary')) { 
     								    
-    							    $sContentFile .= "\n".'          $this->'.$oField->join[$i].' = $aResult[0];';
+    							    $sContentFile .= "\n".'          if (count($aResult) > 0) { $this->'.$oField->join[$i].' = $aResult[0]; }
+          else { $this->'.$oField->join[$i].' = array(); }';
     							}
     			                     
     							$sContentFile .= '
