@@ -120,32 +120,40 @@ class Entity extends Controller {
     				foreach ($oOneTable->fields as $sFieldName => $oOneField) {
     				
     				    if (isset($oOneField->join)) {
-    				        	
+
     				        if (isset($oOneField->join_by_field)) { $sJoinByField = $oOneField->join_by_field; }
     				        else { $sJoinByField = $oOneField->join; }
-
-				            if (isset($oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->key)
-				                && $oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->key == 'primary'
-				                && !isset($oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->join)) {
-
-				                $oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->join = array();
-				                $oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->join[0] = $sTableName;
-				                $oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->join_by_field[0] = $sFieldName;
-				            }
-				            else if (isset($oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->key)
-				                && $oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->key == 'primary'
-				                && isset($oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->join)
-				                && !in_array($sTableName, $oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->join)) {
-				                
-                                $iIndex = count($oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->join);
-				                $oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->join[$iIndex] = $sTableName;
-				                $oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->join_by_field[$iIndex] = $sFieldName;
-				            }
-				            else if (!isset($oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->join)) {
-
-				                $oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->join = $sTableName;
-				                $oConnection->tables->{$oOneField->join}->fields->{$sJoinByField}->join_by_field = $sFieldName;
-				            }
+    				        
+    				        if (is_string($oOneField->join)) { $aOneFieldJoin = array($oOneField->join); }
+    				        if (is_string($sJoinByField)) { $aJoinByField = array($sJoinByField); }
+    				        
+    				        foreach ($aOneFieldJoin as $iKey => $sOneFieldJoin) {
+    				            
+    				            $sJoinByField = $aJoinByField[$iKey];
+        				        
+    				            if (isset($oConnection->tables->{$sOneFieldJoin}->fields->{$sJoinByField}->key)
+    				                && $oConnection->tables->{$sOneFieldJoin}->fields->{$sJoinByField}->key == 'primary'
+    				                && !isset($oConnection->tables->{$sOneFieldJoin}->fields->{$sJoinByField}->join)) {
+    
+    				                $oConnection->tables->{$sOneFieldJoin}->fields->{$sJoinByField}->join = array();
+    				                $oConnection->tables->{$sOneFieldJoin}->fields->{$sJoinByField}->join[0] = $sTableName;
+    				                $oConnection->tables->{$sOneFieldJoin}->fields->{$sJoinByField}->join_by_field[0] = $sFieldName;
+    				            }
+    				            else if (isset($oConnection->tables->{$sOneFieldJoin}->fields->{$sJoinByField}->key)
+    				                && $oConnection->tables->{$sOneFieldJoin}->fields->{$sJoinByField}->key == 'primary'
+    				                && isset($oConnection->tables->{$sOneFieldJoin}->fields->{$sJoinByField}->join)
+    				                && !in_array($sTableName, $oConnection->tables->{$sOneFieldJoin}->fields->{$sJoinByField}->join)) {
+    				                
+                                    $iIndex = count($oConnection->tables->{$sOneFieldJoin}->fields->{$sJoinByField}->join);
+    				                $oConnection->tables->{$sOneFieldJoin}->fields->{$sJoinByField}->join[$iIndex] = $sTableName;
+    				                $oConnection->tables->{$sOneFieldJoin}->fields->{$sJoinByField}->join_by_field[$iIndex] = $sFieldName;
+    				            }
+    				            else if (!isset($oConnection->tables->{$sOneFieldJoin}->fields->{$sJoinByField}->join)) {
+    
+    				                $oConnection->tables->{$sOneFieldJoin}->fields->{$sJoinByField}->join = $sTableName;
+    				                $oConnection->tables->{$sOneFieldJoin}->fields->{$sJoinByField}->join_by_field = $sFieldName;
+    				            }
+    				        }
     				    }
     				}
     			}

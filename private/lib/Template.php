@@ -559,7 +559,7 @@ class Template {
 			// transformation all : {$ssdsd} in <php echo ; >
 			//*****************************************************************************************************************************
 
-			$sContent = preg_replace('|\{(\$[a-z0-9_\[\].\->\(\)\$\+/*\']+)\}|msi', '<?php echo $1; ?>', $sContent);
+			$sContent = preg_replace('|\{(\$[a-z0-9_\[\].\->\(\)\$\+/*\'=+]+)\}|msi', '<?php echo $1; ?>', $sContent);
 			$sContent = preg_replace('|\{([a-z0-9_\(\),.]+\(\$[a-z0-9_\[\].\->\(\)\$\+/*\'"]+[ a-z0-9_\(\),".]+)\}|msi', '<?php echo $1; ?>', $sContent);
 			$sContent = preg_replace('|\{([a-z0-9_\(\),.]+\([^\}]+\))\}|msi', '<?php echo $1; ?>', $sContent);
 
