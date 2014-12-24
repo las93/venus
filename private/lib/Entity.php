@@ -328,12 +328,12 @@ class Entity {
 
 		    $sDoc = $oProperty->getDocComment();
 
-		    if (preg_match('/@map ([a-zA-Z_]+)/', $sDoc, $aMatch)) {
+		    if (preg_match('/@map ([a-zA-Z_]+)/', $sDoc, $aMatch) && !preg_match('/@join/', $sDoc)) {
 
 		    	$sMethodName = 'get_'.$oProperty->getName();
 		    	$oEntitieSetup->$aMatch[1] = $oEntity->$sMethodName();
 		    }
-		    else {
+		    else if (!preg_match('/@join/', $sDoc)) {
 
 		    	$sMethodName = 'get_'.$oProperty->getName();
 		    	$sPropertyName = $oProperty->getName();

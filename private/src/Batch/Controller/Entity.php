@@ -352,6 +352,7 @@ class '.$sTableName.' extends Entity
 	 *
 	 * @access private
 	 * @var    '.$oField->join[$i].'
+	 * @join
 	 *
 	 */
     private $'.$sJoinUsedName.' = null;
@@ -450,7 +451,8 @@ class '.$sTableName.' extends Entity
 	 * get '.$sJoinUsedName.' entity join by '.$sFieldName.' of '.$sTableName.'
 	 *
 	 * @access public
-	   @param  array $aWhere
+	 * @param  array $aWhere
+	 * @join
 	 * @return ';
 								
     							if (isset($oField->key) && $oField->key == 'primary') { 
@@ -490,8 +492,7 @@ class '.$sTableName.' extends Entity
     							}
     			                     
     							$sContentFile .= ' = $oOrm->where($aWhere)
-                                   ->limit(1)
-						           ->load();';
+						           ->load(false, \''.$sPortail.'\');';
 		 
     							if (!isset($oField->key) || (isset($oField->key) && $oField->key != 'primary')) { 
     								    
@@ -510,6 +511,7 @@ class '.$sTableName.' extends Entity
 	 *
 	 * @access public
 	 * @param  \Venus\src\\'.$sPortail.'\Entity\\'.$oField->join[$i].'  $'.$sJoinUsedName.' '.$oField->join[$i].' entity
+	 * @join
 	 * @return ';
 		 
     							if (isset($oField->key) && $oField->key == 'primary') { 
