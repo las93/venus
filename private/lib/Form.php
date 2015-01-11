@@ -151,7 +151,7 @@ class Form {
 
 	public function add($sName, $sType, $sLabel = null, $mValue = null, $mOptions = null) {
 
-		if ($sType === 'text' || $sType === 'submit' || $sType === 'password') {
+		if ($sType === 'text' || $sType === 'submit' || $sType === 'password' || $sType === 'file') {
 
 			$this->_aElement[$sName] = new Input($sName, $sType, $sLabel, $mValue);
 		}

@@ -19,7 +19,6 @@
  * 				-r [rewrite] => if we force rewrite file
  * 					by default, it's Batch
  */
-
 namespace Venus\src\Batch\Controller;
 
 use \Venus\lib\Db as Db;
@@ -39,9 +38,8 @@ use \Venus\src\Batch\common\Controller as Controller;
  * @link      	http://www.iscreenway.com
  * @since     	1.0
  */
-
-class Entity extends Controller {
-
+class Entity extends Controller
+{
 	/**
 	 * run the batch to create entity
 	 * @tutorial launch.php scaffolding
@@ -52,8 +50,8 @@ class Entity extends Controller {
 	 * @return void
 	 */
 
-	public function runScaffolding(array $aOptions = array()) {
-
+	public function runScaffolding(array $aOptions = array())
+	{
 		/**
 		 * option -p [portail]
 		 */
@@ -107,6 +105,15 @@ class Entity extends Controller {
 
 		foreach ($oConfiguration as $sConnectionName => $oConnection) {
 
+		    if ($oConnection->type == 'mysql') {
+
+		        define(SQL_FIELD_NAME_SEPARATOR, '`');
+		    }
+		    else {
+		        
+		        define(SQL_FIELD_NAME_SEPARATOR, '');
+		    }
+		    
 			/**
 			 * scaffolding of the database
 			 */
@@ -162,18 +169,18 @@ class Entity extends Controller {
 
 					if ($bDropTable === true) {
 						
-						$sQuery = 'DROP TABLE IF EXISTS `'.$sTableName.'`';
+						$sQuery = 'DROP TABLE IF EXISTS '.SQL_FIELD_NAME_SEPARATOR.$sTableName.SQL_FIELD_NAME_SEPARATOR;
 						$oPdo->query($sQuery);
 					}
 					
-					$sQuery = 'CREATE TABLE IF NOT EXISTS `'.$sTableName.'` (';
+					$sQuery = 'CREATE TABLE IF NOT EXISTS '.SQL_FIELD_NAME_SEPARATOR.$sTableName.SQL_FIELD_NAME_SEPARATOR.' (';
 
 					$aIndex = array();
 					$aPrimaryKey = array();
 
 					foreach ($oOneTable->fields as $sFieldName => $oOneField) {
 
-						$sQuery .= '`'.$sFieldName.'` '.$oOneField->type;
+						$sQuery .= SQL_FIELD_NAME_SEPARATOR.$sFieldName.SQL_FIELD_NAME_SEPARATOR.' '.$oOneField->type;
 
 						if (isset($oOneField->values) && $oOneField->type === 'enum' && is_array($oOneField->values)) {
 
@@ -210,6 +217,11 @@ class Entity extends Controller {
 
 						if (isset($oOneField->key) && $oOneField->key === 'primary') { $aPrimaryKey[] = $sFieldName; }
 						else if (isset($oOneField->key) && $oOneField->key === 'index') { $aIndex[] = $sFieldName; }
+					
+    					if (isset($oOneField->join) && is_string($oOneField->join)) {
+    					    
+    					    $sQuery .= 'FOREIGN KEY('.$sFieldName.') REFERENCES '.$oOneField->join.'('.$oOneField->join_by_field.'),';
+    					}
 					}
 
 					if (count($aPrimaryKey) > 0) { $sQuery .= 'PRIMARY KEY('.implode(',', $aPrimaryKey).') , '; }
@@ -228,6 +240,8 @@ class Entity extends Controller {
 					$sQuery .= ')';
 
 					$oPdo->query($sQuery);
+					
+					echo $sQuery.'<br/>';
 				}
 			}
 

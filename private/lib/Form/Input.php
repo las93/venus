@@ -187,7 +187,7 @@ class Input extends Common {
 
 		$sContent = '';
 
-		if ($this->getType() === 'text' || $this->getType() === 'password') {
+		if ($this->getType() === 'text' || $this->getType() === 'password' || $this->getType() === 'file') {
 
 			$sContent .= '<label>'.$this->getLabel().'</label> ';
 		}
