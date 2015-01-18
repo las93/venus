@@ -107,11 +107,11 @@ class Entity extends Controller
 
 		    if ($oConnection->type == 'mysql') {
 
-		        define(SQL_FIELD_NAME_SEPARATOR, '`');
+		        define('SQL_FIELD_NAME_SEPARATOR', '`');
 		    }
 		    else {
 		        
-		        define(SQL_FIELD_NAME_SEPARATOR, '');
+		        define('SQL_FIELD_NAME_SEPARATOR', '');
 		    }
 		    
 			/**
