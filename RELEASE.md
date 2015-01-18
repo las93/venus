@@ -1,4 +1,12 @@
 ===================
+Venus 1.0.3
+===================
+
+IMPORTANT CHANGE
+
+1/ Bug fixed : on the scaffolding
+
+===================
 Venus 1.0.2
 ===================
 
