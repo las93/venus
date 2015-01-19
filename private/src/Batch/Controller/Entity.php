@@ -240,8 +240,6 @@ class Entity extends Controller
 					$sQuery .= ')';
 
 					$oPdo->query($sQuery);
-					
-					echo $sQuery.'<br/>';
 				}
 			}
 
